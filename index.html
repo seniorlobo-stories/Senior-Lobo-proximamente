@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Senior Lobo — Próximamente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design Tokens ── */
+    :root {
+      --bosque:      #4f7860;
+      --ambar:       #c9a035;
+      --amber:       #c9a035;
+      --pergamino:   #f5edd8;
+      --castano:     #8c5f3a;
+      --niebla:      #9ba89c;
+      --tinta:       #38362c;
+      --ink-soft:    #6f7268;
+      --paper-piece: color-mix(in srgb, #ffffff 32%, var(--pergamino));
+      --on-dark:     var(--pergamino);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Base ── */
+    body {
+      font-family: 'EB Garamond', Georgia, serif;
+      background-color: var(--pergamino);
+      color: var(--tinta);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      /* linen texture via SVG noise */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+    }
+
+    /* ── Navbar ── */
+    .navbar-wrap {
+      padding: 16px 16px 0;
+    }
+
+    .navbar {
+      position: relative;
+      z-index: 0;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 13px 16px;
+      border-radius: 13px;
+    }
+
+    .navbar > .bg {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      border: 0;
+      border-radius: 13px;
+      background-color: var(--paper-piece);
+      background-image: radial-gradient(rgba(120,90,40,.05) 1px, transparent 1px);
+      background-size: 4px 4px;
+      filter: url(#torn-paper);
+    }
+
+    .navbar .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .navbar .mark {
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .navbar .mark img {
+      width: 68px;
+      height: 68px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .navbar .word {
+      font-family: 'EB Garamond', serif;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--bosque);
+      white-space: nowrap;
+    }
+
+    .navbar .nlinks {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: 8px;
+    }
+
+    .navbar .nlink {
+      position: relative;
+      z-index: 0;
+      font-family: 'EB Garamond', serif;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-soft);
+      padding: 10px 15px;
+      border-radius: 9px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color .15s;
+    }
+
+    .navbar .nlink:hover { color: var(--bosque); }
+    .navbar .nlink.active { color: var(--on-dark); }
+
+    .navbar .nlink.active > .bg {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border: 0;
+      border-radius: 9px;
+      background-color: var(--amber);
+      box-shadow: 0 5px 9px rgba(59,47,23,.28), inset 0 1px 0 rgba(255,255,255,.3);
+      filter: url(#torn-paper);
+    }
+
+    .navbar .nacts {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .navbar .iconbtn {
+      position: relative;
+      z-index: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: 'EB Garamond', serif;
+    }
+
+    .navbar .iconbtn > .bg {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border: 0;
+      border-radius: 10px;
+      background-color: var(--paper-piece);
+      background-image: radial-gradient(rgba(120,90,40,.05) 1px, transparent 1px);
+      background-size: 4px 4px;
+      box-shadow: 0 5px 9px rgba(59,47,23,.24), inset 0 1px 0 rgba(255,255,255,.45);
+      filter: url(#torn-paper);
+    }
+
+    .navbar .iconbtn:active > .bg {
+      transform: translateY(2px);
+      box-shadow: 0 2px 5px rgba(59,47,23,.22), inset 0 1px 0 rgba(255,255,255,.4);
+    }
+
+    .navbar .iconbtn svg {
+      width: 19px;
+      height: 19px;
+      stroke: #5b4226;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: url(#rough);
+    }
+
+    .navbar .iconbtn.avatar {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      color: var(--on-dark);
+    }
+
+    .navbar .iconbtn.avatar > .bg {
+      background-color: var(--bosque);
+      background-image: none;
+      box-shadow: 0 5px 9px rgba(59,47,23,.28), inset 0 1px 0 rgba(255,255,255,.18);
+    }
+
+    /* ── Main / Book page ── */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem 4rem;
+      width: 100%;
+    }
+
+    .book-page {
+      display: flex;
+      width: 100%;
+      max-width: 960px;
+    }
+
+    .book-left {
+      flex: 0 0 38%;
+      padding: 0 3.5rem 0 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .book-label {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--tinta);
+      opacity: 0.55;
+      margin-bottom: 0.5rem;
+    }
+
+    .book-rule {
+      width: 100%;
+      height: 1px;
+      background-color: var(--tinta);
+      opacity: 0.2;
+      margin-bottom: 2rem;
+    }
+
+    .book-left img,
+    .book-left video {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+    }
+
+    .book-divider {
+      width: 1px;
+      background-color: rgba(56,54,44,0.18);
+      flex-shrink: 0;
+      align-self: stretch;
+    }
+
+    .book-right {
+      flex: 1;
+      padding: 0 0 0 3.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.1rem;
+    }
+
+    .book-right p {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.1rem;
+      line-height: 1.75;
+      color: var(--tinta);
+    }
+
+    .book-right strong { font-weight: 700; }
+
+    .book-right ul {
+      list-style: disc;
+      padding-left: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .book-right ul li {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.1rem;
+      line-height: 1.65;
+      color: var(--tinta);
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1.5px solid rgba(56,54,44,0.2);
+      padding: 2rem 3rem 0;
+    }
+
+    .footer-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1.5rem;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: var(--tinta);
+    }
+
+    .footer-logo-icon {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .footer-logo-icon img {
+      width: 68px;
+      height: 68px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .footer-logo-text {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--tinta);
+    }
+
+    .footer-nav {
+      display: flex;
+      gap: 2.5rem;
+    }
+
+    .footer-nav a {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--tinta);
+      text-decoration: none;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .footer-nav a:hover { opacity: 1; }
+
+    .footer-divider {
+      border: none;
+      border-top: 1px dashed rgba(56,54,44,0.3);
+      margin: 0 -3rem;
+    }
+
+    .footer-copy {
+      text-align: center;
+      padding: 0.9rem 0 1.2rem;
+      font-family: 'EB Garamond', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--tinta);
+      opacity: 0.45;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 720px) {
+      .book-page { flex-direction: column; }
+      .book-left { flex: none; padding: 0 0 2rem 0; align-items: center; }
+      .book-left img { max-width: 200px; }
+      .book-divider { width: 100%; height: 1px; align-self: auto; }
+      .book-right { padding: 2rem 0 0 0; }
+    }
+
+    @media (max-width: 600px) {
+      .navbar-wrap { padding: 10px 10px 0; }
+      .navbar .word { display: none; }
+      .navbar .nlinks { margin-left: 0; }
+      footer { padding: 1.5rem 1.5rem 0; }
+      .footer-divider { margin: 0 -1.5rem; }
+      .footer-main { flex-direction: column; gap: 1.2rem; }
+      main { padding: 2rem 1.2rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── SVG Filters (one time, hidden) ── -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <filter id="rough" x="-6%" y="-6%" width="112%" height="112%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.018 0.022" numOctaves="2" seed="3" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="torn-paper" x="-18%" y="-22%" width="136%" height="150%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.03 0.034" numOctaves="4" seed="6" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" result="p"/>
+        <feDropShadow in="p" dx="0" dy="5" stdDeviation="7" flood-color="#3b2f17" flood-opacity="0.20"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- ── Navbar ── -->
+  <div class="navbar-wrap">
+    <nav class="navbar">
+      <i class="bg"></i>
+
+      <a href="/" class="brand">
+        <span class="mark">
+          <img src="Logos/Logo_banner_senior_lobo_dia.svg" alt="Senior Lobo" />
+        </span>
+        <span class="word">Senior Lobo</span>
+      </a>
+
+      <div class="nlinks">
+        <a href="/" class="nlink active"><i class="bg"></i>Inicio</a>
+      </div>
+
+      <div class="nacts">
+        <button class="iconbtn" aria-label="Buscar">
+          <i class="bg"></i>
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>
+        </button>
+        <button class="iconbtn avatar" aria-label="Perfil">
+          <i class="bg"></i>
+          SL
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- ── Main ── -->
+  <main>
+    <div class="book-page">
+
+      <div class="book-left">
+        <span class="book-label">Próximamente</span>
+        <div class="book-rule"></div>
+        <video autoplay muted loop playsinline>
+          <source src="video/video_paginas_dia.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <div class="book-divider"></div>
+
+      <div class="book-right">
+        <p>¿Te gustaría leer un libro en el que <strong>el protagonista de la historia eres tú mismo</strong>?</p>
+        <p>¿Qué me dices si te digo que también pueden aparecer todos tus allegados? :</p>
+        <ul>
+          <li>Paco, el amigo indiscreto</li>
+          <li>Luisa, la vecina del 5º y sus detallados informes de la comunidad</li>
+          <li>Alma, la niña de tus ojos.</li>
+        </ul>
+        <p>Aventuras, misterio, romanticismo... estamos trabajando a contrarreloj para que configures una historia única e irrepetible porque si <strong>algo tiene nuestro lobo es experiencia contando cuentos.</strong></p>
+        <p>Muy pronto.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="footer-main">
+      <a href="/" class="footer-logo">
+        <div class="footer-logo-icon">
+          <img src="Logos/Logo_banner_senior_lobo_dia.svg" alt="Senior Lobo" />
+        </div>
+        <span class="footer-logo-text">Senior Lobo</span>
+      </a>
+
+    </div>
+
+    <hr class="footer-divider" />
+
+    <p class="footer-copy">© 2026 Senior Lobo — Todos los derechos reservados.</p>
+  </footer>
+
+</body>
+</html>
