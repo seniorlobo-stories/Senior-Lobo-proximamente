@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dia">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,6 +34,7 @@
       flex-direction: column;
       /* linen texture via SVG noise */
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+      transition: background-color .45s ease, color .45s ease;
     }
 
     /* ── Navbar ── */
@@ -94,106 +95,6 @@
       font-size: 18px;
       color: var(--bosque);
       white-space: nowrap;
-    }
-
-    .navbar .nlinks {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      margin-left: 8px;
-    }
-
-    .navbar .nlink {
-      position: relative;
-      z-index: 0;
-      font-family: 'EB Garamond', serif;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink-soft);
-      padding: 10px 15px;
-      border-radius: 9px;
-      text-decoration: none;
-      white-space: nowrap;
-      transition: color .15s;
-    }
-
-    .navbar .nlink:hover { color: var(--bosque); }
-    .navbar .nlink.active { color: var(--on-dark); }
-
-    .navbar .nlink.active > .bg {
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      border: 0;
-      border-radius: 9px;
-      background-color: var(--amber);
-      box-shadow: 0 5px 9px rgba(59,47,23,.28), inset 0 1px 0 rgba(255,255,255,.3);
-      filter: url(#torn-paper);
-    }
-
-    .navbar .nacts {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 11px;
-    }
-
-    .navbar .iconbtn {
-      position: relative;
-      z-index: 0;
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      border: none;
-      background: none;
-      font-family: 'EB Garamond', serif;
-    }
-
-    .navbar .iconbtn > .bg {
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      border: 0;
-      border-radius: 10px;
-      background-color: var(--paper-piece);
-      background-image: radial-gradient(rgba(120,90,40,.05) 1px, transparent 1px);
-      background-size: 4px 4px;
-      box-shadow: 0 5px 9px rgba(59,47,23,.24), inset 0 1px 0 rgba(255,255,255,.45);
-      filter: url(#torn-paper);
-    }
-
-    .navbar .iconbtn:active > .bg {
-      transform: translateY(2px);
-      box-shadow: 0 2px 5px rgba(59,47,23,.22), inset 0 1px 0 rgba(255,255,255,.4);
-    }
-
-    .navbar .iconbtn svg {
-      width: 19px;
-      height: 19px;
-      stroke: #5b4226;
-      stroke-width: 2;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      filter: url(#rough);
-    }
-
-    .navbar .iconbtn.avatar {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: .05em;
-      color: var(--on-dark);
-    }
-
-    .navbar .iconbtn.avatar > .bg {
-      background-color: var(--bosque);
-      background-image: none;
-      box-shadow: 0 5px 9px rgba(59,47,23,.28), inset 0 1px 0 rgba(255,255,255,.18);
     }
 
     /* ── Main / Book page ── */
@@ -291,6 +192,9 @@
     footer {
       border-top: 1.5px solid rgba(56,54,44,0.2);
       padding: 2rem 3rem 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
     }
 
     .footer-main {
@@ -366,6 +270,137 @@
       opacity: 0.45;
     }
 
+    /* ── Tema Noche ── */
+    :root[data-theme="noche"] {
+      --pergamino:   #1b2744;
+      --tinta:       #f0e6c8;
+      --niebla:      #6b7a9a;
+      --castano:     #c98a5a;
+      --ink-soft:    #8a96aa;
+      --paper-piece: #253560;
+      --on-dark:     #1b2744;
+    }
+
+    [data-theme="noche"] .navbar .word        { color: var(--amber); }
+    [data-theme="noche"] .navbar .nlink:hover { color: var(--amber); }
+    [data-theme="noche"] .book-divider        { background-color: rgba(240,230,200,.18); }
+    [data-theme="noche"] footer               { border-top-color: rgba(240,230,200,.18); }
+    [data-theme="noche"] .footer-divider      { border-top-color: rgba(240,230,200,.25); }
+
+    .navbar > .bg { transition: background-color .4s ease; }
+
+    /* ── Switch Día / Noche ── */
+    .navbar .nacts {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+    }
+
+    .dn-switch {
+      --dsw: 90px; --dsh: 42px; --dsp: 4px;
+      width: var(--dsw); height: var(--dsh); border-radius: 24px;
+      position: relative; z-index: 0; flex: none; cursor: pointer;
+      display: inline-block;
+    }
+
+    .dn-switch > .bg {
+      position: absolute; inset: 0; z-index: -1; border-radius: 24px;
+      background: color-mix(in srgb, #4f7860 12%, #f5edd8);
+      border: 2px solid color-mix(in srgb, #4f7860 70%, #8c5f3a);
+      filter: url(#rough); pointer-events: none;
+      transition: background .25s, border-color .25s;
+    }
+
+    .dn-switch[data-mode="noche"] > .bg {
+      background: #1c283e;
+      border-color: #f0e6c8;
+    }
+
+    .dn-switch .glyph {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 18px; height: 18px; display: grid; place-items: center;
+      z-index: 1; transition: opacity .25s;
+    }
+
+    .dn-switch .glyph.sun  { left: 8px; }
+    .dn-switch .glyph.moon { right: 8px; }
+
+    .dn-switch .glyph svg {
+      width: 18px; height: 18px; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+      filter: url(#rough);
+    }
+
+    .dn-switch .glyph.sun  svg { stroke: #c9a035; }
+    .dn-switch .glyph.moon svg { stroke: #f5edd8; }
+
+    .dn-switch[data-mode="dia"]   .glyph.sun  { opacity: 0; }
+    .dn-switch[data-mode="dia"]   .glyph.moon { opacity: .32; }
+    .dn-switch[data-mode="noche"] .glyph.moon { opacity: 0; }
+    .dn-switch[data-mode="noche"] .glyph.sun  { opacity: .28; }
+
+    .dn-switch .stars {
+      position: absolute; inset: 0; z-index: 1;
+      opacity: 0; transition: opacity .3s; pointer-events: none;
+    }
+
+    .dn-switch[data-mode="noche"] .stars { opacity: .85; }
+
+    .dn-switch .stars i {
+      position: absolute; width: 3px; height: 3px;
+      border-radius: 50%; background: #f0e6c8;
+    }
+
+    .dn-switch .stars i:nth-child(1) { left: 14px; top: 10px; }
+    .dn-switch .stars i:nth-child(2) { left: 24px; top: 25px; width: 2px; height: 2px; }
+    .dn-switch .stars i:nth-child(3) { left: 33px; top: 8px;  width: 2px; height: 2px; }
+
+    .dn-switch .dn-knob {
+      position: absolute; top: var(--dsp); left: var(--dsp);
+      width: calc(var(--dsh) - var(--dsp) * 2);
+      height: calc(var(--dsh) - var(--dsp) * 2);
+      border-radius: 50%; z-index: 2;
+      transition: left .26s cubic-bezier(.5, 1.4, .5, 1);
+    }
+
+    .dn-switch[data-mode="noche"] .dn-knob {
+      left: calc(var(--dsw) - (var(--dsh) - var(--dsp)));
+    }
+
+    .dn-switch .dn-knob > .bg {
+      position: absolute; inset: 0; z-index: -1; border-radius: 50%;
+      background: #c9a035;
+      border: 2px solid color-mix(in srgb, #c9a035 60%, #8c5f3a);
+      filter: url(#rough); pointer-events: none;
+      transition: background .25s, border-color .25s;
+    }
+
+    .dn-switch[data-mode="noche"] .dn-knob > .bg {
+      background: #f0e6c8;
+      border-color: #9ba89c;
+    }
+
+    .dn-switch .dn-knob .face {
+      position: absolute; inset: 0; display: grid; place-items: center;
+      z-index: 1; transition: opacity .2s;
+    }
+
+    .dn-switch .dn-knob .face svg {
+      width: 18px; height: 18px; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+      filter: url(#rough);
+    }
+
+    .dn-switch .dn-knob .face.sun  svg { stroke: #8c5f3a; }
+    .dn-switch .dn-knob .face.moon svg { stroke: #253560; }
+
+    .dn-switch[data-mode="dia"]   .dn-knob .face.moon { opacity: 0; }
+    .dn-switch[data-mode="noche"] .dn-knob .face.sun  { opacity: 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .dn-switch *, body { transition: none !important; }
+    }
+
     /* ── Responsive ── */
     @media (max-width: 720px) {
       .book-page { flex-direction: column; }
@@ -410,25 +445,25 @@
 
       <a href="/" class="brand">
         <span class="mark">
-          <img src="Logos/Logo_banner_senior_lobo_dia.svg" alt="Senior Lobo" />
+          <img class="brand-logo" src="Logos/Logo_banner_senior_lobo_dia.svg" alt="Senior Lobo" />
         </span>
         <span class="word">Senior Lobo</span>
       </a>
 
-      <div class="nlinks">
-        <a href="/" class="nlink active"><i class="bg"></i>Inicio</a>
+      <div class="nacts">
+        <span class="dn-switch" data-mode="dia" role="switch" aria-checked="false" tabindex="0" aria-label="Cambiar modo día o noche">
+          <i class="bg"></i>
+          <span class="glyph sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.2v2.6M12 19.2v2.6M2.2 12h2.6M19.2 12h2.6M5 5l1.9 1.9M17.1 17.1L19 19M19 5l-1.9 1.9M6.9 17.1L5 19"/></svg></span>
+          <span class="glyph moon"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.4 6.4 0 0 0 10.5 10.5z"/></svg></span>
+          <span class="stars"><i></i><i></i><i></i></span>
+          <span class="dn-knob">
+            <i class="bg"></i>
+            <span class="face sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.2v2.6M12 19.2v2.6M2.2 12h2.6M19.2 12h2.6M5 5l1.9 1.9M17.1 17.1L19 19M19 5l-1.9 1.9M6.9 17.1L5 19"/></svg></span>
+            <span class="face moon"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.4 6.4 0 0 0 10.5 10.5z"/></svg></span>
+          </span>
+        </span>
       </div>
 
-      <div class="nacts">
-        <button class="iconbtn" aria-label="Buscar">
-          <i class="bg"></i>
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>
-        </button>
-        <button class="iconbtn avatar" aria-label="Perfil">
-          <i class="bg"></i>
-          SL
-        </button>
-      </div>
     </nav>
   </div>
 
@@ -439,7 +474,7 @@
       <div class="book-left">
         <span class="book-label">Próximamente</span>
         <div class="book-rule"></div>
-        <video autoplay muted loop playsinline>
+        <video id="main-video" autoplay muted loop playsinline>
           <source src="video/video_paginas_dia.mp4" type="video/mp4" />
         </video>
       </div>
@@ -466,7 +501,7 @@
     <div class="footer-main">
       <a href="/" class="footer-logo">
         <div class="footer-logo-icon">
-          <img src="Logos/Logo_banner_senior_lobo_dia.svg" alt="Senior Lobo" />
+          <img class="brand-logo" src="Logos/Logo_banner_senior_lobo_dia.svg" alt="Senior Lobo" />
         </div>
         <span class="footer-logo-text">Senior Lobo</span>
       </a>
@@ -477,6 +512,45 @@
 
     <p class="footer-copy">© 2026 Senior Lobo — Todos los derechos reservados.</p>
   </footer>
+
+  <script>
+    (function () {
+      var sw    = document.querySelector('.dn-switch');
+      var root  = document.documentElement;
+      var video = document.getElementById('main-video');
+      var logos = document.querySelectorAll('.brand-logo');
+      var assets = {
+        dia:   { video: 'video/video_paginas_dia.mp4',   logo: 'Logos/Logo_banner_senior_lobo_dia.svg' },
+        noche: { video: 'video/video_paginas_noche.mp4', logo: 'Logos/Senior_lobo_noche.svg' }
+      };
+
+      function apply(mode) {
+        sw.dataset.mode = mode;
+        sw.setAttribute('aria-checked', mode === 'noche');
+        root.dataset.theme = mode;
+        var a = assets[mode];
+        if (video.querySelector('source').getAttribute('src') !== a.video) {
+          video.querySelector('source').setAttribute('src', a.video);
+          video.load();
+        }
+        logos.forEach(function (img) { img.src = a.logo; });
+        try { localStorage.setItem('theme', mode); } catch (e) {}
+      }
+
+      function toggle() {
+        apply(sw.dataset.mode === 'dia' ? 'noche' : 'dia');
+      }
+
+      var saved = 'dia';
+      try { saved = localStorage.getItem('theme') || 'dia'; } catch (e) {}
+      apply(saved);
+
+      sw.addEventListener('click', toggle);
+      sw.addEventListener('keydown', function (e) {
+        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); }
+      });
+    })();
+  </script>
 
 </body>
 </html>
