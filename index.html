@@ -588,16 +588,13 @@
           video.load();
         }
         logos.forEach(function (img) { img.src = a.logo; });
-        try { localStorage.setItem('theme', mode); } catch (e) {}
       }
 
       function toggle() {
         apply(sw.dataset.mode === 'dia' ? 'noche' : 'dia');
       }
 
-      var saved = 'dia';
-      try { saved = localStorage.getItem('theme') || 'dia'; } catch (e) {}
-      apply(saved);
+      apply('dia');
 
       sw.addEventListener('click', toggle);
       sw.addEventListener('keydown', function (e) {
