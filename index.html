@@ -6,8 +6,27 @@
   <title>Senior Lobo — Próximamente</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Courier+Prime:wght@400;700&family=Cormorant+Upright:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
+    /* ── Fuentes self-hosted ── */
+    @font-face{
+      font-family:'Wakerobin Compressed';
+      src:url('fonts/wakerobin-compressed.otf') format('opentype');
+      font-weight:400 700; font-style:normal; font-display:swap;
+    }
+    @font-face{
+      font-family:'Mick Caster';
+      src:url('fonts/Mick_Caster.otf') format('opentype'),
+          url('fonts/Mick_Caster.ttf') format('truetype');
+      font-weight:400 700; font-style:normal; font-display:swap;
+    }
+    @font-face{
+      font-family:'Mick Caster';
+      src:url('fonts/Mick_Caster_Italic.otf') format('opentype'),
+          url('fonts/Mick_Caster_Italic.ttf') format('truetype');
+      font-weight:400 700; font-style:italic; font-display:swap;
+    }
+
     /* ── Design Tokens ── */
     :root {
       --bosque:      #4f7860;
@@ -20,6 +39,15 @@
       --ink-soft:    #6f7268;
       --paper-piece: color-mix(in srgb, #ffffff 32%, var(--pergamino));
       --on-dark:     var(--pergamino);
+      --line:        var(--tinta);
+      --ink:         var(--tinta);
+      --teal:        var(--tinta);
+      --bw:          2px;
+
+      --font-disp: 'Wakerobin Compressed', Garamond, serif;
+      --font-body: 'Cormorant Upright', Garamond, serif;
+      --font-slab: 'Mick Caster', serif;
+      --font-mono: 'Cormorant Upright', Garamond, serif;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -81,9 +109,12 @@
     }
 
     .navbar .mark {
+      position: relative;
       display: grid;
       place-items: center;
       flex-shrink: 0;
+      width: 68px;
+      height: 68px;
     }
 
     .navbar .mark img {
@@ -92,6 +123,15 @@
       object-fit: contain;
       display: block;
     }
+
+    .navbar .mark img.brand-logo-noche {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity .45s ease;
+    }
+
+    :root[data-theme="noche"] .navbar .mark img.brand-logo-noche { opacity: 1; }
 
     .navbar .word {
       font-family: 'EB Garamond', serif;
@@ -103,201 +143,133 @@
       white-space: nowrap;
     }
 
-    /* ── Main / Book page ── */
-    main {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 3rem 2rem 4rem;
-      width: 100%;
+    /* ── Main / Home ── */
+    main { flex: 1; width: 100%; }
+    .home { max-width: 1140px; margin: 0 auto; padding: 0 28px 60px; }
+
+    /* ── Topband ── */
+    .topband { height: 8px; background: var(--bosque); filter: url(#torn-line); transition: background-color .45s ease; }
+    :root[data-theme="noche"] .topband { background: var(--amber); }
+
+    /* ── Dissolve día/noche: evita "saltos" de color en toda la home/navbar ── */
+    .home *, .navbar * {
+      transition: background-color .45s ease, color .45s ease, border-color .45s ease, fill .45s ease, stroke .45s ease;
     }
 
-    .book-page {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      max-width: 960px;
-      gap: 3rem;
-    }
+    /* ── Hero ── */
+    .hero { display: grid; grid-template-columns: 1.04fr .96fr; gap: 48px; align-items: center; padding: 30px 0 35px; }
+    .hero-eyebrow { display: flex; align-items: center; gap: 14px; margin: 0 0 2px;
+      font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .42em; font-size: 14px;
+      font-weight: 600; color: var(--line); line-height: 1; }
+    .hero-eyebrow .dia { width: 6px; height: 6px; background: var(--line); transform: rotate(45deg); flex: none; }
+    .hero-h1 { font-family: var(--font-slab); font-weight: 700; text-transform: lowercase;
+      font-size: clamp(44px, 5.4vw, 76px); line-height: .92; margin: 14px 0 0; color: var(--line); white-space: nowrap; }
+    .hero-h1::first-letter { text-transform: uppercase; }
+    .hero-h1 .lobo { display: inline; text-transform: none; color: var(--bosque); }
+    :root[data-theme="noche"] .hero-h1 .lobo { color: var(--amber); }
+    .hero-sub { font-family: var(--font-body); font-size: 21px; line-height: 1.5; color: var(--ink);
+      max-width: 430px; margin: 26px 0 0; }
+    .hero-acts { display: flex; align-items: center; gap: 24px; margin-top: 32px; flex-wrap: wrap; }
+    .hero-quote { font-family: var(--font-body); font-style: italic; font-size: 17px; line-height: 1.55;
+      color: var(--ink-soft); margin: 34px 0 0; max-width: 430px; padding-left: 18px; border-left: 3px solid var(--bosque); }
+    :root[data-theme="noche"] .hero-quote { border-left-color: var(--amber); }
+    .hero-quote .name { color: var(--castano); font-style: normal; }
+    .hero-quote .name-input { font: inherit; color: var(--castano); font-style: normal; background: none;
+      border: none; border-bottom: 1px dashed color-mix(in srgb, var(--castano) 55%, transparent); outline: none;
+      padding: 0 1px; min-width: 2ch; text-align: center; }
+    .hero-quote .name-input::placeholder { color: var(--castano); opacity: .6; }
+    .hero-quote .name-input:focus { border-bottom-style: solid; }
 
-    .book-columns {
-      display: flex;
-      align-items: flex-start;
+    .hero-art { position: relative; display: flex; justify-content: center; align-items: center; }
+    .hero-art-card { position: relative; z-index: 0; width: 100%; max-width: 440px; display: grid; place-items: center; }
+    .hero-art-card video { width: 100%; height: auto; display: block; border-radius: 8px; grid-area: 1 / 1; }
+    .hero-art-card video.hero-video-noche {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      opacity: 0; transition: opacity .45s ease;
     }
+    :root[data-theme="noche"] .hero-art-card video.hero-video-noche { opacity: 1; }
+    .blob { position: absolute; border-radius: 50%; background: color-mix(in srgb, var(--niebla) 34%, transparent); z-index: 0; }
+    .blob.b1 { width: 16px; height: 16px; top: 6%; right: 8%; }
+    .blob.b2 { width: 9px; height: 9px; top: 18%; right: 3%; }
+    .blob.b3 { width: 12px; height: 12px; bottom: 12%; left: 4%; }
 
-    .book-section-hd {
-      width: 38%;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
+    /* ── Botones (sistema Línea) ── */
+    .btn { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .07em; font-size: 14px;
+      font-weight: 600; color: var(--line); padding: 11px 22px; border-radius: 9px; border: 0; background: none;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 9px; position: relative; z-index: 0;
+      text-decoration: none; }
+    .btn .bg { position: absolute; inset: 0; z-index: -1; border-radius: 9px; }
+    .btn.primary { color: var(--on-dark); }
+    .btn.primary .bg { background: var(--teal); }
+    .btn.ghost .bg { background: var(--pergamino); }
+    .hero-acts .btn.primary .bg { box-shadow: 4px 5px 0 rgba(59, 47, 23, .22); }
+    .hero-acts .btn.ghost .bg { box-shadow: 4px 5px 0 rgba(59, 47, 23, .22), inset 0 1px 0 rgba(255, 255, 255, .4); }
+    .hero-acts .btn:active .bg { transform: translate(2px, 2px); box-shadow: 2px 3px 0 rgba(59, 47, 23, .20); }
 
-    .book-left .book-section-hd {
-      width: 100%;
-    }
+    .hero-act-cta { position: relative; display: inline-flex; }
+    .hero-act-tag { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 6px;
+      font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .14em; white-space: nowrap;
+      font-size: 11px; font-weight: 600; color: var(--ink-soft); }
 
-    .book-section-body {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
+    /* ── Book page (Prólogo / Capítulo I) ── */
+    .quees { padding: 17px 0 0; }
+    .book-page { max-width: 720px; margin: 46px auto 0; text-align: left; }
+    .book-page::after { content: ""; display: block; clear: both; }
 
-    .book-left {
-      flex: 0 0 38%;
-      padding: 0 3.5rem 0 0;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
+    .chapter-plate { display: flex; flex-direction: column; align-items: center; gap: 9px; width: 100%; margin: 7px 0 22px; }
+    .chapter-no { position: relative; margin: 0; padding: 0 0 2px; display: flex; align-items: center; justify-content: center;
+      gap: 14px; font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .42em; font-size: 14px;
+      font-weight: 600; color: var(--line); line-height: 1; }
+    .chapter-no .dia { width: 6px; height: 6px; background: var(--line); transform: rotate(45deg); flex: none; }
+    .chapter-title { position: relative; margin: 0; padding: 6px 0 0; text-align: center; white-space: nowrap;
+      font-family: var(--font-slab); font-weight: 700; text-transform: lowercase; letter-spacing: .5px;
+      font-size: clamp(26px, 3.4vw, 36px); line-height: 1.04; color: var(--line); }
+    .chapter-title::first-letter { text-transform: uppercase; }
 
-    .book-label {
-      font-family: 'EB Garamond', serif;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--tinta);
-      opacity: 0.55;
-      margin-bottom: 0.5rem;
-    }
+    .book-fig { float: right; width: 310px; margin: -90px 0 14px 30px; display: flex; flex-direction: column; gap: 9px; shape-margin: 14px; }
+    .book-fig .plate { position: relative; aspect-ratio: 4/5; border-radius: 6px;
+      display: grid; place-items: center; overflow: hidden; }
+    .book-fig .slot { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--ink-soft); text-align: center; line-height: 1.5; padding: 0 14px; }
+    .book-fig .plate img { width: 100%; height: 100%; object-fit: contain; }
+    .book-fig figcaption { font-family: var(--font-body); font-style: italic; font-size: 13.5px; line-height: 1.4;
+      color: var(--ink-soft); text-align: center; }
 
-    .book-rule {
-      width: 100%;
-      height: 1px;
-      background-color: var(--tinta);
-      opacity: 0.2;
-      margin-bottom: 2rem;
-    }
+    .book-para { font-family: var(--font-body); font-size: 20px; line-height: 1.56; color: var(--ink); margin: 0 0 17px;
+      text-align: justify; text-justify: inter-word; hyphens: auto; }
+    .book-para:last-child { margin-bottom: 0; }
+    .book-para .hl { color: var(--bosque); }
+    :root[data-theme="noche"] .book-para .hl { color: var(--amber); }
+    .book-para .sl { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .05em; font-size: .82em; color: var(--line); }
+    .book-epigraph { font-family: var(--font-body); font-style: italic; font-size: 20px; line-height: 1.56;
+      color: var(--ink-soft); text-align: center; margin: 0 0 17px; }
+    .book-epigraph .hl { color: var(--bosque); }
+    :root[data-theme="noche"] .book-epigraph .hl { color: var(--amber); }
 
-    .book-left img,
-    .book-left video {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 8px;
-    }
+    .book-para.lead-cap::first-letter { float: left; font-family: var(--font-slab); font-weight: 700; font-size: 66px;
+      line-height: .66; padding: 7px 12px 0 1px; color: var(--bosque); }
+    :root[data-theme="noche"] .book-para.lead-cap::first-letter { color: var(--amber); }
 
-    .book-divider {
-      width: 1px;
-      background-color: rgba(56,54,44,0.18);
-      flex-shrink: 0;
-      align-self: stretch;
-    }
-
-    .book-right {
-      flex: 1;
-      padding: 0 0 0 3.5rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 1.1rem;
-    }
-
-    .book-right p {
-      font-family: 'EB Garamond', serif;
-      font-size: 1.1rem;
-      line-height: 1.75;
-      color: var(--tinta);
-    }
-
-    .book-right strong { font-weight: 700; }
-
-    .book-right ul {
-      list-style: disc;
-      padding-left: 1.4rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-    }
-
-    .book-right ul li {
-      font-family: 'EB Garamond', serif;
-      font-size: 1.1rem;
-      line-height: 1.65;
-      color: var(--tinta);
-    }
+    .nb-divider { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 26px 0; clear: both; }
+    .nb-divider .ln { width: 78px; height: 0; border-top: var(--bw) solid color-mix(in srgb, var(--line) 55%, transparent); filter: url(#torn-line); }
+    .nb-divider .cl { display: flex; align-items: center; gap: 9px; }
+    .nb-divider .cl b { width: 9px; height: 9px; background: var(--bosque); transform: rotate(45deg); display: block; filter: url(#rough); }
+    .nb-divider .cl b:nth-child(2) { width: 13px; height: 13px; }
+    :root[data-theme="noche"] .nb-divider .cl b { background: var(--amber); }
 
     /* ── Footer ── */
-    footer {
-      border-top: 1.5px solid rgba(56,54,44,0.2);
-      padding: 2rem 3rem 0;
-      max-width: 1200px;
-      margin: 0 auto;
-      width: 100%;
+    .home-foot { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap;
+      margin: 64px 0 0; padding-top: 24px; border-top: 2px solid color-mix(in srgb, var(--line) 22%, transparent);
+      font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .06em; }
+
+    @media (max-width: 920px) {
+      .hero { grid-template-columns: 1fr; gap: 34px; }
+      .hero-art { order: -1; }
     }
-
-    .footer-main {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-bottom: 1.5rem;
-    }
-
-    .footer-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      text-decoration: none;
-      color: var(--tinta);
-    }
-
-    .footer-logo-icon {
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-    }
-
-    .footer-logo-icon img {
-      width: 68px;
-      height: 68px;
-      object-fit: contain;
-      display: block;
-    }
-
-    .footer-logo-text {
-      font-family: 'EB Garamond', serif;
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--tinta);
-    }
-
-    .footer-nav {
-      display: flex;
-      gap: 2.5rem;
-    }
-
-    .footer-nav a {
-      font-family: 'EB Garamond', serif;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--tinta);
-      text-decoration: none;
-      opacity: 0.7;
-      transition: opacity 0.2s;
-    }
-
-    .footer-nav a:hover { opacity: 1; }
-
-    .footer-divider {
-      border: none;
-      border-top: 1px dashed rgba(56,54,44,0.3);
-      margin: 0 -3rem;
-    }
-
-    .footer-copy {
-      text-align: center;
-      padding: 0.9rem 0 1.2rem;
-      font-family: 'EB Garamond', serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--tinta);
-      opacity: 0.45;
+    @media (max-width: 560px) {
+      .book-fig { float: none; width: 100%; margin: 8px 0 20px; }
+      .chapter-title { white-space: normal; }
+      .book-para { text-align: left; hyphens: none; }
     }
 
     /* ── Tema Noche ── */
@@ -309,13 +281,11 @@
       --ink-soft:    #8a96aa;
       --paper-piece: #253560;
       --on-dark:     #1b2744;
+      --teal:        var(--amber);
     }
 
     [data-theme="noche"] .navbar .word        { color: var(--amber); }
     [data-theme="noche"] .navbar .nlink:hover { color: var(--amber); }
-    [data-theme="noche"] .book-divider        { background-color: rgba(240,230,200,.18); }
-    [data-theme="noche"] footer               { border-top-color: rgba(240,230,200,.18); }
-    [data-theme="noche"] .footer-divider      { border-top-color: rgba(240,230,200,.25); }
 
     .navbar > .bg { transition: background-color .4s ease; }
 
@@ -433,21 +403,8 @@
     }
 
     /* ── Responsive ── */
-    @media (max-width: 720px) {
-      .book-columns { flex-direction: column; }
-      .book-section-hd { width: 100%; }
-      .book-left { flex: none; padding: 0 0 2rem 0; align-items: center; }
-      .book-left img, .book-left video { max-width: 200px; }
-      .book-divider { width: 100%; height: 1px; align-self: auto; }
-      .book-right { padding: 2rem 0 0 0; }
-    }
-
     @media (max-width: 600px) {
       .navbar .word { display: none; }
-      .navbar .nlinks { margin-left: 0; }
-      footer { padding: 1.5rem 1.5rem 0; }
-      .footer-divider { margin: 0 -1.5rem; }
-      .footer-main { flex-direction: column; gap: 1.2rem; }
       main { padding: 2rem 1.2rem 3rem; }
     }
   </style>
@@ -466,8 +423,15 @@
         <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" result="p"/>
         <feDropShadow in="p" dx="0" dy="5" stdDeviation="7" flood-color="#3b2f17" flood-opacity="0.20"/>
       </filter>
+      <filter id="torn-line" x="-20%" y="-60%" width="140%" height="220%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.06 0.25" numOctaves="2" seed="4" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
     </defs>
   </svg>
+
+  <!-- ── Topband ── -->
+  <div class="topband"></div>
 
   <!-- ── Navbar ── -->
   <div class="navbar-wrap">
@@ -477,7 +441,8 @@
       <div class="navbar-inner">
         <a href="/" class="brand">
           <span class="mark">
-            <img class="brand-logo" src="Logos/Logo_banner_senior_lobo_dia.svg" alt="Senior Lobo" />
+            <img class="brand-logo-dia" src="Logos/Logo_banner_senior_lobo_dia.svg" alt="Senior Lobo" />
+            <img class="brand-logo-noche" src="Logos/Senior_lobo_noche.svg" alt="" aria-hidden="true" />
           </span>
           <span class="word">Senior Lobo</span>
         </a>
@@ -502,100 +467,96 @@
 
   <!-- ── Main ── -->
   <main>
-    <div class="book-page">
+    <div class="home">
 
-      <!-- Prólogo -->
-      <div>
-        <div class="book-section-hd">
-          <span class="book-label">Prólogo</span>
-          <div class="book-rule"></div>
-        </div>
-        <div class="book-section-body">
-          <p>Antes de que empiece el cuento déjame prometerte algo: <strong>esta vez la historia no hablará de cualquiera, si no de ti.</strong></p>
-          <p>Senior Lobo está preparando relatos únicos gracias a los últimos avances de la IA que permiten abrir la puerta para generar historias 100% personalizadas. Ya no hará falta que te pongas en «la piel de personaje» porque ese personaje, serás tú mismo.</p>
-        </div>
-      </div>
-
-      <!-- Capítulo 1: Premisa -->
-      <div class="book-columns">
-        <div class="book-left">
-          <div class="book-section-hd">
-            <span class="book-label">Capítulo 1: Premisa</span>
-            <div class="book-rule"></div>
+      <!-- ===================== HERO ===================== -->
+      <section class="hero">
+        <div class="hero-art">
+          <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+          <div class="hero-art-card">
+            <video class="hero-video-dia" autoplay muted loop playsinline>
+              <source src="video/video_paginas_dia.mp4" type="video/mp4" />
+            </video>
+            <video class="hero-video-noche" autoplay muted loop playsinline>
+              <source src="video/video_paginas_noche.mp4" type="video/mp4" />
+            </video>
           </div>
-          <video id="main-video" autoplay muted loop playsinline>
-            <source src="video/video_paginas_dia.mp4" type="video/mp4" />
-          </video>
         </div>
-
-        <div class="book-divider"></div>
-
-        <div class="book-right">
-          <p>¿Qué me dices si te digo que también pueden aparecer todos tus allegados? :</p>
-          <ul>
-            <li>Paco, el amigo indiscreto</li>
-            <li>Luisa, la vecina del 5º y sus detallados informes de la comunidad</li>
-            <li>Alma, la niña de tus ojos.</li>
-          </ul>
-          <p>¿Componer el escenario perfecto?</p>
-          <ul>
-            <li>Aventuras,</li>
-            <li>Misterio,</li>
-            <li>Romance...</li>
-          </ul>
-          <p>Estamos trabajando a contrarreloj para que configures una historia irrepetible porque <strong>si algo tiene nuestro lobo es experiencia contando cuentos.</strong></p>
+        <div class="hero-copy">
+          <p class="hero-eyebrow"><b class="dia"></b>Una historia para cada niño<b class="dia"></b></p>
+          <h1 class="hero-h1">Senior <span class="lobo">Lobo</span></h1>
+          <p class="hero-sub">Cuentos personalizados para niños de 6 a 12 años, donde tu peque es el verdadero protagonista.</p>
+          <div class="hero-acts">
+            <span class="hero-act-cta">
+              <button class="btn primary" type="button"><i class="bg"></i>Crear su cuento</button>
+              <span class="hero-act-tag">Próximamente</span>
+            </span>
+            <a class="btn ghost" href="#quees"><i class="bg"></i>¿Qué es Senior Lobo?</a>
+          </div>
+          <p class="hero-quote">"Y entonces, <input type="text" class="name-input" id="nameInput" placeholder="tu nombre" maxlength="24" autocomplete="off" /> abrió el libro… y la aventura empezó."</p>
         </div>
-      </div>
+      </section>
 
-      <!-- Continuará -->
-      <div>
-        <div class="book-section-hd">
-          <span class="book-label">Continuará....</span>
-          <div class="book-rule"></div>
+      <!-- ===================== PRÓLOGO ===================== -->
+      <section class="quees" id="prologo">
+        <div class="book-page">
+          <div class="chapter-plate">
+            <p class="chapter-no"><b class="dia"></b>Prólogo<b class="dia"></b></p>
+            <h2 class="chapter-title">La premisa</h2>
+            <div class="nb-divider"><span class="ln"></span><span class="cl"><b></b><b></b><b></b></span><span class="ln"></span></div>
+          </div>
+
+          <p class="book-epigraph">Antes de que empiece el cuento, déjame prometerte algo: esta vez la historia no hablará de cualquiera, <span class="hl">sino de ti</span>.</p>
+
+          <div class="nb-divider"><span class="ln"></span><span class="cl"><b></b><b></b><b></b></span><span class="ln"></span></div>
+
+          <p class="book-para lead-cap">En <span class="sl">Senior Lobo</span> estamos preparando relatos únicos gracias a los últimos avances de la <span class="sl">IA</span>, que abren la puerta a generar historias <span class="hl">100% personalizadas</span>.</p>
+
+          <p class="book-para">Ya no hará falta que te pongas en «la piel del personaje»… porque ese personaje, <span class="hl">serás tú mismo</span>.</p>
         </div>
-      </div>
+      </section>
+
+      <!-- ===================== ¿QUÉ ES? ===================== -->
+      <section class="quees" id="quees">
+        <div class="book-page">
+          <div class="chapter-plate">
+            <p class="chapter-no"><b class="dia"></b>Capítulo&nbsp;I<b class="dia"></b></p>
+            <h2 class="chapter-title">¿Qué es Senior Lobo?</h2>
+            <div class="nb-divider"><span class="ln"></span><span class="cl"><b></b><b></b><b></b></span><span class="ln"></span></div>
+          </div>
+
+          <figure class="book-fig">
+            <div class="plate"><img src="imagenes/Lobo_pose_03.png" alt="Senior Lobo, mascota de la marca" /></div>
+            <figcaption>Una estampa para cada cuento</figcaption>
+          </figure>
+
+          <p class="book-para lead-cap">Este lobo que ya peina sus primeras canas nace de la idea de explotar al máximo la posibilidad de personalizar historias gracias a los últimos avances en el campo de la inteligencia artificial. Queremos que los niños de 6 a 12 años puedan configurar su nombre como protagonista, sus familiares como personajes secundarios e incluso antagonistas que le den ese toque especial a la trama.</p>
+
+          <p class="book-para">Creemos en la necesidad de contar historias que entretengan, eduquen e incluso <span class="hl">reduzcan miedos</span>gracias a la lectura espejo de historias.</p>
+
+          <div class="nb-divider"><span class="ln"></span><span class="cl"><b></b><b></b><b></b></span><span class="ln"></span></div>
+
+          <p class="book-para lead-cap">Sin necesidad de ponerse en la piel de Pepita o Jaimito… sino de ser ellos mismos: sus gustos, sus pasiones y sus temores dentro de un libro único e irrepetible. 
+        </div>
+      </section>
+
+      <footer class="home-foot">
+        <span>Senior Lobo · Cuentos personalizados</span>
+        <span>Hecho a mano, impreso en tapa dura</span>
+      </footer>
 
     </div>
   </main>
 
-  <!-- ── Footer ── -->
-  <footer>
-    <div class="footer-main">
-      <a href="/" class="footer-logo">
-        <div class="footer-logo-icon">
-          <img class="brand-logo" src="Logos/Logo_banner_senior_lobo_dia.svg" alt="Senior Lobo" />
-        </div>
-        <span class="footer-logo-text">Senior Lobo</span>
-      </a>
-
-    </div>
-
-    <hr class="footer-divider" />
-
-    <p class="footer-copy">© 2026 Senior Lobo — Todos los derechos reservados.</p>
-  </footer>
-
   <script>
     (function () {
-      var sw    = document.querySelector('.dn-switch');
-      var root  = document.documentElement;
-      var video = document.getElementById('main-video');
-      var logos = document.querySelectorAll('.brand-logo');
-      var assets = {
-        dia:   { video: 'video/video_paginas_dia.mp4',   logo: 'Logos/Logo_banner_senior_lobo_dia.svg' },
-        noche: { video: 'video/video_paginas_noche.mp4', logo: 'Logos/Senior_lobo_noche.svg' }
-      };
+      var sw   = document.querySelector('.dn-switch');
+      var root = document.documentElement;
 
       function apply(mode) {
         sw.dataset.mode = mode;
         sw.setAttribute('aria-checked', mode === 'noche');
         root.dataset.theme = mode;
-        var a = assets[mode];
-        if (video.querySelector('source').getAttribute('src') !== a.video) {
-          video.querySelector('source').setAttribute('src', a.video);
-          video.load();
-        }
-        logos.forEach(function (img) { img.src = a.logo; });
       }
 
       function toggle() {
@@ -607,6 +568,30 @@
       sw.addEventListener('click', toggle);
       sw.addEventListener('keydown', function (e) {
         if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); }
+      });
+    })();
+
+    (function () {
+      var input = document.getElementById('nameInput');
+      if (!input) return;
+      var STORAGE_KEY = 'seniorLoboName';
+
+      function resize() {
+        var val = input.value || input.placeholder;
+        input.style.width = (val.length + 1) + 'ch';
+      }
+
+      var saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) input.value = saved;
+      resize();
+
+      input.addEventListener('input', resize);
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          localStorage.setItem(STORAGE_KEY, input.value);
+          input.blur();
+        }
       });
     })();
   </script>
