@@ -30,7 +30,6 @@
     /* ── Design Tokens ── */
     :root {
       --bosque:      #4f7860;
-      --ambar:       #c9a035;
       --amber:       #c9a035;
       --pergamino:   #f5edd8;
       --castano:     #8c5f3a;
@@ -48,7 +47,14 @@
       --font-body: 'Cormorant Upright', Garamond, serif;
       --font-slab: 'Mick Caster', serif;
       --font-mono: 'Cormorant Upright', Garamond, serif;
+
+      /* Ancho máximo de sección por breakpoint: desktop / tablet / móvil */
+      --container-w: 1200px;
+      --gutter: 28px;
     }
+
+    @media (max-width: 1024px) { :root { --container-w: 758px; } }
+    @media (max-width: 600px)  { :root { --container-w: 430px; --gutter: 18px; } }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -97,7 +103,7 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 20px;
-      max-width: 1200px;
+      max-width: var(--container-w);
       margin: 0 auto;
     }
 
@@ -133,6 +139,12 @@
 
     :root[data-theme="noche"] .navbar .mark img.brand-logo-noche { opacity: 1; }
 
+    .navbar .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
     .navbar .word {
       font-family: 'EB Garamond', serif;
       text-transform: uppercase;
@@ -143,9 +155,17 @@
       white-space: nowrap;
     }
 
+    .navbar .tagline {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 12px;
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+
     /* ── Main / Home ── */
     main { flex: 1; width: 100%; }
-    .home { max-width: 1140px; margin: 0 auto; padding: 0 28px 60px; }
+    .home { max-width: var(--container-w); margin: 0 auto; padding: 0 var(--gutter) 60px; }
 
     /* ── Topband ── */
     .topband { height: 8px; background: var(--bosque); filter: url(#torn-line); transition: background-color .45s ease; }
@@ -158,10 +178,10 @@
 
     /* ── Hero ── */
     .hero { display: grid; grid-template-columns: 1.04fr .96fr; gap: 48px; align-items: center; padding: 30px 0 35px; }
-    .hero-eyebrow { display: flex; align-items: center; gap: 14px; margin: 0 0 2px;
+    .hero-eyebrow, .chapter-no { display: flex; align-items: center; gap: 14px; margin: 0 0 2px;
       font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .42em; font-size: 14px;
       font-weight: 600; color: var(--line); line-height: 1; }
-    .hero-eyebrow .dia { width: 6px; height: 6px; background: var(--line); transform: rotate(45deg); flex: none; }
+    .hero-eyebrow .dia, .chapter-no .dia { width: 6px; height: 6px; background: var(--line); transform: rotate(45deg); flex: none; }
     .hero-h1 { font-family: var(--font-slab); font-weight: 700; text-transform: lowercase;
       font-size: clamp(44px, 5.4vw, 76px); line-height: .92; margin: 14px 0 0; color: var(--line); white-space: nowrap; }
     .hero-h1::first-letter { text-transform: uppercase; }
@@ -217,11 +237,8 @@
     .book-page::after { content: ""; display: block; clear: both; }
 
     .chapter-plate { display: flex; flex-direction: column; align-items: center; gap: 9px; width: 100%; margin: 7px 0 22px; }
-    .chapter-no { position: relative; margin: 0; padding: 0 0 2px; display: flex; align-items: center; justify-content: center;
-      gap: 14px; font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .42em; font-size: 14px;
-      font-weight: 600; color: var(--line); line-height: 1; }
-    .chapter-no .dia { width: 6px; height: 6px; background: var(--line); transform: rotate(45deg); flex: none; }
-    .chapter-title { position: relative; margin: 0; padding: 6px 0 0; text-align: center; white-space: nowrap;
+    .chapter-no { margin: 0; padding: 0 0 2px; justify-content: center; }
+    .chapter-title { margin: 0; padding: 6px 0 0; text-align: center; white-space: nowrap;
       font-family: var(--font-slab); font-weight: 700; text-transform: lowercase; letter-spacing: .5px;
       font-size: clamp(26px, 3.4vw, 36px); line-height: 1.04; color: var(--line); }
     .chapter-title::first-letter { text-transform: uppercase; }
@@ -238,13 +255,11 @@
     .book-para { font-family: var(--font-body); font-size: 20px; line-height: 1.56; color: var(--ink); margin: 0 0 17px;
       text-align: justify; text-justify: inter-word; hyphens: auto; }
     .book-para:last-child { margin-bottom: 0; }
-    .book-para .hl { color: var(--bosque); }
-    :root[data-theme="noche"] .book-para .hl { color: var(--amber); }
     .book-para .sl { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .05em; font-size: .82em; color: var(--line); }
     .book-epigraph { font-family: var(--font-body); font-style: italic; font-size: 20px; line-height: 1.56;
       color: var(--ink-soft); text-align: center; margin: 0 0 17px; }
-    .book-epigraph .hl { color: var(--bosque); }
-    :root[data-theme="noche"] .book-epigraph .hl { color: var(--amber); }
+    .hl { color: var(--bosque); }
+    :root[data-theme="noche"] .hl { color: var(--amber); }
 
     .book-para.lead-cap::first-letter { float: left; font-family: var(--font-slab); font-weight: 700; font-size: 66px;
       line-height: .66; padding: 7px 12px 0 1px; color: var(--bosque); }
@@ -262,11 +277,14 @@
       margin: 64px 0 0; padding-top: 24px; border-top: 2px solid color-mix(in srgb, var(--line) 22%, transparent);
       font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .06em; }
 
-    @media (max-width: 920px) {
+    /* ── Responsive: tablet (758px) y móvil (430px) ── */
+    @media (max-width: 1024px) {
       .hero { grid-template-columns: 1fr; gap: 34px; }
       .hero-art { order: -1; }
     }
-    @media (max-width: 560px) {
+    @media (max-width: 600px) {
+      .navbar .brand-text { display: none; }
+
       .book-fig { float: none; width: 100%; margin: 8px 0 20px; }
       .chapter-title { white-space: normal; }
       .book-para { text-align: left; hyphens: none; }
@@ -276,7 +294,7 @@
       .hero-acts > .btn.ghost { flex: 1 1 0; min-width: 0; }
       .hero-acts .btn { width: 100%; justify-content: center; padding: 11px 10px; font-size: 12px; gap: 6px; white-space: nowrap; }
 
-      .hero-eyebrow { gap: 8px; font-size: 11px; letter-spacing: .14em; white-space: nowrap; }
+      .hero-eyebrow, .chapter-no { gap: 8px; font-size: 11px; letter-spacing: .14em; white-space: nowrap; }
 
       #quees .chapter-plate { margin-bottom: 2px; }
       #quees .chapter-plate .nb-divider { margin: 0; }
@@ -336,7 +354,7 @@
     .dn-switch .glyph.sun  { left: 8px; }
     .dn-switch .glyph.moon { right: 8px; }
 
-    .dn-switch .glyph svg {
+    .dn-switch .glyph svg, .dn-switch .dn-knob .face svg {
       width: 18px; height: 18px; fill: none;
       stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
       filter: url(#rough);
@@ -397,12 +415,6 @@
       z-index: 1; transition: opacity .2s;
     }
 
-    .dn-switch .dn-knob .face svg {
-      width: 18px; height: 18px; fill: none;
-      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-      filter: url(#rough);
-    }
-
     .dn-switch .dn-knob .face.sun  svg { stroke: #8c5f3a; }
     .dn-switch .dn-knob .face.moon svg { stroke: #253560; }
 
@@ -411,12 +423,6 @@
 
     @media (prefers-reduced-motion: reduce) {
       .dn-switch *, body { transition: none !important; }
-    }
-
-    /* ── Responsive ── */
-    @media (max-width: 600px) {
-      .navbar .word { display: none; }
-      main { padding: 2rem 1.2rem 3rem; }
     }
   </style>
 </head>
@@ -455,7 +461,10 @@
             <img class="brand-logo-dia" src="Logos/Logo_banner_senior_lobo_dia.svg" alt="Senior Lobo" />
             <img class="brand-logo-noche" src="Logos/Senior_lobo_noche.svg" alt="" aria-hidden="true" />
           </span>
-          <span class="word">Senior Lobo</span>
+          <span class="brand-text">
+            <span class="word">Senior Lobo</span>
+            <span class="tagline">Cuentos personalizados</span>
+          </span>
         </a>
 
         <div class="nacts">
@@ -521,9 +530,9 @@
 
           <div class="nb-divider"><span class="ln"></span><span class="cl"><b></b><b></b><b></b></span><span class="ln"></span></div>
 
-          <p class="book-para lead-cap">En <span class="sl">Senior Lobo</span> estamos preparando relatos únicos gracias a los últimos avances de la <span class="sl">IA</span>, que abren la puerta a generar historias <span class="hl">100% personalizadas</span>.</p>
+          <p class="book-para lead-cap"><span class="sl">Senior Lobo</span> está preparando relatos únicos gracias a los últimos avances en el campo de la <span class="sl">IA</span>, abriendo las puertas para generar historias <span class="hl">100% personalizadas</span>.</p>
 
-          <p class="book-para">Ya no hará falta que te pongas en «la piel del personaje»… porque ese personaje, <span class="hl">serás tú mismo</span>.</p>
+          <p class="book-para">Ya no hará falta que te pongas en «la piel de personaje» porque el protagonista, <span class="hl">serás tú</span>.</p>
         </div>
       </section>
 
@@ -541,13 +550,24 @@
             <figcaption>Una estampa para cada cuento</figcaption>
           </figure>
 
-          <p class="book-para lead-cap">Este lobo que ya peina sus primeras canas nace de la idea de explotar al máximo la posibilidad de personalizar historias gracias a los últimos avances en el campo de la inteligencia artificial. Queremos que los niños de 6 a 12 años puedan configurar su nombre como protagonista, sus familiares como personajes secundarios e incluso antagonistas que le den ese toque especial a la trama.</p>
+          <p class="book-para lead-cap">Nos encargamos de escribir un cuento hecho a la medida de los más pequeños de casa.</p>
 
-          <p class="book-para">Creemos en la necesidad de contar historias que entretengan, eduquen e incluso <span class="hl">reduzcan miedos</span>gracias a la lectura espejo de historias.</p>
+          <p class="book-para">Gracias a la ayuda de la IA y a un narrador nato que lleva siglos contando historias queremos ser precursores de una misión importante: componer un relato único e irrepetible. Creemos fielmente en la necesidad de contar historias que entretengan, eduquen e incluso <span class="hl">reduzcan sus miedos</span> gracias a una lectura de historias espejo.</p>
 
           <div class="nb-divider"><span class="ln"></span><span class="cl"><b></b><b></b><b></b></span><span class="ln"></span></div>
 
-          <p class="book-para lead-cap">Sin necesidad de ponerse en la piel de Pepita o Jaimito… sino de ser ellos mismos: sus gustos, sus pasiones y sus temores dentro de un libro único e irrepetible. 
+          <p class="book-para lead-cap">Queremos que tus hijos sean el centro real de la historia, el núcleo desde dónde todo gire: su nombre, sus gustos, sus miedos y todas las personas que forman parte de su entorno hagan que pase de leer las aventuras de otro a vivir una historia hecha para ellos.</p>
+        </div>
+      </section>
+
+      <!-- ===================== CAPÍTULO II ===================== -->
+      <section class="quees" id="capitulo2">
+        <div class="book-page">
+          <div class="chapter-plate">
+            <p class="chapter-no"><b class="dia"></b>Capítulo&nbsp;II<b class="dia"></b></p>
+            <h2 class="chapter-title">-Continuará-</h2>
+            <div class="nb-divider"><span class="ln"></span><span class="cl"><b></b><b></b><b></b></span><span class="ln"></span></div>
+          </div>
         </div>
       </section>
 
