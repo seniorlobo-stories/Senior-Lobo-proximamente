@@ -71,6 +71,27 @@
       transition: background-color .45s ease, color .45s ease;
     }
 
+    strong,
+    .mark-crema {
+      font-weight: inherit;
+      background-image: linear-gradient(color-mix(in srgb, var(--amber) 50%, transparent), color-mix(in srgb, var(--amber) 50%, transparent));
+      background-repeat: no-repeat;
+      background-position: 0 0;
+      background-size: 0% 100%;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+      padding: .12em .22em;
+      margin: 0 -.22em;
+      border-radius: 2px;
+      transition: background-size .7s ease, font-weight .7s ease;
+    }
+
+    strong.in-view,
+    .mark-crema.in-view {
+      background-size: 100% 100%;
+      font-weight: 700;
+    }
+
     /* ── Navbar ── */
     .navbar-wrap {
       padding: 0;
@@ -173,7 +194,7 @@
 
     /* ── Dissolve día/noche: evita "saltos" de color en toda la home/navbar ── */
     .home *, .navbar * {
-      transition: background-color .45s ease, color .45s ease, border-color .45s ease, fill .45s ease, stroke .45s ease;
+      transition: background-color .45s ease, color .45s ease, border-color .45s ease, fill .45s ease, stroke .45s ease, background-size .7s ease, font-weight .7s ease;
     }
 
     /* ── Hero ── */
@@ -258,9 +279,6 @@
     .book-para .sl { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .05em; font-size: .82em; color: var(--line); }
     .book-epigraph { font-family: var(--font-body); font-style: italic; font-size: 20px; line-height: 1.56;
       color: var(--ink-soft); text-align: center; margin: 0 0 17px; }
-    .hl { color: var(--bosque); }
-    :root[data-theme="noche"] .hl { color: var(--amber); }
-
     .book-para.lead-cap::first-letter { float: left; font-family: var(--font-slab); font-weight: 700; font-size: 66px;
       line-height: .66; padding: 7px 12px 0 1px; color: var(--bosque); }
     :root[data-theme="noche"] .book-para.lead-cap::first-letter { color: var(--amber); }
@@ -284,6 +302,7 @@
     }
     @media (max-width: 600px) {
       .navbar .brand-text { display: none; }
+      .navbar .nlink { font-size: 11px; letter-spacing: .03em; white-space: normal; flex: 1 1 auto; }
 
       .book-fig { float: none; width: 100%; margin: 8px 0 20px; }
       .chapter-title { white-space: normal; }
@@ -296,7 +315,7 @@
 
       .hero-eyebrow, .chapter-no { gap: 8px; font-size: 11px; letter-spacing: .14em; white-space: nowrap; }
 
-      #quees .chapter-plate { margin-bottom: 2px; }
+      #quees .chapter-plate { margin-bottom: 0; }
       #quees .chapter-plate .nb-divider { margin: 0; }
       #quees .book-fig { margin-top: 0; }
     }
@@ -314,6 +333,19 @@
     }
 
     [data-theme="noche"] .navbar .word        { color: var(--amber); }
+
+    .navbar .nlink {
+      font-family: var(--font-disp);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--line);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color .25s ease;
+    }
+    .navbar .nlink:hover { color: var(--bosque); }
     [data-theme="noche"] .navbar .nlink:hover { color: var(--amber); }
 
     .navbar > .bg { transition: background-color .4s ease; }
@@ -467,6 +499,8 @@
           </span>
         </a>
 
+        <a class="nlink" href="#quees">¿Qué es Senior Lobo?</a>
+
         <div class="nacts">
           <span class="dn-switch" data-mode="dia" role="switch" aria-checked="false" tabindex="0" aria-label="Cambiar modo día o noche">
             <i class="bg"></i>
@@ -526,13 +560,13 @@
             <div class="nb-divider"><span class="ln"></span><span class="cl"><b></b><b></b><b></b></span><span class="ln"></span></div>
           </div>
 
-          <p class="book-epigraph">Antes de que empiece el cuento, déjame prometerte algo: esta vez la historia no hablará de cualquiera, <span class="hl">sino de ti</span>.</p>
+          <p class="book-epigraph">Antes de que empiece el cuento, déjame prometerte algo: esta vez la historia no hablará de cualquiera, sino de ti.</p>
 
           <div class="nb-divider"><span class="ln"></span><span class="cl"><b></b><b></b><b></b></span><span class="ln"></span></div>
 
-          <p class="book-para lead-cap"><span class="sl">Senior Lobo</span> está preparando relatos únicos gracias a los últimos avances en el campo de la <span class="sl">IA</span>, abriendo las puertas para generar historias <span class="hl">100% personalizadas</span>.</p>
+          <p class="book-para lead-cap"><span class="sl">Senior Lobo</span> está preparando relatos únicos gracias a los últimos avances en el campo de la <span class="sl">IA</span>, abriendo las puertas  <strong>para generar historias 100% personalizadas</strong>.</p>
 
-          <p class="book-para">Ya no hará falta que te pongas en «la piel de personaje» porque el protagonista, <span class="hl">serás tú</span>.</p>
+          <p class="book-para">Ya no hará falta que te pongas en «la piel de personaje» porque  <strong>el protagonista, serás tú</strong>.</p>
         </div>
       </section>
 
@@ -547,16 +581,16 @@
 
           <figure class="book-fig">
             <div class="plate"><img src="imagenes/Lobo_pose_03.png" alt="Senior Lobo, mascota de la marca" /></div>
-            <figcaption>Una estampa para cada cuento</figcaption>
+            <figcaption>Una aventura diferente para cada libro</figcaption>
           </figure>
 
           <p class="book-para lead-cap">Nos encargamos de escribir un cuento hecho a la medida de los más pequeños de casa.</p>
 
-          <p class="book-para">Gracias a la ayuda de la IA y a un narrador nato que lleva siglos contando historias queremos ser precursores de una misión importante: componer un relato único e irrepetible. Creemos fielmente en la necesidad de contar historias que entretengan, eduquen e incluso <span class="hl">reduzcan sus miedos</span> gracias a una lectura de historias espejo.</p>
+          <p class="book-para">Gracias a la ayuda de la IA y a un narrador nato que lleva siglos contando historias queremos ser precursores de una misión importante: componer un relato único e irrepetible. Creemos fielmente en  <strong> la necesidad de contar historias que entretengan, eduquen e incluso reduzcan sus miedos</strong> gracias a una lectura de historias espejo.</p>
 
           <div class="nb-divider"><span class="ln"></span><span class="cl"><b></b><b></b><b></b></span><span class="ln"></span></div>
 
-          <p class="book-para lead-cap">Queremos que tus hijos sean el centro real de la historia, el núcleo desde dónde todo gire: su nombre, sus gustos, sus miedos y todas las personas que forman parte de su entorno hagan que pase de leer las aventuras de otro a vivir una historia hecha para ellos.</p>
+          <p class="book-para lead-cap">Queremos que tus hijos sean el centro real de la historia, el núcleo desde dónde todo gire. A través de un sencillo formulario los usuarios podrán personalizarlo todo: su nombre, sus gustos, seleccionar géneros, trama y añadir todas las personas que forman parte de su entorno. Una forma nueva que <strong>cambia totalmente el juego</strong> de leer las aventuras de otro a tener una historia hecha para ellos.</p>
         </div>
       </section>
 
@@ -572,7 +606,7 @@
       </section>
 
       <footer class="home-foot">
-        <span>Senior Lobo · Cuentos personalizados</span>
+        <span>Senior Lobo · Cuentos personalizados con IA</span>
         <span>Hecho a mano, impreso en tapa dura</span>
       </footer>
 
@@ -624,6 +658,27 @@
           input.blur();
         }
       });
+    })();
+
+    (function () {
+      var marks = document.querySelectorAll('strong, .mark-crema');
+      if (!marks.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        marks.forEach(function (el) { el.classList.add('in-view'); });
+        return;
+      }
+
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0, rootMargin: '0px 0px -45% 0px' });
+
+      marks.forEach(function (el) { observer.observe(el); });
     })();
   </script>
 
