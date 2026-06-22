@@ -161,9 +161,7 @@
     :root[data-theme="noche"] .navbar .mark img.brand-logo-noche { opacity: 1; }
 
     .navbar .brand-text {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+      position: relative;
     }
 
     .navbar .word {
@@ -174,6 +172,7 @@
       font-size: 18px;
       color: var(--bosque);
       white-space: nowrap;
+      display: block;
     }
 
     .navbar .tagline {
@@ -182,6 +181,10 @@
       font-size: 12px;
       color: var(--ink-soft);
       white-space: nowrap;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 2px;
     }
 
     /* ── Main / Home ── */
@@ -302,7 +305,7 @@
     }
     @media (max-width: 600px) {
       .navbar .brand-text { display: none; }
-      .navbar .nlink { font-size: 11px; letter-spacing: .03em; white-space: normal; flex: 1 1 auto; }
+      .navbar .nlink { font-size: 15px; letter-spacing: .03em; white-space: normal; flex: 1 1 auto; }
 
       .book-fig { float: none; width: 100%; margin: 8px 0 20px; }
       .chapter-title { white-space: normal; }
@@ -338,15 +341,25 @@
       font-family: var(--font-disp);
       text-transform: uppercase;
       letter-spacing: .08em;
-      font-size: 13px;
+      font-size: 17px;
       font-weight: 600;
-      color: var(--line);
+      color: var(--bosque);
       text-decoration: none;
       white-space: nowrap;
-      transition: color .25s ease;
+      background-image: linear-gradient(color-mix(in srgb, var(--amber) 50%, transparent), color-mix(in srgb, var(--amber) 50%, transparent));
+      background-repeat: no-repeat;
+      background-position: 0 0;
+      background-size: 0% 100%;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+      padding: .12em .22em;
+      margin: 0 -.22em;
+      margin-left: calc(6px - .22em);
+      border-radius: 2px;
+      transition: color .25s ease, background-size .7s ease, font-weight .7s ease;
     }
-    .navbar .nlink:hover { color: var(--bosque); }
-    [data-theme="noche"] .navbar .nlink:hover { color: var(--amber); }
+    .navbar .nlink:hover { background-size: 100% 100%; font-weight: 700; }
+    [data-theme="noche"] .navbar .nlink { color: var(--amber); }
 
     .navbar > .bg { transition: background-color .4s ease; }
 
