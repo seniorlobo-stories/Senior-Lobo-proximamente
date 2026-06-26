@@ -60,6 +60,8 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { overflow-x: hidden; }
+
     /* ── Base ── */
     body {
       font-family: 'EB Garamond', Georgia, serif;
@@ -68,7 +70,6 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
       /* linen texture via SVG noise */
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
       transition: background-color .45s ease, color .45s ease;
@@ -393,6 +394,12 @@
 
     /* ── Responsive: tablet (758px) y móvil (430px) ── */
     @media (max-width: 600px) {
+      .navbar-wrap {
+        position: sticky; top: 0; z-index: 50;
+        transform: translateZ(0); -webkit-transform: translateZ(0);
+        will-change: transform;
+      }
+
       .navbar .brand-text { display: none; }
       .navbar .nlink { font-size: 15px; letter-spacing: .03em; white-space: normal; flex: 1 1 auto; }
 
