@@ -394,11 +394,9 @@
 
     /* ── Responsive: tablet (758px) y móvil (430px) ── */
     @media (max-width: 600px) {
-      .navbar-wrap {
-        position: sticky; top: 0; z-index: 50;
-        transform: translateZ(0); -webkit-transform: translateZ(0);
-        will-change: transform;
-      }
+      .topband { position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
+      .navbar-wrap { position: fixed; top: 8px; left: 0; right: 0; z-index: 50; }
+      .hero { margin-top: calc(8px + var(--navh, 94px)); }
 
       .navbar .brand-text { display: none; }
       .navbar .nlink { font-size: 15px; letter-spacing: .03em; white-space: normal; flex: 1 1 auto; }
@@ -637,6 +635,17 @@
     </nav>
   </div>
 
+  <script>
+    (function () {
+      var navWrap = document.querySelector('.navbar-wrap');
+      function setNavH() {
+        document.documentElement.style.setProperty('--navh', navWrap.offsetHeight + 'px');
+      }
+      setNavH();
+      window.addEventListener('resize', setNavH);
+    })();
+  </script>
+
   <!-- ===================== HERO: Bosque Búho ===================== -->
   <!-- Full-bleed: fuera de .home para que la escena ocupe el 100% del viewport. -->
   <section class="hero">
@@ -744,10 +753,20 @@
       var sw   = document.querySelector('.dn-switch');
       var root = document.documentElement;
 
+      var tornEls = document.querySelectorAll('.navbar > .bg, .topband, .hero-tear');
+
       function apply(mode) {
         sw.dataset.mode = mode;
         sw.setAttribute('aria-checked', mode === 'noche');
         root.dataset.theme = mode;
+
+        // Algunos WebView (p.ej. el navegador in-app de Instagram en iOS) no
+        // repintan los elementos con filter:url(#torn-paper/-up) cuando solo
+        // cambia su background-color, dejando un resto visual del color anterior.
+        tornEls.forEach(function (el) {
+          el.style.filter = 'none';
+          requestAnimationFrame(function () { el.style.filter = ''; });
+        });
       }
 
       function toggle() {
