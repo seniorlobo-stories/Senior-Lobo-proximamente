@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero — Bosque Búho</title>
+<style>
+  :root{ --ink:#3E2C1E; --cream:#F5F0DC; }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    width:100%;
+    height:clamp(440px,72vh,760px);
+    overflow:hidden;
+    background:#E7E3CC;
+    isolation:isolate;            /* contain the screen blend-mode */
+  }
+  .hero-scene{position:absolute;inset:0;}
+  .hero-scene img{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    object-fit:cover;object-position:center;
+    user-select:none;-webkit-user-drag:none;
+    will-change:transform;        /* hint GPU compositing */
+  }
+
+  .l-bg  {transform-origin:54% 46%; animation:bgDrift 46s ease-in-out infinite alternate;}
+  .l-tree{transform-origin:13% 100%; animation:treeSway 8.5s ease-in-out infinite;}
+  .l-owl {transform-origin:100% 74%; animation:owlBranch 4.8s ease-in-out .3s infinite;}
+
+  .beam{
+    position:absolute;left:38%;top:6%;width:42%;height:78%;border-radius:50%;
+    background:radial-gradient(ellipse at 50% 35%,rgba(255,250,224,.85),rgba(255,250,224,0) 68%);
+    mix-blend-mode:screen;pointer-events:none;
+    animation:beam 9s ease-in-out infinite;
+  }
+
+  /* drifting dust motes (5 cheap spans) */
+  .motes{position:absolute;inset:0;pointer-events:none;}
+  .motes i{position:absolute;border-radius:50%;background:rgba(255,252,232,.9);
+    box-shadow:0 0 6px rgba(255,252,232,.7);animation:mote linear infinite;}
+  .motes i:nth-child(1){left:50%;top:62%;width:6px;height:6px;--mx:-26px;--my:-220px;--mo:.55;animation-duration:13s;animation-delay:-2s;}
+  .motes i:nth-child(2){left:58%;top:70%;width:4px;height:4px;--mx:24px;--my:-300px;--mo:.5;animation-duration:17s;animation-delay:-7s;}
+  .motes i:nth-child(3){left:46%;top:66%;width:5px;height:5px;--mx:-40px;--my:-260px;--mo:.6;animation-duration:15s;animation-delay:-11s;}
+  .motes i:nth-child(4){left:63%;top:58%;width:4px;height:4px;--mx:30px;--my:-200px;--mo:.45;animation-duration:19s;animation-delay:-4s;}
+  .motes i:nth-child(5){left:53%;top:74%;width:5px;height:5px;--mx:-18px;--my:-330px;--mo:.5;animation-duration:21s;animation-delay:-14s;}
+
+  /* ---------- CONTENT ---------- */
+  .hero-content{
+    position:relative;z-index:2;
+    max-width:560px;height:100%;
+    display:flex;flex-direction:column;justify-content:center;gap:18px;
+    padding:clamp(28px,6vw,80px);
+  }
+  .hero-content h1{
+    margin:0;color:var(--ink);
+    font-size:clamp(34px,5.2vw,64px);line-height:1.04;letter-spacing:-.02em;
+    text-wrap:balance;text-shadow:0 1px 0 rgba(255,250,224,.6);
+  }
+  .hero-content p{
+    margin:0;color:#5A4733;max-width:38ch;
+    font-size:clamp(16px,1.7vw,20px);line-height:1.5;
+  }
+  .hero-cta{
+    align-self:flex-start;margin-top:6px;
+    display:inline-block;text-decoration:none;
+    background:var(--ink);color:var(--cream);
+    padding:14px 26px;border-radius:999px;
+    font-size:16px;font-weight:600;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .hero-cta:hover{transform:translateY(-2px);background:#52382440;background:#523824;}
+
+  /* ---------- KEYFRAMES ---------- */
+  @keyframes bgDrift  {0%{transform:scale(1.03)} 100%{transform:scale(1.065) translate(-.8%,-.5%)}}
+  @keyframes treeSway {0%,100%{transform:rotate(-.9deg)} 50%{transform:rotate(1.1deg)}}
+  @keyframes owlBranch{0%,100%{transform:rotate(-.7deg) translateY(0)} 50%{transform:rotate(.7deg) translateY(-.5%)}}
+  @keyframes beam     {0%,100%{opacity:.18} 50%{opacity:.4}}
+  @keyframes mote{
+    0%{transform:translate(0,0) scale(1);opacity:0;}
+    12%{opacity:var(--mo,.6);}
+    85%{opacity:var(--mo,.6);}
+    100%{transform:translate(var(--mx,-30px),var(--my,-160px)) scale(.7);opacity:0;}
+  }
+
+  /* respect reduced-motion */
+  @media (prefers-reduced-motion:reduce){
+    .l-bg,.l-tree,.l-owl,.beam,.motes i{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="hero-scene" aria-hidden="true">
+      <img class="l-bg"   src="forest-bg.webp"   alt="" fetchpriority="high" decoding="async">
+      <span class="beam"></span>
+      <div class="motes"><i></i><i></i><i></i><i></i><i></i></div>
+      <img class="l-tree" src="forest-tree.webp" alt="" decoding="async">
+      <img class="l-owl"  src="forest-owl.webp"  alt="" decoding="async">
+    </div>
+
+    <div class="hero-content">
+      <h1>Un respiro en el bosque</h1>
+      <p>Una escena viva, ligera y lista para tu portada. Sustituye el titular y el botón por los tuyos.</p>
+      <a class="hero-cta" href="#">Empezar</a>
+    </div>
+  </section>
+
+</body>
+</html>

@@ -97,6 +97,8 @@
     /* ── Navbar ── */
     .navbar-wrap {
       padding: 0;
+      position: relative;
+      z-index: 5;
     }
 
     .navbar {
@@ -197,14 +199,115 @@
     .topband { height: 8px; background: var(--bosque); filter: url(#torn-line); transition: background-color .45s ease; }
     :root[data-theme="noche"] .topband { background: var(--amber); }
 
+    /* ── Hero-tear: borde de hoja rasgada que separa el hero de la página ── */
+    .hero-tear-wrap { height: 48px; margin-top: -48px; overflow: hidden; position: relative; }
+    .hero-tear { position: absolute; top: 12px; left: 0; right: 0; height: 140px; background: var(--pergamino); filter: url(#torn-paper-up); transition: background-color .45s ease; }
+
     /* ── Dissolve día/noche: evita "saltos" de color en toda la home/navbar ── */
     .home *, .navbar * {
       transition: background-color .45s ease, color .45s ease, border-color .45s ease, fill .45s ease, stroke .45s ease, background-size .7s ease, font-weight .7s ease;
     }
 
-    /* ── Hero ── */
-    .hero { display: grid; grid-template-columns: 1.04fr .96fr; gap: 48px; align-items: center; padding: 30px 0 35px; }
-    .hero-eyebrow, .chapter-no { display: flex; align-items: center; gap: 14px; margin: 0 0 2px;
+    /* ── Hero: escena animada "Bosque Búho" ── */
+    /* Capas, orden de apilado y @keyframes según design_handoff_owl_forest_hero — no modificar. */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: clamp(440px, 72vh, 760px);
+      overflow: hidden;
+      background: #E7E3CC;
+      isolation: isolate;
+    }
+    .hero-scene { position: absolute; inset: 0; }
+    .hero-scene img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      /* sesgado hacia la derecha y la zona alta del lienzo: evita que el recorte de
+         object-fit:cover corte el búho (a la derecha) en anchos estrechos o sus
+         orejas (arriba) en proporciones muy panorámicas/bajas */
+      object-fit: cover; object-position: 80% 35%;
+      user-select: none; -webkit-user-drag: none;
+      will-change: transform;
+    }
+    .l-bg   { transform-origin: 54% 46%; animation: bgDrift 46s ease-in-out infinite alternate; }
+    .l-tree { transform-origin: 13% 100%; animation: treeSway 8.5s ease-in-out infinite; }
+
+    /* el búho es un recorte aparte (no cubre el lienzo entero como bg/tree), así que
+       no usa object-fit:cover de .hero-scene img: se ancla al árbol izquierdo por su
+       esquina inferior con tamaño propio para que se vea completo, sin recortes */
+    .owl-wrap { position: absolute; inset: 0; }
+    .owl-wrap .l-owl, .owl-wrap .l-owl-night {
+      top: 18%; right: auto; left: 0%; bottom: auto;
+      width: 22.4%; height: auto;
+      object-fit: contain; object-position: center;
+      transform-origin: 0% 100%;
+      animation: owlBranch 4.8s ease-in-out .3s infinite;
+    }
+    @media (max-width: 1024px) {
+      /* entre 1024 y 601px el búho crece (en vez de encoger) a medida que el viewport se angosta,
+         calibrado para llegar exactamente al tamaño/posición del bloque móvil (top:2%, width:50%) en 601px */
+      .owl-wrap .l-owl, .owl-wrap .l-owl-night { top: calc(-12.21% + 13.62vw); width: calc(401px - 16.67vw); }
+    }
+
+    /* ── Modo noche: capas duplicadas día/noche, apiladas y alternadas por opacity ── */
+    /* Misma composición y animaciones que de día; solo cambian imagen, color de haz/motas y fondo. */
+    .l-bg-night   { transform-origin: 54% 46%; animation: bgDrift 46s ease-in-out infinite alternate; opacity: 0; }
+    .l-tree-night { transform-origin: 13% 100%; animation: treeSway 8.5s ease-in-out infinite; opacity: 0; }
+    .l-owl-night  { opacity: 0; }
+
+    :root[data-theme="noche"] .hero { background: #141d2b; }
+    :root[data-theme="noche"] .l-bg,
+    :root[data-theme="noche"] .l-tree,
+    :root[data-theme="noche"] .l-owl { opacity: 0; }
+    :root[data-theme="noche"] .l-bg-night,
+    :root[data-theme="noche"] .l-tree-night,
+    :root[data-theme="noche"] .l-owl-night { opacity: 1; }
+
+    .beam {
+      position: absolute; left: 38%; top: 6%; width: 42%; height: 78%; border-radius: 50%;
+      background: radial-gradient(ellipse at 50% 35%, rgba(255,250,224,.85), rgba(255,250,224,0) 68%);
+      mix-blend-mode: screen; pointer-events: none;
+      animation: beam 9s ease-in-out infinite;
+    }
+    :root[data-theme="noche"] .beam {
+      background: radial-gradient(ellipse at 50% 35%, rgba(150,180,232,.45), rgba(150,180,232,0) 68%);
+    }
+
+    .motes { position: absolute; inset: 0; pointer-events: none; }
+    .motes i { position: absolute; border-radius: 50%; background: rgba(255,252,232,.9);
+      box-shadow: 0 0 6px rgba(255,252,232,.7); animation: mote linear infinite; }
+    :root[data-theme="noche"] .motes i { background: rgba(255,208,120,.95); box-shadow: 0 0 6px rgba(255,180,80,.95); }
+    .motes i:nth-child(1) { left: 50%; top: 62%; width: 6px; height: 6px; --mx: -26px; --my: -220px; --mo: .55; animation-duration: 13s; animation-delay: -2s; }
+    .motes i:nth-child(2) { left: 58%; top: 70%; width: 4px; height: 4px; --mx: 24px;  --my: -300px; --mo: .5;  animation-duration: 17s; animation-delay: -7s; }
+    .motes i:nth-child(3) { left: 46%; top: 66%; width: 5px; height: 5px; --mx: -40px; --my: -260px; --mo: .6;  animation-duration: 15s; animation-delay: -11s; }
+    .motes i:nth-child(4) { left: 63%; top: 58%; width: 4px; height: 4px; --mx: 30px;  --my: -200px; --mo: .45; animation-duration: 19s; animation-delay: -4s; }
+    .motes i:nth-child(5) { left: 53%; top: 74%; width: 5px; height: 5px; --mx: -18px; --my: -330px; --mo: .5;  animation-duration: 21s; animation-delay: -14s; }
+
+    @keyframes bgDrift   { 0% { transform: scale(1.03); } 100% { transform: scale(1.065) translate(-.8%,-.5%); } }
+    @keyframes treeSway  { 0%, 100% { transform: rotate(-.9deg); } 50% { transform: rotate(1.1deg); } }
+    @keyframes owlBranch { 0%, 100% { transform: rotate(-.7deg) translateY(0); } 50% { transform: rotate(.7deg) translateY(-.5%); } }
+    @keyframes beam      { 0%, 100% { opacity: .18; } 50% { opacity: .4; } }
+    @keyframes mote {
+      0%   { transform: translate(0,0) scale(1); opacity: 0; }
+      12%  { opacity: var(--mo, .6); }
+      85%  { opacity: var(--mo, .6); }
+      100% { transform: translate(var(--mx, -30px), var(--my, -160px)) scale(.7); opacity: 0; }
+    }
+
+    /* ── Contenido del hero (slots: eyebrow, h1, sub, CTAs, cita) ── */
+    /* .hero-inner alinea el texto con el mismo grid (--container-w/--gutter) que navbar y .home,
+       mientras .hero-scene sigue ocupando el 100% del viewport detrás. */
+    .hero-inner {
+      position: relative; z-index: 2; height: 100%;
+      max-width: var(--container-w); margin: 0 auto; padding: 0 var(--gutter);
+    }
+    .hero-content {
+      height: 100%;
+      display: flex; flex-direction: column; justify-content: center; align-items: flex-end;
+      text-align: right;
+      max-width: 560px; margin-left: auto; margin-right: 40px; padding: clamp(28px, 6vw, 80px) 0;
+    }
+    .hero-eyebrow, .chapter-no { display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin: 0 0 2px;
       font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .42em; font-size: 14px;
       font-weight: 600; color: var(--line); line-height: 1; }
     .hero-eyebrow .dia, .chapter-no .dia { width: 6px; height: 6px; background: var(--line); transform: rotate(45deg); flex: none; }
@@ -215,9 +318,9 @@
     :root[data-theme="noche"] .hero-h1 .lobo { color: var(--amber); }
     .hero-sub { font-family: var(--font-body); font-size: 21px; line-height: 1.5; color: var(--ink);
       max-width: 430px; margin: 26px 0 0; }
-    .hero-acts { display: flex; align-items: center; gap: 24px; margin-top: 32px; flex-wrap: wrap; }
+    .hero-acts { display: flex; align-items: center; justify-content: flex-end; gap: 24px; margin-top: 32px; flex-wrap: wrap; }
     .hero-quote { font-family: var(--font-body); font-style: italic; font-size: 17px; line-height: 1.55;
-      color: var(--ink-soft); margin: 34px 0 0; max-width: 430px; padding-left: 18px; border-left: 3px solid var(--bosque); }
+      color: var(--ink-soft); margin: 34px 0 0; max-width: 430px; padding-right: 18px; border-right: 3px solid var(--bosque); }
     :root[data-theme="noche"] .hero-quote { border-left-color: var(--amber); }
     .hero-quote .name { color: var(--castano); font-style: normal; }
     .hero-quote .name-input { font: inherit; color: var(--castano); font-style: normal; background: none;
@@ -225,19 +328,6 @@
       padding: 0 1px; min-width: 2ch; text-align: center; }
     .hero-quote .name-input::placeholder { color: var(--castano); opacity: .6; }
     .hero-quote .name-input:focus { border-bottom-style: solid; }
-
-    .hero-art { position: relative; display: flex; justify-content: center; align-items: center; }
-    .hero-art-card { position: relative; z-index: 0; width: 100%; max-width: 440px; display: grid; place-items: center; }
-    .hero-art-card video { width: 100%; height: auto; display: block; border-radius: 8px; grid-area: 1 / 1; }
-    .hero-art-card video.hero-video-noche {
-      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-      opacity: 0; transition: opacity .45s ease;
-    }
-    :root[data-theme="noche"] .hero-art-card video.hero-video-noche { opacity: 1; }
-    .blob { position: absolute; border-radius: 50%; background: color-mix(in srgb, var(--niebla) 34%, transparent); z-index: 0; }
-    .blob.b1 { width: 16px; height: 16px; top: 6%; right: 8%; }
-    .blob.b2 { width: 9px; height: 9px; top: 18%; right: 3%; }
-    .blob.b3 { width: 12px; height: 12px; bottom: 12%; left: 4%; }
 
     /* ── Botones (sistema Línea) ── */
     .btn { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .07em; font-size: 14px;
@@ -259,7 +349,7 @@
 
     /* ── Book page (Prólogo / Capítulo I) ── */
     .quees { padding: 17px 0 0; }
-    .book-page { max-width: 720px; margin: 46px auto 0; text-align: left; }
+    .book-page { max-width: 900px; margin: 46px auto 0; text-align: left; }
     .book-page::after { content: ""; display: block; clear: both; }
 
     .chapter-plate { display: flex; flex-direction: column; align-items: center; gap: 9px; width: 100%; margin: 7px 0 22px; }
@@ -301,10 +391,6 @@
       font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .06em; }
 
     /* ── Responsive: tablet (758px) y móvil (430px) ── */
-    @media (max-width: 1024px) {
-      .hero { grid-template-columns: 1fr; gap: 34px; }
-      .hero-art { order: -1; }
-    }
     @media (max-width: 600px) {
       .navbar .brand-text { display: none; }
       .navbar .nlink { font-size: 15px; letter-spacing: .03em; white-space: normal; flex: 1 1 auto; }
@@ -312,6 +398,8 @@
       .book-fig { float: none; width: 100%; margin: 8px 0 20px; }
       .chapter-title { white-space: normal; }
       .book-para { text-align: left; hyphens: none; }
+
+      .owl-wrap .l-owl, .owl-wrap .l-owl-night { width: 50%; top: 2%; }
 
       .hero-acts { flex-wrap: nowrap; gap: 10px; }
       .hero-acts .hero-act-cta,
@@ -470,6 +558,8 @@
 
     @media (prefers-reduced-motion: reduce) {
       .dn-switch *, body { transition: none !important; }
+      .l-bg, .l-tree, .l-bg-night, .l-tree-night, .beam, .motes i,
+      .owl-wrap .l-owl, .owl-wrap .l-owl-night { animation: none; }
     }
   </style>
 </head>
@@ -485,7 +575,12 @@
       <filter id="torn-paper" x="-18%" y="-22%" width="136%" height="150%">
         <feTurbulence type="fractalNoise" baseFrequency="0.03 0.034" numOctaves="4" seed="6" result="n"/>
         <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" result="p"/>
-        <feDropShadow in="p" dx="0" dy="5" stdDeviation="7" flood-color="#3b2f17" flood-opacity="0.20"/>
+        <feDropShadow in="p" dx="0" dy="5" stdDeviation="0" flood-color="#3b2f17" flood-opacity="0.20"/>
+      </filter>
+      <filter id="torn-paper-up" x="-18%" y="-22%" width="136%" height="150%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.03 0.034" numOctaves="4" seed="6" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" result="p"/>
+        <feDropShadow in="p" dx="0" dy="-5" stdDeviation="0" flood-color="#3b2f17" flood-opacity="0.20"/>
       </filter>
       <filter id="torn-line" x="-20%" y="-60%" width="140%" height="220%">
         <feTurbulence type="fractalNoise" baseFrequency="0.06 0.25" numOctaves="2" seed="4" result="n"/>
@@ -534,37 +629,45 @@
     </nav>
   </div>
 
+  <!-- ===================== HERO: Bosque Búho ===================== -->
+  <!-- Full-bleed: fuera de .home para que la escena ocupe el 100% del viewport. -->
+  <section class="hero">
+    <div class="hero-scene" aria-hidden="true">
+      <img class="l-bg" src="imagenes/Fondo/forest-bg.webp" alt="" fetchpriority="high" decoding="async">
+      <img class="l-bg-night" src="imagenes/Fondo/forest-bg-night.webp" alt="" decoding="async">
+      <span class="beam"></span>
+      <div class="motes"><i></i><i></i><i></i><i></i><i></i></div>
+      <img class="l-tree" src="imagenes/Fondo/forest-tree.webp" alt="" decoding="async">
+      <img class="l-tree-night" src="imagenes/Fondo/forest-tree-night.webp" alt="" decoding="async">
+      <div class="owl-wrap">
+        <img class="l-owl" src="imagenes/Fondo/forest-owl.webp" alt="" decoding="async">
+        <img class="l-owl-night" src="imagenes/Fondo/forest-owl-night.webp" alt="" decoding="async">
+      </div>
+    </div>
+
+    <div class="hero-inner">
+      <div class="hero-content">
+        <p class="hero-eyebrow"><b class="dia"></b>Una historia para cada niño<b class="dia"></b></p>
+        <h1 class="hero-h1">Senior <span class="lobo">Lobo</span></h1>
+        <p class="hero-sub"><b>Cuentos personalizados para niños de 6 a 12 años, donde tu peque es el verdadero protagonista.</b></p>
+        <div class="hero-acts">
+          <span class="hero-act-cta">
+            <button class="btn primary" type="button"><i class="bg"></i>Crear cuento</button>
+            <span class="hero-act-tag">Próximamente</span>
+          </span>
+          <a class="btn ghost" href="#quees"><i class="bg"></i>¿Qué es Senior Lobo?</a>
+        </div>
+        <p class="hero-quote">"Y entonces, <input type="text" class="name-input" id="nameInput" placeholder="tu nombre" maxlength="24" autocomplete="off" /> abrió el libro… y la aventura empezó."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Hero-tear: borde de hoja rasgada al final del hero ── -->
+  <div class="hero-tear-wrap" aria-hidden="true"><div class="hero-tear"></div></div>
+
   <!-- ── Main ── -->
   <main>
     <div class="home">
-
-      <!-- ===================== HERO ===================== -->
-      <section class="hero">
-        <div class="hero-art">
-          <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
-          <div class="hero-art-card">
-            <video class="hero-video-dia" autoplay muted loop playsinline>
-              <source src="video/video_paginas_dia.mp4" type="video/mp4" />
-            </video>
-            <video class="hero-video-noche" autoplay muted loop playsinline>
-              <source src="video/video_paginas_noche.mp4" type="video/mp4" />
-            </video>
-          </div>
-        </div>
-        <div class="hero-copy">
-          <p class="hero-eyebrow"><b class="dia"></b>Una historia para cada niño<b class="dia"></b></p>
-          <h1 class="hero-h1">Senior <span class="lobo">Lobo</span></h1>
-          <p class="hero-sub">Cuentos personalizados para niños de 6 a 12 años, donde tu peque es el verdadero protagonista.</p>
-          <div class="hero-acts">
-            <span class="hero-act-cta">
-              <button class="btn primary" type="button"><i class="bg"></i>Crear su cuento</button>
-              <span class="hero-act-tag">Próximamente</span>
-            </span>
-            <a class="btn ghost" href="#quees"><i class="bg"></i>¿Qué es Senior Lobo?</a>
-          </div>
-          <p class="hero-quote">"Y entonces, <input type="text" class="name-input" id="nameInput" placeholder="tu nombre" maxlength="24" autocomplete="off" /> abrió el libro… y la aventura empezó."</p>
-        </div>
-      </section>
 
       <!-- ===================== PRÓLOGO ===================== -->
       <section class="quees" id="prologo">
@@ -686,10 +789,7 @@
 
       var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
-            observer.unobserve(entry.target);
-          }
+          entry.target.classList.toggle('in-view', entry.isIntersecting);
         });
       }, { threshold: 0, rootMargin: '0px 0px -45% 0px' });
 
