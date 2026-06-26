@@ -68,6 +68,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
       /* linen texture via SVG noise */
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
       transition: background-color .45s ease, color .45s ease;
@@ -111,9 +112,9 @@
     .navbar > .bg {
       position: absolute;
       top: -60px;
-      right: 0;
+      right: -24px;
       bottom: 0;
-      left: 0;
+      left: -24px;
       z-index: -1;
       pointer-events: none;
       border: 0;
@@ -230,14 +231,14 @@
       will-change: transform;
     }
     .l-bg   { transform-origin: 54% 46%; animation: bgDrift 46s ease-in-out infinite alternate; }
-    .l-tree { transform-origin: 13% 100%; animation: treeSway 8.5s ease-in-out infinite; }
+    .l-tree { left: -15px; width: calc(100% + 15px); transform-origin: 13% 100%; animation: treeSway 8.5s ease-in-out infinite; }
 
     /* el búho es un recorte aparte (no cubre el lienzo entero como bg/tree), así que
        no usa object-fit:cover de .hero-scene img: se ancla al árbol izquierdo por su
        esquina inferior con tamaño propio para que se vea completo, sin recortes */
     .owl-wrap { position: absolute; inset: 0; }
     .owl-wrap .l-owl, .owl-wrap .l-owl-night {
-      top: 18%; right: auto; left: 0%; bottom: auto;
+      top: 18%; right: auto; left: -8px; bottom: auto;
       width: 22.4%; height: auto;
       object-fit: contain; object-position: center;
       transform-origin: 0% 100%;
@@ -252,7 +253,7 @@
     /* ── Modo noche: capas duplicadas día/noche, apiladas y alternadas por opacity ── */
     /* Misma composición y animaciones que de día; solo cambian imagen, color de haz/motas y fondo. */
     .l-bg-night   { transform-origin: 54% 46%; animation: bgDrift 46s ease-in-out infinite alternate; opacity: 0; }
-    .l-tree-night { transform-origin: 13% 100%; animation: treeSway 8.5s ease-in-out infinite; opacity: 0; }
+    .l-tree-night { left: -15px; width: calc(100% + 15px); transform-origin: 13% 100%; animation: treeSway 8.5s ease-in-out infinite; opacity: 0; }
     .l-owl-night  { opacity: 0; }
 
     :root[data-theme="noche"] .hero { background: #141d2b; }
@@ -284,7 +285,7 @@
     .motes i:nth-child(5) { left: 53%; top: 74%; width: 5px; height: 5px; --mx: -18px; --my: -330px; --mo: .5;  animation-duration: 21s; animation-delay: -14s; }
 
     @keyframes bgDrift   { 0% { transform: scale(1.03); } 100% { transform: scale(1.065) translate(-.8%,-.5%); } }
-    @keyframes treeSway  { 0%, 100% { transform: rotate(-.9deg); } 50% { transform: rotate(1.1deg); } }
+    @keyframes treeSway  { 0%, 100% { transform: rotate(-3.9deg) scale(1.05); } 50% { transform: rotate(-1.9deg) scale(1.05); } }
     @keyframes owlBranch { 0%, 100% { transform: rotate(-.7deg) translateY(0); } 50% { transform: rotate(.7deg) translateY(-.5%); } }
     @keyframes beam      { 0%, 100% { opacity: .18; } 50% { opacity: .4; } }
     @keyframes mote {
@@ -399,7 +400,7 @@
       .chapter-title { white-space: normal; }
       .book-para { text-align: left; hyphens: none; }
 
-      .owl-wrap .l-owl, .owl-wrap .l-owl-night { width: 50%; top: 2%; }
+      .owl-wrap .l-owl, .owl-wrap .l-owl-night { width: 45.5%; top: 2%; }
 
       .hero-acts { flex-wrap: nowrap; gap: 10px; }
       .hero-acts .hero-act-cta,
