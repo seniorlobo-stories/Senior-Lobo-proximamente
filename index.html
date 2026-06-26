@@ -123,6 +123,7 @@
       background-image: radial-gradient(rgba(120,90,40,.05) 1px, transparent 1px);
       background-size: 4px 4px;
       filter: url(#torn-paper);
+      will-change: filter;
     }
 
     .navbar-inner {
@@ -198,12 +199,12 @@
     .home { max-width: var(--container-w); margin: 0 auto; padding: 0 var(--gutter) 60px; }
 
     /* ── Topband ── */
-    .topband { height: 8px; background: var(--bosque); filter: url(#torn-line); transition: background-color .45s ease; }
+    .topband { height: 8px; background: var(--bosque); filter: url(#torn-line); will-change: filter; transition: background-color .45s ease; }
     :root[data-theme="noche"] .topband { background: var(--amber); }
 
     /* ── Hero-tear: borde de hoja rasgada que separa el hero de la página ── */
     .hero-tear-wrap { height: 48px; margin-top: -48px; overflow: hidden; position: relative; }
-    .hero-tear { position: absolute; top: 12px; left: 0; right: 0; height: 140px; background: var(--pergamino); filter: url(#torn-paper-up); transition: background-color .45s ease; }
+    .hero-tear { position: absolute; top: 12px; left: 0; right: 0; height: 140px; background: var(--pergamino); filter: url(#torn-paper-up); will-change: filter; transition: background-color .45s ease; }
 
     /* ── Dissolve día/noche: evita "saltos" de color en toda la home/navbar ── */
     .home *, .navbar * {
@@ -760,12 +761,18 @@
         sw.setAttribute('aria-checked', mode === 'noche');
         root.dataset.theme = mode;
 
-        // Algunos WebView (p.ej. el navegador in-app de Instagram en iOS) no
-        // repintan los elementos con filter:url(#torn-paper/-up) cuando solo
-        // cambia su background-color, dejando un resto visual del color anterior.
+        // Algunos navegadores móviles (Safari/WebView iOS) no repintan los
+        // elementos con filter:url(#torn-paper/-up/-line) cuando solo cambia
+        // su background-color vía variable CSS, dejando un resto visual del
+        // color del tema anterior (el "corte" pergamino en modo noche).
+        // Quitar el filtro, forzar un reflow síncrono y restaurarlo invalida
+        // la caché de render del filtro de forma más fiable que un solo rAF.
         tornEls.forEach(function (el) {
           el.style.filter = 'none';
-          requestAnimationFrame(function () { el.style.filter = ''; });
+          void el.offsetHeight;
+          requestAnimationFrame(function () {
+            el.style.filter = '';
+          });
         });
       }
 
