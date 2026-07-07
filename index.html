@@ -230,7 +230,8 @@
          orejas (arriba) en proporciones muy panorámicas/bajas */
       object-fit: cover; object-position: 80% 35%;
       user-select: none; -webkit-user-drag: none;
-      will-change: transform;
+      will-change: transform, opacity;
+      transition: opacity .45s ease;
     }
     .l-bg   { transform-origin: 54% 46%; animation: bgDrift 46s ease-in-out infinite alternate; }
     .l-tree { left: -15px; width: calc(100% + 15px); transform-origin: 13% 100%; animation: treeSway 8.5s ease-in-out infinite; }
@@ -323,14 +324,13 @@
       max-width: 430px; margin: 26px 0 0; }
     .hero-acts { display: flex; align-items: center; justify-content: flex-end; gap: 24px; margin-top: 32px; flex-wrap: wrap; }
     .hero-quote { font-family: var(--font-body); font-style: italic; font-size: 17px; line-height: 1.55;
-      color: var(--ink-soft); margin: 34px 0 0; max-width: 430px; padding-right: 18px; border-right: 3px solid var(--bosque); }
-    :root[data-theme="noche"] .hero-quote { border-left-color: var(--amber); }
-    .hero-quote .name { color: var(--castano); font-style: normal; }
-    .hero-quote .name-input { font: inherit; color: var(--castano); font-style: normal; background: none;
-      border: none; border-bottom: 1px dashed color-mix(in srgb, var(--castano) 55%, transparent); outline: none;
-      padding: 0 1px; min-width: 2ch; text-align: center; }
-    .hero-quote .name-input::placeholder { color: var(--castano); opacity: .6; }
-    .hero-quote .name-input:focus { border-bottom-style: solid; }
+      color: var(--ink-soft); margin: 34px 0 0; max-width: 430px; padding-right: 18px; border-right: 3px solid var(--bosque);
+      display: grid; }
+    :root[data-theme="noche"] .hero-quote { border-right-color: var(--amber); }
+    .hero-quote-dia, .hero-quote-noche { grid-area: 1 / 1; transition: opacity .45s ease; }
+    .hero-quote-noche { opacity: 0; }
+    :root[data-theme="noche"] .hero-quote-dia { opacity: 0; }
+    :root[data-theme="noche"] .hero-quote-noche { opacity: 1; }
 
     /* ── Botones (sistema Línea) ── */
     .btn { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .07em; font-size: 14px;
@@ -368,6 +368,11 @@
     .book-fig .slot { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
       color: var(--ink-soft); text-align: center; line-height: 1.5; padding: 0 14px; }
     .book-fig .plate img { width: 100%; height: 100%; object-fit: contain; }
+    .book-fig .plate .lobo-dia,
+    .book-fig .plate .lobo-noche { transition: opacity .45s ease; }
+    .book-fig .plate .lobo-noche { position: absolute; inset: 0; opacity: 0; }
+    :root[data-theme="noche"] .book-fig .plate .lobo-dia { opacity: 0; }
+    :root[data-theme="noche"] .book-fig .plate .lobo-noche { opacity: 1; }
     .book-fig figcaption { font-family: var(--font-body); font-style: italic; font-size: 13.5px; line-height: 1.4;
       color: var(--ink-soft); text-align: center; }
 
@@ -399,8 +404,11 @@
       .navbar-wrap { position: fixed; top: 8px; left: 0; right: 0; z-index: 50; }
       .hero { margin-top: calc(8px + var(--navh, 94px)); }
 
+      .navbar-inner { flex-wrap: nowrap; gap: 10px; }
+      .navbar .mark, .navbar .mark img { width: 50px; height: 50px; }
       .navbar .brand-text { display: none; }
-      .navbar .nlink { font-size: 15px; letter-spacing: .03em; white-space: normal; flex: 1 1 auto; }
+      .navbar .nlink { font-size: 13px; letter-spacing: .02em; white-space: nowrap; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+      .dn-switch { --dsw: 74px; --dsh: 36px; }
 
       .book-fig { float: none; width: 100%; margin: 8px 0 20px; }
       .chapter-title { white-space: normal; }
@@ -532,11 +540,13 @@
       width: calc(var(--dsh) - var(--dsp) * 2);
       height: calc(var(--dsh) - var(--dsp) * 2);
       border-radius: 50%; z-index: 2;
-      transition: left .26s cubic-bezier(.5, 1.4, .5, 1);
+      transform: translateX(0);
+      transition: transform .26s cubic-bezier(.5, 1.4, .5, 1);
+      will-change: transform;
     }
 
     .dn-switch[data-mode="noche"] .dn-knob {
-      left: calc(var(--dsw) - (var(--dsh) - var(--dsp)));
+      transform: translateX(calc(var(--dsw) - var(--dsh)));
     }
 
     .dn-switch .dn-knob > .bg {
@@ -675,7 +685,10 @@
           </span>
           <a class="btn ghost" href="#quees"><i class="bg"></i>¿Qué es Senior Lobo?</a>
         </div>
-        <p class="hero-quote">"Y entonces, <input type="text" class="name-input" id="nameInput" placeholder="tu nombre" maxlength="24" autocomplete="off" /> abrió el libro… y la aventura empezó."</p>
+        <p class="hero-quote">
+          <span class="hero-quote-dia">Cuentos para despertar su imaginación</span>
+          <span class="hero-quote-noche" aria-hidden="true">Historias que les adentran en el reino de los sueños</span>
+        </p>
       </div>
     </div>
   </section>
@@ -716,7 +729,10 @@
           </div>
 
           <figure class="book-fig">
-            <div class="plate"><img src="imagenes/Lobo_pose_03.png" alt="Senior Lobo, mascota de la marca" /></div>
+            <div class="plate">
+              <img class="lobo-dia" src="imagenes/Lobo_pose_03.png" alt="Senior Lobo, mascota de la marca" />
+              <img class="lobo-noche" src="imagenes/Lobo_noche_pose_03.png" alt="" aria-hidden="true" />
+            </div>
             <figcaption>Una aventura diferente para cada libro</figcaption>
           </figure>
 
@@ -756,24 +772,28 @@
 
       var tornEls = document.querySelectorAll('.navbar > .bg, .topband, .hero-tear');
 
+      // El bug de repintado de filter:url(#torn-paper/-up/-line) al cambiar
+      // background-color por variable CSS solo se da en motores WebKit
+      // (Safari / cualquier navegador en iOS). En el resto (Chrome, Firefox,
+      // Android...) el forzado de reflow es puro coste extra durante el
+      // cambio de tema, así que se aplica solo donde hace falta.
+      var needsFilterRepaintFix = /iP(hone|od|ad)/.test(navigator.userAgent) ||
+        (/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+
       function apply(mode) {
         sw.dataset.mode = mode;
         sw.setAttribute('aria-checked', mode === 'noche');
         root.dataset.theme = mode;
 
-        // Algunos navegadores móviles (Safari/WebView iOS) no repintan los
-        // elementos con filter:url(#torn-paper/-up/-line) cuando solo cambia
-        // su background-color vía variable CSS, dejando un resto visual del
-        // color del tema anterior (el "corte" pergamino en modo noche).
-        // Quitar el filtro, forzar un reflow síncrono y restaurarlo invalida
-        // la caché de render del filtro de forma más fiable que un solo rAF.
-        tornEls.forEach(function (el) {
-          el.style.filter = 'none';
-          void el.offsetHeight;
+        if (needsFilterRepaintFix) {
           requestAnimationFrame(function () {
-            el.style.filter = '';
+            tornEls.forEach(function (el) { el.style.filter = 'none'; });
+            void document.body.offsetHeight; // un único reflow forzado, no uno por elemento
+            requestAnimationFrame(function () {
+              tornEls.forEach(function (el) { el.style.filter = ''; });
+            });
           });
-        });
+        }
       }
 
       function toggle() {
@@ -785,30 +805,6 @@
       sw.addEventListener('click', toggle);
       sw.addEventListener('keydown', function (e) {
         if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); }
-      });
-    })();
-
-    (function () {
-      var input = document.getElementById('nameInput');
-      if (!input) return;
-      var STORAGE_KEY = 'seniorLoboName';
-
-      function resize() {
-        var val = input.value || input.placeholder;
-        input.style.width = (val.length + 1) + 'ch';
-      }
-
-      var saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) input.value = saved;
-      resize();
-
-      input.addEventListener('input', resize);
-      input.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          localStorage.setItem(STORAGE_KEY, input.value);
-          input.blur();
-        }
       });
     })();
 
