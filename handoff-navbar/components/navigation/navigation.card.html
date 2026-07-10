@@ -1,0 +1,493 @@
+<!-- @dsCard group="Components" viewport="1000x640" name="Navigation" subtitle="Navbar (visitante y con sesión), selector de páginas" -->
+<!DOCTYPE html>
+<html lang="es" data-theme="dia">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body{margin:0;padding:26px;display:flex;flex-direction:column;gap:24px}
+  .cluster{display:flex;flex-direction:column;gap:13px}
+  .cluster > .panel-label{margin:0}
+
+  /* ---- navbar · hoja rasgada de papel con sombra (del wizard «Crear cuento») ---- */
+  .wz-topbar{position:relative;z-index:5;margin:0 -26px 10px;}
+  .wz-topbar > .bg{position:absolute;inset:0;z-index:-1;border:0;border-radius:0;
+    background-color:var(--pergamino);background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+    box-shadow:4px 6px 0 rgba(59,47,23,.18);filter:url(#torn-paper);}
+  /* modo noche: sombra dura (sin difuminado) en color pergamino */
+  :root[data-theme="noche"] .wz-topbar > .bg,
+  :root[data-theme="noche"] .mobile-demo .wz-topbar > .bg{box-shadow:4px 6px 0 rgba(245,237,216,.5);}
+  .wz-nav-inner{position:relative;max-width:1200px;margin:0 auto;
+    display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:20px 26px 22px;}
+
+  .wz-brand{display:flex;align-items:center;gap:14px;flex:none;border:0;background:none;cursor:pointer;text-align:left;padding:0;}
+  .wz-brand .wz-mark{width:68px;height:68px;flex:none;display:grid;place-items:center;}
+  .wz-brand .wz-mark img{width:100%;height:100%;object-fit:contain;filter:url(#rough);}
+  .wz-brand .wz-mark .lobo-noche{display:none;}
+  :root[data-theme="noche"] .wz-brand .wz-mark .lobo-dia{display:none;}
+  :root[data-theme="noche"] .wz-brand .wz-mark .lobo-noche{display:block;}
+  .wz-brand .wz-word{display:flex;flex-direction:column;gap:3px;line-height:1;}
+  .wz-brand .wz-word b{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.14em;font-weight:700;font-size:21px;color:var(--line);white-space:nowrap;}
+  .wz-brand .wz-word small{font-family:var(--font-body);font-style:italic;font-size:13.5px;color:var(--ink-soft);white-space:nowrap;}
+
+  .wz-nav{display:flex;align-items:center;gap:5px;margin-left:12px;flex-wrap:wrap;}
+  .wz-nlink{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.07em;font-size:12.5px;font-weight:600;
+    color:var(--ink-soft);padding:9px 14px;border-radius:9px;border:0;background:none;cursor:pointer;position:relative;white-space:nowrap;}
+  .wz-nlink::after{content:"";position:absolute;left:14px;right:14px;bottom:4px;height:2px;background:var(--bosque);filter:url(#torn-line);opacity:0;transition:opacity .15s;}
+  :root[data-theme="noche"] .wz-nlink::after{background:var(--amber);}
+  .wz-nlink:hover{color:var(--line);}
+  .wz-nlink:hover::after{opacity:.85;}
+  .wz-nlink.wz-danger{color:color-mix(in srgb,var(--error) 72%,var(--line));}
+  .wz-nlink.wz-danger::after{background:var(--error);}
+  .wz-nlink.wz-danger:hover{color:var(--error);}
+
+  /* la barra de herramientas NO ancla los menús: se posicionan respecto al
+     navbar completo para que caigan por DEBAJO de él (no sobre el switch/avatar) */
+  .wz-tools{margin-left:auto;display:flex;align-items:center;gap:14px;}
+  .wz-tools > [id^="dn-mount"]{display:flex;align-items:center;}
+  /* día/noche switch dimensionado para la barra */
+  .wz-tools .dn-switch{--w:88px;--h:42px}
+  .wz-tools .dn-switch .dn-knob .face svg,.wz-tools .dn-switch .glyph svg{width:20px;height:20px}
+  .wz-login{flex:none;white-space:nowrap;}
+  .wz-login .bg{box-shadow:3px 4px 0 rgba(59,47,23,.22)}
+  .wz-login:active .bg{transform:translate(2px,2px);box-shadow:1px 2px 0 rgba(59,47,23,.20)}
+  /* modo noche: sombra de botones dura, pergamino al 50% */
+  :root[data-theme="noche"] .wz-login .bg{box-shadow:3px 4px 0 rgba(245,237,216,.5);}
+  :root[data-theme="noche"] .wz-login:active .bg{box-shadow:1px 2px 0 rgba(245,237,216,.5);}
+  .wz-user{display:flex;align-items:center;gap:11px;flex:none;border:0;background:none;cursor:pointer;padding:0;}
+  .wz-uname{font-family:var(--font-body);font-style:italic;font-size:14.5px;color:var(--ink-soft);white-space:nowrap;}
+
+  /* ---- avatar de usuario + menú desplegable ---- */
+  .cf-user{flex:none;}
+  .cf-user > .wz-user{border-radius:26px;padding:3px;position:relative;z-index:3;}
+  .cf-user > .wz-user.on{transform:translateY(1px);}
+  .cf-menu{position:absolute;top:calc(100% - 18px);right:26px;z-index:-2;min-width:312px;padding:34px 30px 16px;display:none;}
+  .cf-menu.open{display:block;}
+  .cf-menu > .bg{position:absolute;inset:0;z-index:-1;border:0;background-color:var(--pergamino);
+    background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+    box-shadow:4px 6px 0 rgba(59,47,23,.24);filter:url(#torn-paper);}
+  /* modo noche: sombra dura color pergamino, como el resto de piezas */
+  :root[data-theme="noche"] .cf-menu > .bg{box-shadow:4px 6px 0 rgba(245,237,216,.5);}
+  .cf-menu-head{display:flex;align-items:center;gap:12px;padding:12px 12px 14px;}
+  .cf-menu-head .avatar{flex:none;}
+  .cf-menu-name{display:flex;flex-direction:column;gap:3px;line-height:1.15;min-width:0;}
+  .cf-menu-name b{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:12.5px;color:var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .cf-menu-name small{font-family:var(--font-body);font-size:12.5px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;}
+  .cf-menu-rule{height:2px;margin:2px 8px 6px;background:var(--line);opacity:.4;filter:url(#torn-line);}
+  .cf-menu-item{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;cursor:pointer;text-align:left;
+    padding:11px 12px;border-radius:8px;font-family:var(--font-body);font-size:14.5px;color:var(--ink);}
+  .cf-menu-item svg{width:19px;height:19px;flex:none;fill:none;stroke:var(--ink-soft);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough);}
+  .cf-menu-item:hover{background:var(--paper-piece);color:var(--line);}
+  .cf-menu-item.cf-menu-danger{color:color-mix(in srgb,var(--error) 72%,var(--line));}
+  .cf-menu-item.cf-menu-danger svg{stroke:var(--error);}
+  .cf-menu-item.cf-menu-danger:hover{background:color-mix(in srgb,var(--error) 12%,transparent);color:var(--error);}
+  @media(prefers-reduced-motion:no-preference){
+    .cf-menu.open{animation:cf-pop .16s cubic-bezier(.2,.9,.3,1.1) both;}
+  }
+  @keyframes cf-pop{from{opacity:0;transform:translateY(-6px) scale(.98);}to{opacity:1;transform:none;}}
+
+  /* ---- hamburguesa + menú desplegable (solo móvil) ---- */
+  .wz-burger{display:none;flex:none;width:44px;height:44px;border:0;background:none;cursor:pointer;padding:0;
+    place-items:center;border-radius:10px;position:relative;z-index:3;}
+  .wz-burger svg{width:26px;height:26px;fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;overflow:visible;}
+  .wz-burger svg .l{transition:transform .34s cubic-bezier(.2,.9,.3,1.25),opacity .18s ease;transform-box:fill-box;transform-origin:center;}
+  .wz-burger.open .l-top{transform:translateY(5px) rotate(45deg);}
+  .wz-burger.open .l-mid{opacity:0;transform:scaleX(.15);}
+  .wz-burger.open .l-bot{transform:translateY(-5px) rotate(-45deg);}
+  @media(prefers-reduced-motion:reduce){.wz-burger svg .l{transition:none;}}
+  .wz-burger:active{transform:translateY(1px);}
+  .wz-menu{display:none;position:absolute;top:calc(100% - 18px);right:26px;z-index:-2;min-width:250px;
+    flex-direction:column;padding:30px 24px 14px;}
+  .wz-menu > .bg{position:absolute;inset:0;z-index:-1;border:0;background-color:var(--pergamino);
+    background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+    box-shadow:4px 6px 0 rgba(59,47,23,.20);filter:url(#torn-paper);}
+  /* modo noche: sombra dura color pergamino, como el resto de piezas */
+  :root[data-theme="noche"] .wz-menu > .bg{box-shadow:4px 6px 0 rgba(245,237,216,.5);}
+  .wz-menu.open{display:flex;}
+  .wz-menu .wz-nlink{width:100%;text-align:left;padding:12px 14px;border-radius:9px;}
+  .wz-menu .wz-nlink::after{left:14px;right:auto;width:26px;bottom:6px;}
+  .wz-menu-dn{display:flex;align-items:center;justify-content:space-between;gap:14px;
+    margin-top:8px;padding:12px 14px 4px;border-top:2px dashed color-mix(in srgb,var(--line) 22%,transparent);}
+  .wz-menu-dn span{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.07em;font-size:12.5px;font-weight:600;color:var(--ink-soft);}
+  /* etiquetas Día / Noche a los lados del switch; se resalta el tema activo */
+  .wz-menu-dn .dn-lbl{color:var(--ink-faint);transition:color .2s;}
+  :root[data-theme="dia"] .wz-menu-dn .dn-lbl-dia{color:var(--line);}
+  :root[data-theme="noche"] .wz-menu-dn .dn-lbl-noche{color:var(--line);}
+  /* switch de tema en el menú móvil: sin pista/cobertura, solo el círculo (sol o luna) */
+  .wz-menu-dn .dn-switch > .bg{display:none;}
+  .wz-menu-dn .dn-switch > .glyph{display:none;}
+  .wz-menu-dn .dn-switch > .stars{display:none;}
+  /* el círculo muestra el icono del tema OPUESTO (a dónde vas al pulsar) */
+  .wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.sun{opacity:0;}
+  .wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.moon{opacity:1;}
+  .wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.moon{opacity:0;}
+  .wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.sun{opacity:1;}
+  /* día → luna oscura sobre círculo ámbar; noche → sol pergamino sobre círculo oscuro (colores fijos, no dependen del tema) */
+  .wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.moon svg{stroke:#3b2f17;}
+  .wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob > .bg,
+  :root[data-theme="noche"] .wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob > .bg{background:#253560;border-color:#1b2744;}
+  .wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.sun svg{stroke:#f0e6c8;}
+
+  /* ---- modificador de disposición móvil ---- */
+  .wz-topbar.is-mobile .wz-nav-inner{flex-wrap:nowrap;gap:12px;padding:16px 18px 18px;}
+  .wz-topbar.is-mobile .wz-brand .wz-word{display:none;}
+  .wz-topbar.is-mobile > .wz-nav-inner > .wz-nav{display:none;}
+  .wz-topbar.is-mobile .wz-tools{gap:10px;}
+  .wz-topbar.is-mobile .wz-tools > [id^="dn-mount"].dn-desktop{display:none;}
+  .wz-topbar.is-mobile .wz-burger{display:grid;}
+
+  /* ---- menú móvil a pantalla completa · títulos centrados ---- */
+  .wz-topbar.is-mobile .wz-menu{left:0;right:0;min-width:0;padding:32px 22px 22px;align-items:center;}
+  .wz-topbar.is-mobile .wz-menu .wz-nlink{width:100%;text-align:center;font-size:15px;letter-spacing:.09em;padding:15px 14px;}
+  .wz-topbar.is-mobile .wz-menu .wz-nlink::after{left:50%;right:auto;transform:translateX(-50%);width:30px;bottom:7px;}
+  .wz-topbar.is-mobile .wz-menu-dn{justify-content:center;width:100%;}
+
+  /* ---- menú de avatar en móvil · a pantalla completa, títulos centrados ---- */
+  .wz-topbar.is-mobile .wz-tools{position:static;}
+  .wz-topbar.is-mobile .cf-menu{left:0;right:0;min-width:0;padding:34px 22px 18px;}
+  .wz-topbar.is-mobile .cf-menu-head{justify-content:center;padding:8px 12px 16px;}
+  .wz-topbar.is-mobile .cf-menu-item{justify-content:center;font-size:15px;padding:14px 12px;}
+
+  /* demo: bastidor de teléfono */
+  .mobile-row{display:flex;gap:22px;flex-wrap:wrap;}
+  .mobile-demo{width:392px;max-width:100%;}
+  .mobile-demo .wz-topbar{margin:0;}
+  .mobile-demo .wz-topbar > .bg{box-shadow:4px 6px 0 rgba(59,47,23,.16);}
+  .mobile-demo .cf-menu,.mobile-demo .wz-menu{right:18px;}
+
+  /* ---- responsivo real: bajo 640px la barra adopta la disposición móvil ---- */
+  @media (max-width:640px){
+    .wz-topbar .wz-nav-inner{flex-wrap:nowrap;gap:12px;padding:16px 18px 18px;}
+    .wz-topbar .wz-brand .wz-word{display:none;}
+    .wz-topbar > .wz-nav-inner > .wz-nav{display:none;}
+    .wz-topbar .wz-tools{gap:10px;}
+    .wz-topbar .wz-tools > [id^="dn-mount"].dn-desktop{display:none;}
+    .wz-topbar .wz-burger{display:grid;}
+    .wz-topbar .wz-menu{left:0;right:0;min-width:0;padding:32px 22px 22px;align-items:center;}
+    .wz-topbar .wz-menu .wz-nlink{width:100%;text-align:center;font-size:15px;letter-spacing:.09em;padding:15px 14px;}
+    .wz-topbar .wz-menu .wz-nlink::after{left:50%;right:auto;transform:translateX(-50%);width:30px;bottom:7px;}
+    .wz-topbar .wz-menu-dn{justify-content:center;width:100%;}
+    .wz-topbar .wz-tools{position:static;}
+    .wz-topbar .cf-menu{left:0;right:0;min-width:0;padding:34px 22px 18px;}
+    .wz-topbar .cf-menu-head{justify-content:center;padding:8px 12px 16px;}
+    .wz-topbar .cf-menu-item{justify-content:center;font-size:15px;padding:14px 12px;}
+  }
+
+  /* ---- selector de número de páginas · círculos de tinta ---- */
+  .pg-circles{display:flex;align-items:center;gap:13px;flex-wrap:wrap;}
+  .pg-dot{position:relative;width:43px;height:43px;flex:none;border:0;background:none;cursor:pointer;padding:0;
+    display:grid;place-items:center;font-family:var(--font-disp);font-size:15px;color:var(--line);
+    transition:transform .12s;}
+  .pg-dot .ring{position:absolute;inset:0;border:2px solid var(--line);border-radius:50%;filter:url(#rough);background:var(--pergamino);}
+  .pg-dot span{position:relative;z-index:1;}
+  .pg-dot:hover{transform:translateY(-2px);}
+  .pg-dot.cur{color:var(--line);}
+  .pg-dot.cur .ring{background:var(--amber);border-color:color-mix(in srgb,var(--amber) 60%,var(--line));
+    box-shadow:4px 5px 0 rgba(59,47,23,.22);}
+  .pg-dot.pg-arrow svg{position:relative;z-index:1;width:18px;height:18px;fill:none;stroke:var(--line);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+  .pg-dot.pg-arrow:disabled{opacity:.3;cursor:default;transform:none;}
+  .pg-track{display:flex;align-items:center;gap:13px;flex-wrap:wrap;}
+  .pg-ellipsis{font-family:var(--font-disp);font-size:18px;color:var(--ink-soft);padding:0 2px;letter-spacing:.05em;}
+</style>
+</head>
+<body>
+
+  <p class="panel-label" style="margin:0 0 -4px">Visitante · sin sesión</p>
+  <div class="wz-topbar">
+    <i class="bg"></i>
+    <div class="wz-nav-inner">
+      <button class="wz-brand">
+        <span class="wz-mark"><img class="lobo-dia" src="../../assets/senorlobo-dia.svg" alt="Senior Lobo"><img class="lobo-noche" src="../../assets/senorlobo-noche.svg" alt="Senior Lobo"></span>
+        <span class="wz-word"><b>Senior Lobo</b><small>Cuentos personalizados</small></span>
+      </button>
+      <nav class="wz-nav">
+        <button class="wz-nlink">Inicio</button>
+        <button class="wz-nlink">¿Qué es Senior Lobo?</button>
+        <button class="wz-nlink">Ayuda</button>
+      </nav>
+      <div class="wz-tools">
+        <div id="dn-mount-1" class="dn-desktop"></div>
+        <button class="btn ghost wz-login"><i class="bg"></i>Iniciar sesión</button>
+        <button class="wz-burger" data-menu="m1" aria-label="Menú"><svg viewBox="0 0 24 24"><line class="l l-top" x1="4" y1="7" x2="20" y2="7"/><line class="l l-mid" x1="4" y1="12" x2="20" y2="12"/><line class="l l-bot" x1="4" y1="17" x2="20" y2="17"/></svg></button>
+      </div>
+      <div class="wz-menu" id="m1">
+        <i class="bg"></i>
+        <button class="cf-menu-item"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h4v-5h4v5h4v-9"></path></svg>Inicio</button>
+            <button class="cf-menu-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01M11 12h1v4h1"></path></svg>¿Qué es Senior Lobo?</button>
+        <button class="cf-menu-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7M12 17h.01"></path></svg>Ayuda</button>
+        <div class="wz-menu-dn"><span class="dn-lbl dn-lbl-dia">Día</span><div id="dn-mount-3"></div><span class="dn-lbl dn-lbl-noche">Noche</span></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="panel-label" style="margin:14px 0 -4px">Con sesión iniciada</p>
+  <div class="wz-topbar">
+    <i class="bg"></i>
+    <div class="wz-nav-inner">
+      <button class="wz-brand">
+        <span class="wz-mark"><img class="lobo-dia" src="../../assets/senorlobo-dia.svg" alt="Senior Lobo"><img class="lobo-noche" src="../../assets/senorlobo-noche.svg" alt="Senior Lobo"></span>
+        <span class="wz-word"><b>Senior Lobo</b><small>Cuentos personalizados</small></span>
+      </button>
+      <nav class="wz-nav">
+        <button class="wz-nlink">Inicio</button>
+        <button class="wz-nlink">¿Qué es Senior Lobo?</button>
+        <button class="wz-nlink">Mis cuentos</button>
+        <button class="wz-nlink">Ayuda</button>
+      </nav>
+      <div class="wz-tools">
+        <div id="dn-mount-2" class="dn-desktop"></div>
+        <div class="cf-user">
+          <button class="wz-user" data-usermenu="u2">
+            <span class="avatar"><i class="bg"></i>JG<i class="status"></i></span>
+          </button>
+          <div class="cf-menu" id="u2">
+            <i class="bg"></i>
+            <div class="cf-menu-head">
+              <span class="avatar"><i class="bg"></i>JG<i class="status"></i></span>
+              <span class="cf-menu-name"><b>John Galt</b><small>johngalt@atlantis.com</small></span>
+            </div>
+            <div class="cf-menu-rule"></div>
+            <button class="cf-menu-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-3.5 3.5-6 8-6s8 2.5 8 6"></path></svg>
+              Mi perfil
+            </button>
+            <button class="cf-menu-item">
+              <svg viewBox="0 0 24 24"><path d="M12 6.5C10.5 5 8 4.5 5 5v13c3-.5 5.5 0 7 1.5M12 6.5C13.5 5 16 4.5 19 5v13c-3-.5-5.5 0-7 1.5M12 6.5v13"></path></svg>
+              Mis cuentos
+            </button>
+            <button class="cf-menu-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              Configuración
+            </button>
+            <div class="cf-menu-rule"></div>
+            <button class="cf-menu-item cf-menu-danger">
+              <svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M11 8l-4 4 4 4M7 12h9"></path></svg>
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
+        <button class="wz-burger" data-menu="m2" aria-label="Menú"><svg viewBox="0 0 24 24"><line class="l l-top" x1="4" y1="7" x2="20" y2="7"/><line class="l l-mid" x1="4" y1="12" x2="20" y2="12"/><line class="l l-bot" x1="4" y1="17" x2="20" y2="17"/></svg></button>
+      </div>
+      <div class="wz-menu" id="m2">
+        <i class="bg"></i>
+        <button class="cf-menu-item"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h4v-5h4v5h4v-9"></path></svg>Inicio</button>
+            <button class="cf-menu-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01M11 12h1v4h1"></path></svg>¿Qué es Senior Lobo?</button>
+        <button class="cf-menu-item"><svg viewBox="0 0 24 24"><path d="M12 6.5C10.5 5 8 4.5 5 5v13c3-.5 5.5 0 7 1.5M12 6.5C13.5 5 16 4.5 19 5v13c-3-.5-5.5 0-7 1.5M12 6.5v13"></path></svg>Mis cuentos</button>
+        <button class="cf-menu-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7M12 17h.01"></path></svg>Ayuda</button>
+        <div class="wz-menu-dn"><span class="dn-lbl dn-lbl-dia">Día</span><div id="dn-mount-4"></div><span class="dn-lbl dn-lbl-noche">Noche</span></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="panel-label" style="margin:14px 0 -4px">Móvil · logo + acción + hamburguesa</p>
+  <div class="mobile-row">
+    <div class="mobile-demo">
+      <div class="wz-topbar is-mobile">
+        <i class="bg"></i>
+        <div class="wz-nav-inner">
+          <button class="wz-brand">
+            <span class="wz-mark"><img class="lobo-dia" src="../../assets/senorlobo-dia.svg" alt="Senior Lobo"><img class="lobo-noche" src="../../assets/senorlobo-noche.svg" alt="Senior Lobo"></span>
+            <span class="wz-word"><b>Senior Lobo</b><small>Cuentos personalizados</small></span>
+          </button>
+          <div class="wz-tools">
+            <button class="btn ghost wz-login"><i class="bg"></i>Iniciar sesión</button>
+            <button class="wz-burger" data-menu="m3" aria-label="Menú"><svg viewBox="0 0 24 24"><line class="l l-top" x1="4" y1="7" x2="20" y2="7"/><line class="l l-mid" x1="4" y1="12" x2="20" y2="12"/><line class="l l-bot" x1="4" y1="17" x2="20" y2="17"/></svg></button>
+          </div>
+          <div class="wz-menu" id="m3">
+            <i class="bg"></i>
+            <button class="cf-menu-item"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h4v-5h4v5h4v-9"></path></svg>Inicio</button>
+            <button class="cf-menu-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01M11 12h1v4h1"></path></svg>¿Qué es Senior Lobo?</button>
+            <button class="cf-menu-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7M12 17h.01"></path></svg>Ayuda</button>
+            <div class="wz-menu-dn"><span class="dn-lbl dn-lbl-dia">Día</span><div id="dn-mount-5"></div><span class="dn-lbl dn-lbl-noche">Noche</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-demo">
+      <div class="wz-topbar is-mobile">
+        <i class="bg"></i>
+        <div class="wz-nav-inner">
+          <button class="wz-brand">
+            <span class="wz-mark"><img class="lobo-dia" src="../../assets/senorlobo-dia.svg" alt="Senior Lobo"><img class="lobo-noche" src="../../assets/senorlobo-noche.svg" alt="Senior Lobo"></span>
+            <span class="wz-word"><b>Senior Lobo</b><small>Cuentos personalizados</small></span>
+          </button>
+          <div class="wz-tools">
+            <div class="cf-user">
+              <button class="wz-user" data-usermenu="u4">
+                <span class="avatar"><i class="bg"></i>JG<i class="status"></i></span>
+              </button>
+              <div class="cf-menu" id="u4">
+                <i class="bg"></i>
+                <div class="cf-menu-head">
+                  <span class="avatar"><i class="bg"></i>JG<i class="status"></i></span>
+                  <span class="cf-menu-name"><b>John Galt</b><small>johngalt@atlantis.com</small></span>
+                </div>
+                <div class="cf-menu-rule"></div>
+                <button class="cf-menu-item">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-3.5 3.5-6 8-6s8 2.5 8 6"></path></svg>
+                  Mi perfil
+                </button>
+                <button class="cf-menu-item">
+                  <svg viewBox="0 0 24 24"><path d="M12 6.5C10.5 5 8 4.5 5 5v13c3-.5 5.5 0 7 1.5M12 6.5C13.5 5 16 4.5 19 5v13c-3-.5-5.5 0-7 1.5M12 6.5v13"></path></svg>
+                  Mis cuentos
+                </button>
+                <button class="cf-menu-item">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                  Configuración
+                </button>
+                <div class="cf-menu-rule"></div>
+                <button class="cf-menu-item cf-menu-danger">
+                  <svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M11 8l-4 4 4 4M7 12h9"></path></svg>
+                  Cerrar sesión
+                </button>
+              </div>
+            </div>
+            <button class="wz-burger" data-menu="m4" aria-label="Menú"><svg viewBox="0 0 24 24"><line class="l l-top" x1="4" y1="7" x2="20" y2="7"/><line class="l l-mid" x1="4" y1="12" x2="20" y2="12"/><line class="l l-bot" x1="4" y1="17" x2="20" y2="17"/></svg></button>
+          </div>
+          <div class="wz-menu" id="m4">
+            <i class="bg"></i>
+            <button class="cf-menu-item"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h4v-5h4v5h4v-9"></path></svg>Inicio</button>
+            <button class="cf-menu-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01M11 12h1v4h1"></path></svg>¿Qué es Senior Lobo?</button>
+            <button class="cf-menu-item"><svg viewBox="0 0 24 24"><path d="M12 6.5C10.5 5 8 4.5 5 5v13c3-.5 5.5 0 7 1.5M12 6.5C13.5 5 16 4.5 19 5v13c-3-.5-5.5 0-7 1.5M12 6.5v13"></path></svg>Mis cuentos</button>
+            <button class="cf-menu-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7M12 17h.01"></path></svg>Ayuda</button>
+            <div class="wz-menu-dn"><span class="dn-lbl dn-lbl-dia">Día</span><div id="dn-mount-6"></div><span class="dn-lbl dn-lbl-noche">Noche</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cluster">
+    <p class="panel-label">Hasta 5 páginas · sin flechas</p>
+    <div class="pg-circles" data-total="4" data-cur="2">
+      <button class="pg-dot pg-arrow" data-nav="prev"><i class="ring"></i><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <div class="pg-track"></div>
+      <button class="pg-dot pg-arrow" data-nav="next"><i class="ring"></i><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+  </div>
+
+  <div class="cluster">
+    <p class="panel-label">Más de 5 páginas · con flechas y elipsis</p>
+    <div class="pg-circles" data-total="24" data-cur="22">
+      <button class="pg-dot pg-arrow" data-nav="prev"><i class="ring"></i><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <div class="pg-track"></div>
+      <button class="pg-dot pg-arrow" data-nav="next"><i class="ring"></i><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+  </div>
+
+<script src="../../assets/linea-runtime.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script>
+  var DayNightSwitch = window.SeOrLoboDesignSystem_981966.DayNightSwitch;
+  ['dn-mount-1', 'dn-mount-2', 'dn-mount-3', 'dn-mount-4', 'dn-mount-5', 'dn-mount-6'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) ReactDOM.createRoot(el)
+      .render(React.createElement(DayNightSwitch, { defaultMode: 'dia', persist: false }));
+  });
+
+  // hamburguesa · abre/cierra el menú desplegable
+  document.querySelectorAll('.wz-burger').forEach(function(b){
+    b.addEventListener('click', function(e){
+      e.stopPropagation();
+      var menu = document.getElementById(b.dataset.menu);
+      var wasOpen = menu.classList.contains('open');
+      document.querySelectorAll('.wz-menu.open, .cf-menu.open').forEach(function(m){ m.classList.remove('open'); });
+      document.querySelectorAll('.wz-user.on').forEach(function(u){ u.classList.remove('on'); });
+      document.querySelectorAll('.wz-burger.open').forEach(function(x){ x.classList.remove('open'); });
+      if (!wasOpen){ menu.classList.add('open'); b.classList.add('open'); }
+    });
+  });
+
+  // avatar · abre/cierra el menú de usuario
+  document.querySelectorAll('.wz-user[data-usermenu]').forEach(function(u){
+    u.addEventListener('click', function(e){
+      e.stopPropagation();
+      var menu = document.getElementById(u.dataset.usermenu);
+      var wasOpen = menu.classList.contains('open');
+      document.querySelectorAll('.wz-menu.open, .cf-menu.open').forEach(function(m){ m.classList.remove('open'); });
+      document.querySelectorAll('.wz-user.on').forEach(function(x){ x.classList.remove('on'); });
+      document.querySelectorAll('.wz-burger.open').forEach(function(x){ x.classList.remove('open'); });
+      if (!wasOpen){ menu.classList.add('open'); u.classList.add('on'); }
+    });
+  });
+
+  document.addEventListener('click', function(e){
+    if (!e.target.closest('.wz-menu') && !e.target.closest('.wz-burger')
+        && !e.target.closest('.cf-menu') && !e.target.closest('.wz-user')){
+      document.querySelectorAll('.wz-menu.open, .cf-menu.open').forEach(function(m){ m.classList.remove('open'); });
+      document.querySelectorAll('.wz-user.on').forEach(function(u){ u.classList.remove('on'); });
+      document.querySelectorAll('.wz-burger.open').forEach(function(x){ x.classList.remove('open'); });
+    }
+  });
+
+  // selector de número de páginas · ventana con elipsis (máx 5 círculos)
+  function initPager(root){
+    var TOTAL = +root.dataset.total, cur = +root.dataset.cur;
+    var track = root.querySelector('.pg-track');
+    var prev = root.querySelector('[data-nav="prev"]');
+    var next = root.querySelector('[data-nav="next"]');
+    var arrowed = TOTAL > 5;
+    prev.style.display = next.style.display = arrowed ? '' : 'none';
+
+    function windowFor(c){
+      var all = [];
+      for (var p = 1; p <= TOTAL; p++) all.push(p);
+      return all;
+    }
+
+    function paintSmall(){
+      track.innerHTML = '';
+      windowFor(cur).forEach(function(p){ track.appendChild(makeDot(p)); });
+    }
+
+    function makeDot(p){
+      var b = document.createElement('button');
+      b.className = 'pg-dot' + (p === cur ? ' cur' : '');
+      b.innerHTML = '<i class="ring"></i><span>' + p + '</span>';
+      b.addEventListener('click', function(){ cur = p; paint(); });
+      return b;
+    }
+
+    function makeSep(show){
+      var e = document.createElement('span');
+      e.className = 'pg-ellipsis';
+      e.textContent = '\u2026';
+      e.style.visibility = show ? 'visible' : 'hidden';
+      return e;
+    }
+
+    // >5 páginas: siempre 3 círculos (primera, media, última) + huecos de elipsis fijos
+    function paintBig(){
+      var m = Math.min(Math.max(cur, 2), TOTAL - 1);
+      track.innerHTML = '';
+      track.appendChild(makeDot(1));
+      track.appendChild(makeSep(m > 2));
+      track.appendChild(makeDot(m));
+      track.appendChild(makeSep(m < TOTAL - 1));
+      track.appendChild(makeDot(TOTAL));
+    }
+
+    function paint(){
+      if (arrowed) paintBig(); else paintSmall();
+      prev.disabled = cur === 1;
+      next.disabled = cur === TOTAL;
+    }
+    prev.addEventListener('click', function(){
+      if (!arrowed) return;
+      cur = Math.max(1, cur - 1);
+      paint();
+    });
+    next.addEventListener('click', function(){
+      if (!arrowed) return;
+      cur = Math.min(TOTAL, cur + 1);
+      paint();
+    });
+    paint();
+  }
+  document.querySelectorAll('.pg-circles').forEach(initPager);
+</script>
+</body>
+</html>

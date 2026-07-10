@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Configuración · Usuario" description="Pantalla en blanco de configuración de usuario con la barra Senior Lobo en modo sesión iniciada: marca, enlaces y avatar del usuario (con menú) a la derecha. Lienzo vacío listo para construir el panel de ajustes. Clicable, con Día/Noche y responsive." -->
+<helmet>
+<script src="./ds-base.js"></script>
+<script src="../../assets/linea-runtime.js"></script>
+<style>
+.cf-app{min-height:100vh;background:var(--kraft);
+  background-image:radial-gradient(rgba(59,47,23,.05) 1px,transparent 1px);background-size:5px 5px;
+  color:var(--ink);font-family:var(--font-body);display:flex;flex-direction:column;}
+.cf-app *{box-sizing:border-box;}
+
+/* ---- navbar · hoja rasgada de papel con sombra (sesión iniciada) ---- */
+.wz-topbar{position:relative;z-index:5;}
+.wz-topbar > .bg{position:absolute;inset:0;z-index:-1;border:0;border-radius:0;
+  background-color:var(--pergamino);background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+  box-shadow:4px 6px 0 rgba(59,47,23,.18);filter:url(#torn-paper);}
+:root[data-theme="noche"] .wz-topbar > .bg{box-shadow:4px 6px 0 rgba(245,237,216,.5);}
+.wz-nav-inner{position:relative;z-index:1;max-width:1200px;margin:0 auto;
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:20px clamp(16px,3vw,44px) 22px;}
+
+.wz-brand{display:flex;align-items:center;gap:14px;flex:none;border:0;background:none;cursor:pointer;text-align:left;padding:0;}
+.wz-brand .wz-mark{width:52px;height:52px;flex:none;display:grid;place-items:center;}
+.wz-brand .wz-mark img{width:100%;height:100%;object-fit:contain;filter:url(#rough);}
+.lobo-noche{display:none;}
+:root[data-theme="noche"] .lobo-dia{display:none;}
+:root[data-theme="noche"] .lobo-noche{display:block;}
+.wz-brand .wz-word{display:flex;flex-direction:column;gap:3px;line-height:1;}
+.wz-brand .wz-word b{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.14em;font-weight:700;font-size:21px;color:var(--line);white-space:nowrap;}
+.wz-brand .wz-word small{font-family:var(--font-body);font-style:italic;font-size:13.5px;color:var(--ink-soft);white-space:nowrap;}
+
+.wz-nav{display:flex;align-items:center;gap:5px;margin-left:12px;flex-wrap:wrap;}
+.wz-nlink{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.07em;font-size:12.5px;font-weight:600;
+  color:var(--ink-soft);padding:9px 14px;border-radius:9px;border:0;background:none;cursor:pointer;position:relative;white-space:nowrap;}
+.wz-nlink::after{content:"";position:absolute;left:14px;right:14px;bottom:4px;height:2px;background:var(--bosque);filter:url(#torn-line);opacity:0;transition:opacity .15s;}
+:root[data-theme="noche"] .wz-nlink::after{background:var(--amber);}
+.wz-nlink:hover{color:var(--line);}
+.wz-nlink:hover::after{opacity:.85;}
+.wz-nlink.on{color:var(--line);}
+.wz-nlink.on::after{opacity:.9;}
+
+.wz-tools{margin-left:auto;display:flex;align-items:center;gap:14px;}
+
+/* ---- avatar de usuario + menú ---- */
+.cf-user{position:relative;flex:none;}
+.cf-avatar-btn{display:flex;align-items:center;gap:11px;border:0;background:none;cursor:pointer;padding:5px 6px 5px 8px;border-radius:26px;
+  position:relative;z-index:0;filter:url(#rough);}
+.cf-avatar-btn > .bg{border-radius:26px;background:var(--paper);border-width:1.6px;box-shadow:3px 4px 0 rgba(59,47,23,.16);}
+.cf-avatar-btn:hover > .bg{background:var(--paper-piece);}
+.cf-avatar-btn.on > .bg{transform:translate(2px,2px);box-shadow:1px 2px 0 rgba(59,47,23,.14);}
+.cf-avatar-name{display:flex;flex-direction:column;gap:2px;line-height:1;text-align:left;}
+.cf-avatar-name b{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--line);white-space:nowrap;}
+.cf-avatar-name small{font-family:var(--font-body);font-style:italic;font-size:12px;color:var(--ink-soft);white-space:nowrap;}
+.cf-avatar-chev{position:relative;z-index:1;width:16px;height:16px;flex:none;fill:none;stroke:var(--ink-soft);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .16s;margin-right:2px;}
+.cf-avatar-btn.on .cf-avatar-chev{transform:rotate(180deg);}
+
+.cf-menu{position:absolute;top:calc(100% + 12px);right:0;z-index:30;min-width:224px;padding:8px;
+  border-radius:12px;position:relative;display:none;}
+.cf-menu.open{display:block;}
+.cf-menu{position:absolute;}
+.cf-menu > .bg{border-radius:12px;background:var(--pergamino);box-shadow:4px 6px 0 rgba(59,47,23,.24);}
+:root[data-theme="noche"] .cf-menu > .bg{box-shadow:4px 6px 0 rgba(245,237,216,.5);}
+.cf-menu-head{display:flex;align-items:center;gap:12px;padding:12px 12px 14px;}
+.cf-menu-head .cf-menu-name{display:flex;flex-direction:column;gap:3px;line-height:1.15;min-width:0;}
+.cf-menu-head .cf-menu-name b{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:12.5px;color:var(--line);}
+.cf-menu-head .cf-menu-name small{font-family:var(--font-body);font-size:12.5px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;}
+.cf-menu-rule{height:2px;margin:2px 8px 6px;background:var(--line);opacity:.4;filter:url(#torn-line);}
+.cf-menu-item{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;cursor:pointer;text-align:left;
+  padding:11px 12px;border-radius:8px;font-family:var(--font-body);font-size:14.5px;color:var(--ink);}
+.cf-menu-item svg{width:19px;height:19px;flex:none;fill:none;stroke:var(--ink-soft);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough);}
+.cf-menu-item:hover{background:var(--paper-piece);color:var(--line);}
+.cf-menu-item.cf-menu-danger{color:color-mix(in srgb,var(--error) 72%,var(--line));}
+.cf-menu-item.cf-menu-danger svg{stroke:var(--error);}
+.cf-menu-item.cf-menu-danger:hover{background:color-mix(in srgb,var(--error) 12%,transparent);color:var(--error);}
+
+@media(prefers-reduced-motion:no-preference){
+  .cf-menu.open{animation:cf-pop .16s cubic-bezier(.2,.9,.3,1.1) both;}
+}
+@keyframes cf-pop{from{opacity:0;transform:translateY(-6px) scale(.98);}to{opacity:1;transform:none;}}
+
+/* ---- hamburguesa + menú móvil de navegación (sólo bajo 640px) ---- */
+.wz-burger{display:none;flex:none;width:44px;height:44px;border:0;background:none;cursor:pointer;padding:0;
+  place-items:center;border-radius:10px;position:relative;z-index:3;}
+.wz-burger svg{width:26px;height:26px;fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;overflow:visible;}
+.wz-burger svg .l{transition:transform .34s cubic-bezier(.2,.9,.3,1.25),opacity .18s ease;transform-box:fill-box;transform-origin:center;}
+.wz-burger.open .l-top{transform:translateY(5px) rotate(45deg);}
+.wz-burger.open .l-mid{opacity:0;transform:scaleX(.15);}
+.wz-burger.open .l-bot{transform:translateY(-5px) rotate(-45deg);}
+@media(prefers-reduced-motion:reduce){.wz-burger svg .l{transition:none;}}
+.wz-burger:active{transform:translateY(1px);}
+.wz-menu{display:none;position:absolute;top:calc(100% - 18px);right:clamp(16px,3vw,44px);z-index:30;min-width:250px;
+  flex-direction:column;padding:30px 24px 14px;}
+.wz-menu.open{display:flex;}
+.wz-menu > .bg{position:absolute;inset:0;z-index:-1;border:0;background-color:var(--pergamino);
+  background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+  box-shadow:4px 6px 0 rgba(59,47,23,.20);filter:url(#torn-paper);}
+:root[data-theme="noche"] .wz-menu > .bg{box-shadow:4px 6px 0 rgba(245,237,216,.5);}
+.wz-menu .wz-nlink{width:100%;text-align:left;padding:12px 14px;border-radius:9px;}
+.wz-menu .wz-nlink::after{left:14px;right:auto;width:26px;bottom:6px;}
+.wz-menu-dn{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  margin-top:8px;padding:12px 14px 4px;border-top:2px dashed color-mix(in srgb,var(--line) 22%,transparent);}
+.wz-menu-dn span{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.07em;font-size:12.5px;font-weight:600;color:var(--ink-soft);}
+.wz-menu-dn .dn-lbl{color:var(--ink-faint);transition:color .2s;}
+:root[data-theme="dia"] .wz-menu-dn .dn-lbl-dia{color:var(--line);}
+:root[data-theme="noche"] .wz-menu-dn .dn-lbl-noche{color:var(--line);}
+.wz-menu-dn .dn-switch > .bg,.wz-menu-dn .dn-switch > .glyph,.wz-menu-dn .dn-switch > .stars{display:none;}
+.wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.sun{opacity:0;}
+.wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.moon{opacity:1;}
+.wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.moon{opacity:0;}
+.wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.sun{opacity:1;}
+.wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.moon svg{stroke:#3b2f17;}
+.wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob > .bg,
+:root[data-theme="noche"] .wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob > .bg{background:#253560;border-color:#1b2744;}
+.wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.sun svg{stroke:#f0e6c8;}
+@media(max-width:640px){
+  .wz-topbar .wz-nav-inner > .wz-nav{display:none;}
+  .wz-topbar .wz-tools > .dn-desktop{display:none;}
+  .wz-topbar .wz-burger{display:grid;}
+}
+
+/* ---- lienzo vacío ---- */
+.cf-canvas{flex:1 1 auto;display:flex;align-items:center;justify-content:center;padding:60px clamp(16px,3vw,44px);}
+.cf-hint{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;opacity:.5;}
+.cf-hint .badge{font-family:var(--font-mono);}
+.cf-hint .cf-hint-sub{font-family:var(--font-body);font-style:italic;font-size:14px;color:var(--ink-soft);}
+
+/* ---- pantalla · Mis cuentos ---- */
+.mc-screen{flex:1 1 auto;width:100%;max-width:1200px;margin:0 auto;padding:44px clamp(16px,3vw,44px) 72px;}
+.mc-head{display:flex;align-items:baseline;justify-content:flex-start;gap:14px;margin:6px 0 32px;flex-wrap:wrap;}
+.mc-titles{display:flex;flex-direction:column;gap:8px;}
+.mc-eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);}
+.mc-h1{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;font-weight:700;font-size:clamp(30px,4vw,44px);color:var(--line);margin:0;line-height:1;}
+.mc-count{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);}
+
+.mc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;max-width:780px;align-items:stretch;}
+.mc-grid.drafts-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-width:none;gap:20px;width:75%;}
+.mc-grid.drafts-grid .mc-cover{height:150px;margin:12px 12px 0;padding:16px;gap:9px;}
+.mc-grid.drafts-grid .mc-cover-ico{width:44px;height:44px;}
+.mc-grid.drafts-grid .mc-cover-ico svg{width:22px;height:22px;}
+.mc-grid.drafts-grid .mc-cover-title{font-size:18px;max-width:16ch;}
+.mc-grid.drafts-grid .mc-body{padding:14px;gap:9px;}
+.mc-grid.drafts-grid .mc-add{padding:26px 20px;gap:12px;}
+.mc-grid.drafts-grid .mc-add-ico{width:48px;height:48px;}
+.mc-grid.drafts-grid .mc-add-ico svg{width:24px;height:24px;}
+
+/* la tarjeta del cuento (trozo de papel, hereda .chip) */
+.mc-card{position:relative;z-index:0;border-radius:13px;display:flex;flex-direction:column;cursor:pointer;}
+.mc-card > .bg{border-radius:13px;background:var(--paper);border-width:1.8px;border-color:var(--line);box-shadow:4px 5px 0 rgba(59,47,23,.16) !important;transition:background .15s;}
+.mc-card.chip > .bg{border-radius:13px;border-width:1.5px;border-style:solid;border-color:transparent;transition:background .15s,border-color .12s;}
+.mc-card.chip:hover > .bg{background:var(--paper-piece);border-color:var(--line);}
+.mc-cover{height:194px;margin:14px 14px 0;border-radius:10px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:22px;
+  background:color-mix(in srgb,var(--niebla) 16%,var(--paper-piece));border:var(--bw) solid var(--line);}
+.mc-cover-ico{width:54px;height:54px;border-radius:12px;position:relative;z-index:0;display:grid;place-items:center;}
+.mc-cover-ico > .bg{border:0;border-radius:12px;background-color:var(--amber);box-shadow:4px 5px 0 rgba(59,47,23,.26);filter:url(#torn-paper);}
+.mc-cover-ico svg{position:relative;z-index:1;width:26px;height:26px;fill:none;stroke:var(--on-dark);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough);}
+.mc-cover-kicker{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.11em;font-size:12px;color:var(--castano);}
+.mc-cover-title{font-family:var(--font-slab);font-weight:700;font-size:23px;color:var(--line);line-height:1.12;max-width:15ch;}
+.mc-body{padding:18px;display:flex;flex-direction:column;gap:11px;}
+.mc-body-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.mc-body-title{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.02em;font-size:15.5px;color:var(--line);line-height:1.2;}
+.mc-meta{font-family:var(--font-mono);font-size:11.5px;line-height:1.55;color:var(--ink-soft);}
+.mc-audio{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11.5px;color:var(--bosque);}
+:root[data-theme="noche"] .mc-audio{color:var(--amber);}
+.mc-audio svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough);}
+
+/* segunda sección · borradores */
+.mc-head-sub{margin-top:48px;}
+.mc-card.draft{cursor:pointer;}
+.mc-card.draft .mc-cover{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--niebla) 14%,var(--paper-piece)) 0 9px,var(--paper-piece) 9px 18px);}
+.mc-card.draft .mc-cover-ico > .bg{background-color:color-mix(in srgb,var(--castano) 62%,var(--line));}
+.mc-card.draft .mc-cover-title{color:color-mix(in srgb,var(--line) 78%,var(--paper));}
+.mc-progress{display:flex;flex-direction:column;gap:6px;}
+.mc-progress-track{position:relative;height:8px;border-radius:5px;background:color-mix(in srgb,var(--niebla) 22%,var(--paper-piece));border:1.4px solid color-mix(in srgb,var(--line) 55%,transparent);overflow:hidden;}
+.mc-progress-fill{position:absolute;inset:0 auto 0 0;background:var(--castano);border-radius:5px;filter:url(#torn-line);}
+:root[data-theme="noche"] .mc-progress-fill{background:var(--amber);}
+.mc-progress-label{font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);}
+
+/* botón · crear cuento (diseño ghost — trozo de papel con borde rasgado) */
+.mc-add{position:relative;z-index:0;border:0;background:none;cursor:pointer;border-radius:13px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;text-align:center;padding:34px 26px;min-height:100%;}
+.mc-add > .bg{border-radius:13px;background:var(--paper);border-width:1.8px;border-style:dashed;border-color:var(--line);box-shadow:4px 5px 0 rgba(59,47,23,.16);filter:url(#torn-paper);transition:background .15s;}
+.mc-add:hover > .bg{background:var(--paper-piece);}
+.mc-add:active > .bg{transform:translate(2px,2px);box-shadow:2px 3px 0 rgba(59,47,23,.14);}
+.mc-add-ico{width:58px;height:58px;border-radius:14px;position:relative;z-index:0;display:grid;place-items:center;}
+.mc-add-ico > .bg{border:0;border-radius:14px;background-color:var(--bosque);box-shadow:4px 5px 0 rgba(59,47,23,.24);filter:url(#torn-paper);}
+:root[data-theme="noche"] .mc-add-ico > .bg{background-color:var(--amber);}
+.mc-add-ico svg{position:relative;z-index:1;width:28px;height:28px;fill:none;stroke:var(--on-dark);stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough);}
+.mc-add-text{display:flex;flex-direction:column;gap:6px;}
+.mc-add-text b{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:16px;color:var(--line);}
+.mc-add-text small{font-family:var(--font-body);font-style:italic;font-size:13.5px;color:var(--ink-soft);max-width:210px;}
+
+/* ---- bordes rectos: se desactiva el filtro de rasgado en esta pantalla ---- */
+.cf-app .bg{filter:none !important;}
+.cf-app .wz-nlink::after,
+.cf-app .cf-menu-rule,
+.cf-app .mc-progress-fill{filter:none !important;}
+/* ...excepto la barra de navegación, que conserva su borde rasgado por defecto */
+.cf-app .wz-topbar > .bg{filter:url(#torn-paper) !important;}
+
+@media(max-width:760px){
+  .wz-nav-inner{gap:12px;padding:15px clamp(16px,3vw,44px) 17px;}
+  .wz-brand .wz-mark{width:44px;height:44px;}
+  .wz-brand .wz-word b{font-size:17px;}
+  .wz-nav{margin-left:6px;gap:2px;}
+  .wz-nlink{padding:8px 11px;font-size:11.5px;}
+  .cf-avatar-name{display:none;}
+  .mc-grid{grid-template-columns:1fr;}
+  .mc-grid.drafts-grid{grid-template-columns:1fr;}
+}
+</style>
+</helmet>
+<div class="cf-app">
+
+  <div class="wz-topbar">
+    <i class="bg"></i>
+    <div class="wz-nav-inner">
+      <button class="wz-brand">
+        <span class="wz-mark"><img class="lobo-dia" src="../../assets/senorlobo-dia.svg" alt="Senior Lobo"><img class="lobo-noche" src="../../assets/senorlobo-noche.svg" alt="Senior Lobo"></span>
+        <span class="wz-word"><b>Senior Lobo</b><small>Cuentos personalizados</small></span>
+      </button>
+      <nav class="wz-nav">
+        <button class="wz-nlink {{ navInicioCls }}" onClick="{{ goInicio }}">INICIO</button>
+        <button class="wz-nlink {{ navCuentosCls }}" onClick="{{ goCuentos }}">MIS CUENTOS</button>
+        <button class="wz-nlink">¿QUÉ ES SENIOR LOBO?</button>
+        <button class="wz-nlink">AYUDA</button>
+      </nav>
+      <div class="wz-tools">
+        <div class="dn-desktop"><x-import component-from-global-scope="SeOrLoboDesignSystem_981966.DayNightSwitch" hint-size="88px,42px"></x-import></div>
+        <div class="cf-user">
+          <button class="cf-avatar-btn {{ menuCls }}" onClick="{{ toggleMenu }}">
+
+            <x-import component-from-global-scope="SeOrLoboDesignSystem_981966.Avatar" status="{{ true }}" hint-size="40px,40px">JG</x-import>
+            <span class="cf-avatar-name"></span>
+
+          </button>
+          <div class="cf-menu {{ menuCls }}">
+            <i class="bg"></i>
+            <div class="cf-menu-head">
+              <x-import component-from-global-scope="SeOrLoboDesignSystem_981966.Avatar" hint-size="40px,40px">JG</x-import>
+              <span class="cf-menu-name"><b>John Galt</b><small>johngalt@atlantis.com</small></span>
+            </div>
+            <div class="cf-menu-rule"></div>
+            <button class="cf-menu-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-3.5 3.5-6 8-6s8 2.5 8 6"></path></svg>
+              Mi perfil
+            </button>
+            <button class="cf-menu-item" onClick="{{ goCuentos }}">
+              <svg viewBox="0 0 24 24"><path d="M12 6.5C10.5 5 8 4.5 5 5v13c3-.5 5.5 0 7 1.5M12 6.5C13.5 5 16 4.5 19 5v13c-3-.5-5.5 0-7 1.5M12 6.5v13"></path></svg>
+              Mis cuentos
+            </button>
+            <button class="cf-menu-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"></path></svg>
+              Configuración
+            </button>
+            <div class="cf-menu-rule"></div>
+            <button class="cf-menu-item cf-menu-danger">
+              <svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M11 8l-4 4 4 4M7 12h9"></path></svg>
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
+        <button class="wz-burger {{ burgerCls }}" onClick="{{ toggleBurger }}" aria-label="Menú"><svg viewBox="0 0 24 24"><line class="l l-top" x1="4" y1="7" x2="20" y2="7"/><line class="l l-mid" x1="4" y1="12" x2="20" y2="12"/><line class="l l-bot" x1="4" y1="17" x2="20" y2="17"/></svg></button>
+      </div>
+      <div class="wz-menu {{ burgerCls }}">
+        <i class="bg"></i>
+        <button class="wz-nlink {{ navInicioCls }}" onClick="{{ goInicio }}">INICIO</button>
+        <button class="wz-nlink {{ navCuentosCls }}" onClick="{{ goCuentos }}">MIS CUENTOS</button>
+        <button class="wz-nlink">¿QUÉ ES SENIOR LOBO?</button>
+        <button class="wz-nlink">AYUDA</button>
+        <div class="wz-menu-dn"><span class="dn-lbl dn-lbl-dia">Día</span><x-import component-from-global-scope="SeOrLoboDesignSystem_981966.DayNightSwitch" hint-size="64px,32px"></x-import><span class="dn-lbl dn-lbl-noche">Noche</span></div>
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{ showCanvas }}" hint-placeholder-val="{{ true }}">
+  <div class="cf-canvas">
+    <div class="cf-hint">
+      <span class="badge"><i class="bg"></i>Configuración · Usuario</span>
+      <span class="cf-hint-sub">Lienzo en blanco — construye aquí el panel de ajustes</span>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ showCuentos }}">
+  <div class="mc-screen">
+    <h1 class="mc-h1">Mis cuentos</h1><div class="mc-head">
+      <div class="mc-titles">
+        <span class="mc-eyebrow">MIS LIBROS EN BORRADOR</span>
+      </div>
+      <span class="mc-count">2 borradores</span>
+    </div>
+
+    <div class="mc-grid drafts-grid">
+      <button class="mc-add">
+        <i class="bg"></i>
+        <span class="mc-add-ico"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg></span>
+        <span class="mc-add-text">
+          <b>Crear cuento</b>
+          <small>Empieza un nuevo cuento personalizado</small>
+        </span>
+      </button>
+
+      <article class="mc-card draft chip">
+        <i class="bg"></i>
+        <div class="mc-cover">
+          <span class="mc-cover-ico"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M5 4h9l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"></path><path d="M14 4v5h5"></path></svg></span>
+          <span class="mc-cover-kicker">Aventura</span>
+          <span class="mc-cover-title">Rumbo a la isla de las cometas</span>
+        </div>
+        <div class="mc-body">
+          <div class="mc-body-row">
+            <b class="mc-body-title">Rumbo a la isla de las cometas</b>
+            <x-import component-from-global-scope="SeOrLoboDesignSystem_981966.Badge" variant="line" hint-size="78px,24px">Borrador</x-import>
+          </div>
+          <span class="mc-meta">Aventura · 2 personajes · sin audiolibro</span>
+          <div class="mc-progress">
+            <div class="mc-progress-track"><span class="mc-progress-fill" style="width:50%;"></span></div>
+            <span class="mc-progress-label">8 de 16 págs · continuar edición</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="mc-card draft chip">
+        <i class="bg"></i>
+        <div class="mc-cover">
+          <span class="mc-cover-ico"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M5 4h9l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"></path><path d="M14 4v5h5"></path></svg></span>
+          <span class="mc-cover-kicker">Fantasía</span>
+          <span class="mc-cover-title">El bosque de los farolillos</span>
+        </div>
+        <div class="mc-body">
+          <div class="mc-body-row">
+            <b class="mc-body-title">El bosque de los farolillos</b>
+            <x-import component-from-global-scope="SeOrLoboDesignSystem_981966.Badge" variant="line" hint-size="78px,24px">Borrador</x-import>
+          </div>
+          <span class="mc-meta">Fantasía · 1 personaje · sin audiolibro</span>
+          <div class="mc-progress">
+            <div class="mc-progress-track"><span class="mc-progress-fill" style="width:25%;"></span></div>
+            <span class="mc-progress-label">3 de 12 págs · continuar edición</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="mc-head mc-head-sub">
+      <div class="mc-titles">
+        <span class="mc-eyebrow">MIS LIBROS PUBLICADOS</span>
+      </div>
+      <span class="mc-count">1 cuento</span>
+    </div>
+
+    <div class="mc-grid drafts-grid">
+      <article class="mc-card chip">
+        <i class="bg"></i>
+        <div class="mc-cover">
+          <span class="mc-cover-ico"><i class="bg"></i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg></span>
+          <span class="mc-cover-kicker">Misterio</span>
+          <span class="mc-cover-title">El misterio de la casa del reloj</span>
+        </div>
+        <div class="mc-body">
+          <div class="mc-body-row">
+            <b class="mc-body-title">El misterio de la casa del reloj</b>
+            <x-import component-from-global-scope="SeOrLoboDesignSystem_981966.Badge" variant="status" hint-size="90px,24px">Publicado</x-import>
+          </div>
+          <span class="mc-meta">Misterio · Casa del reloj · 2 personajes · 18 págs</span>
+          <span class="mc-audio"><svg viewBox="0 0 24 24"><path d="M4 13v-1a8 8 0 0 1 16 0v1"></path><path d="M4 13h3v6H5.5A1.5 1.5 0 0 1 4 17.5zM20 13h-3v6h1.5A1.5 1.5 0 0 0 20 17.5z"></path></svg>Audiolibro · voz femenina</span>
+        </div>
+      </article>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { menu: false, burger: false, view: 'canvas' };
+
+  componentDidMount() {
+    this._onDoc = (e) => {
+      if (this.state.menu) {
+        const user = document.querySelector('.cf-user');
+        if (user && !user.contains(e.target)) this.setState({ menu: false });
+      }
+      if (this.state.burger) {
+        if (!e.target.closest('.wz-menu') && !e.target.closest('.wz-burger')) this.setState({ burger: false });
+      }
+    };
+    this._onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      if (this.state.menu) this.setState({ menu: false });
+      if (this.state.burger) this.setState({ burger: false });
+    };
+    document.addEventListener('mousedown', this._onDoc);
+    document.addEventListener('keydown', this._onKey);
+  }
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this._onDoc);
+    document.removeEventListener('keydown', this._onKey);
+  }
+
+  renderVals() {
+    const view = this.state.view;
+    return {
+      menuCls: this.state.menu ? 'open on' : '',
+      toggleMenu: () => this.setState({ menu: !this.state.menu, burger: false }),
+      burgerCls: this.state.burger ? 'open' : '',
+      toggleBurger: () => this.setState({ burger: !this.state.burger, menu: false }),
+      showCanvas: view === 'canvas',
+      showCuentos: view === 'cuentos',
+      navCuentosCls: view === 'cuentos' ? 'on' : '',
+      navInicioCls: view === 'canvas' ? 'on' : '',
+      goCuentos: () => this.setState({ view: 'cuentos', menu: false, burger: false }),
+      goInicio: () => this.setState({ view: 'canvas', menu: false, burger: false }),
+    };
+  }
+}
+</script>
+</body>
+</html>

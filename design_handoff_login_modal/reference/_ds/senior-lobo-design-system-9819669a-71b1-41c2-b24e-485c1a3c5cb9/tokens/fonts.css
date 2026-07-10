@@ -1,0 +1,36 @@
+/* =========================================================================
+   Fonts — Línea Tactile Design System
+   Most families are served from Google Fonts. Mick Caster (the heavy slab) is
+   a commercial face and is SELF-HOSTED from /fonts via @font-face below.
+   - Wakerobin Compressed → display (the hand-set condensed voice; self-hosted)
+   - Cormorant Upright → body prose, and values/tokens/captions/code
+   - Mick Caster  → heavy slab for section heads & tab labels (self-hosted)
+   ========================================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Upright:wght@400;500;600;700&display=swap');
+
+/* ---- Wakerobin Compressed — self-hosted display (--font-disp) ----------- */
+@font-face{
+  font-family:'Wakerobin Compressed';
+  src:url('../fonts/wakerobin-compressed.otf') format('opentype');
+  font-weight:400 700;
+  font-style:normal;
+  font-display:swap;
+}
+
+/* ---- Mick Caster — self-hosted slab (--font-slab) ----------------------- */
+@font-face{
+  font-family:'Mick Caster';
+  src:url('../fonts/Mick_Caster.otf') format('opentype'),
+      url('../fonts/Mick_Caster.ttf') format('truetype');
+  font-weight:400 700;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:'Mick Caster';
+  src:url('../fonts/Mick_Caster_Italic.otf') format('opentype'),
+      url('../fonts/Mick_Caster_Italic.ttf') format('truetype');
+  font-weight:400 700;
+  font-style:italic;
+  font-display:swap;
+}

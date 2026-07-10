@@ -1,0 +1,494 @@
+/* =========================================================================
+   Components — Línea Tactile Design System
+   Class-based styling for every primitive. React components in
+   /components/** emit these class names plus their own <i class="bg"> layer.
+   Depends on tokens/* and base/base.css (the .bg system + torn-paper).
+   ========================================================================= */
+
+/* ---- Buttons ------------------------------------------------------------ */
+.btn{
+  font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.07em;
+  font-size:14px;font-weight:600;color:var(--line);
+  padding:11px 22px;border-radius:9px;border:0;background:none;cursor:pointer;
+  display:inline-flex;align-items:center;gap:9px}
+.btn .bg{border-radius:9px}
+.btn.primary{color:var(--on-dark)}
+.btn.primary .bg{background:var(--teal);box-shadow:0 3px 0 var(--teal-deep)}
+.btn.primary:active .bg{transform:translateY(2px);box-shadow:0 1px 0 var(--teal-deep)}
+.btn.ghost .bg{background:var(--fill)}
+.btn.pressed{color:var(--on-dark)}
+.btn.pressed .bg{background:var(--teal-deep);box-shadow:inset 2px 3px 0 var(--sh-drop,rgba(46,58,46,.40))}
+.btn.disabled{color:var(--ink-faint);cursor:not-allowed}
+.btn.disabled .bg{background:transparent;border-style:dashed;border-color:var(--ink-faint)}
+.btn .icon{stroke:currentColor;filter:url(#rough)}
+
+/* in a dialog, the primary (Confirm) matches the ghost (Cancel) shadow */
+.modal .actions .btn.primary .bg{box-shadow:6px 8px 0 var(--sh-drop,rgba(46,58,46,.16))}
+.modal .actions .btn.primary:active .bg{transform:translateY(2px);box-shadow:4px 5px 0 var(--sh-drop,rgba(46,58,46,.16))}
+
+/* ---- Text fields -------------------------------------------------------- */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-family:var(--font-disp);text-transform:uppercase;
+  letter-spacing:.09em;font-size:12px;color:var(--line)}
+.field .input-wrap{position:relative;z-index:0;border-radius:8px}
+.field .input-wrap > .bg{border-radius:8px}
+.field input,.field textarea{
+  font-family:var(--font-body);font-size:14px;color:var(--ink);
+  background:none;border:0;outline:0;padding:11px 13px;border-radius:8px;width:100%}
+.field input::placeholder{color:var(--ink-faint)}
+.field .helper{font-family:var(--font-mono);font-size:11px;color:var(--ink-soft)}
+.field.focus .input-wrap > .bg{border-color:var(--teal);box-shadow:0 0 0 4px var(--teal-pale)}
+.field.error .input-wrap > .bg{border-color:var(--error);background:var(--error-tint)}
+.field.error label,.field.error .helper{color:var(--error)}
+
+/* ---- Checkbox / Radio / Switch ----------------------------------------- */
+.opt{display:flex;align-items:center;gap:11px;cursor:pointer;font-size:14px;color:var(--ink)}
+.box{width:22px;height:22px;border-radius:6px;flex:none;position:relative;z-index:0}
+.box .bg{border-radius:6px;background:var(--fill)}
+.opt.on .box .bg{background:var(--teal);border-color:var(--teal-deep)}
+.box .check{position:absolute;inset:0;stroke:var(--on-dark);stroke-width:2.4;
+  fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0;filter:url(#rough)}
+.opt.on .box .check{opacity:1}
+.dot{width:22px;height:22px;border-radius:50%;flex:none;position:relative;z-index:0;
+  display:grid;place-items:center}
+.dot .bg{border-radius:50%}
+.dot::after{content:"";width:10px;height:10px;border-radius:50%;
+  background:var(--teal);opacity:0;transition:opacity .12s}
+.opt.on .dot::after{opacity:1}
+.opt.on .dot .bg{border-color:var(--teal-deep)}
+
+.switch{width:50px;height:28px;border-radius:16px;position:relative;z-index:0;flex:none;cursor:pointer}
+.switch .bg{border-radius:16px}
+.switch .knob{position:absolute;top:3px;left:3px;width:20px;height:20px;
+  border-radius:50%;background:var(--line);transition:left .16s,background .16s;z-index:1}
+.switch.on .bg{background:var(--teal-pale);border-color:var(--teal-deep)}
+.switch.on .knob{left:25px;background:var(--teal)}
+
+/* día — noche switch: the knob is the active luminary (sun/moon) and slides
+   between ends; night darkens the track and reveals stars */
+.dn-switch{
+  --w:104px; --h:48px; --pad:5px;
+  width:var(--w);height:var(--h);border-radius:26px;
+  position:relative;z-index:0;flex:none;cursor:pointer;
+  display:inline-block;transition:filter .2s}
+.dn-switch > .bg{border-radius:26px;background:var(--teal-pale);
+  border-color:var(--teal-deep);transition:background .25s}
+.dn-switch[data-mode="noche"] > .bg{
+  background:color-mix(in srgb, var(--tinta) 78%, var(--bosque));
+  border-color:var(--tinta)}
+.dn-switch .glyph{position:absolute;top:50%;transform:translateY(-50%);
+  width:22px;height:22px;display:grid;place-items:center;z-index:1;transition:opacity .25s}
+.dn-switch .glyph.sun{left:11px}
+.dn-switch .glyph.moon{right:11px}
+.dn-switch .glyph svg{width:22px;height:22px;filter:url(#rough)}
+.dn-switch .glyph.sun svg{stroke:var(--amber)}
+.dn-switch .glyph.moon svg{stroke:var(--pergamino)}
+.dn-switch[data-mode="dia"] .glyph.sun{opacity:0}
+.dn-switch[data-mode="dia"] .glyph.moon{opacity:.32}
+.dn-switch[data-mode="noche"] .glyph.moon{opacity:0}
+.dn-switch[data-mode="noche"] .glyph.sun{opacity:.28}
+.dn-switch .stars{position:absolute;inset:0;z-index:1;opacity:0;transition:opacity .3s;pointer-events:none}
+.dn-switch[data-mode="noche"] .stars{opacity:.8}
+.dn-switch .stars i{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--pergamino)}
+.dn-switch .stars i:nth-child(1){left:18px;top:13px}
+.dn-switch .stars i:nth-child(2){left:30px;top:30px;width:2px;height:2px}
+.dn-switch .stars i:nth-child(3){left:40px;top:11px;width:2px;height:2px}
+.dn-switch .dn-knob{
+  position:absolute;top:var(--pad);left:var(--pad);
+  width:calc(var(--h) - var(--pad)*2);height:calc(var(--h) - var(--pad)*2);
+  border-radius:50%;z-index:2;
+  transition:left .26s cubic-bezier(.5,1.4,.5,1), background .25s}
+.dn-switch .dn-knob > .bg{border-radius:50%;background:var(--amber);
+  border-color:color-mix(in srgb,var(--amber) 60%,var(--castano));
+  transition:background .25s,border-color .25s}
+.dn-switch[data-mode="noche"] .dn-knob{left:calc(var(--w) - (var(--h) - var(--pad)))}
+.dn-switch[data-mode="noche"] .dn-knob > .bg{background:var(--pergamino);border-color:var(--niebla)}
+.dn-switch .dn-knob .face{position:absolute;inset:0;display:grid;place-items:center;z-index:1;transition:opacity .2s}
+.dn-switch .dn-knob .face svg{width:24px;height:24px;filter:url(#rough)}
+.dn-switch .dn-knob .face.sun svg{stroke:var(--castano)}
+.dn-switch .dn-knob .face.moon svg{stroke:var(--teal-deep)}
+.dn-switch[data-mode="dia"]   .dn-knob .face.moon{opacity:0}
+.dn-switch[data-mode="noche"] .dn-knob .face.sun{opacity:0}
+/* dn-switch tuned for when the whole PAGE is in night theme (on dark chips) */
+:root[data-theme="noche"] .dn-switch[data-mode="noche"] > .bg{background:#1b2744;border-color:var(--line)}
+:root[data-theme="noche"] .dn-switch[data-mode="noche"] .dn-knob > .bg{background:#f0e6c8;border-color:var(--line)}
+:root[data-theme="noche"] .dn-switch .stars i{background:#f0e6c8}
+:root[data-theme="noche"] .dn-switch .glyph.sun svg{stroke:#c9a035}
+
+/* ---- Slider ------------------------------------------------------------- */
+.slider{display:flex;align-items:center;gap:14px}
+.slider .track{position:relative;flex:1;height:8px;border-radius:5px;z-index:0}
+.slider .track .bg{border-radius:5px;background:var(--fill-2)}
+.slider .track .fill{position:absolute;top:0;left:0;height:100%;width:58%;
+  background:var(--teal);border-radius:5px;filter:url(#torn-line)}
+.slider .knob{position:absolute;top:50%;left:58%;transform:translate(-50%,-50%);
+  width:20px;height:20px;border-radius:50%;background:var(--fill);
+  border:var(--bw) solid var(--line);z-index:1}
+.slider .badge{font-family:var(--font-mono);font-size:12px;color:var(--line);min-width:38px;text-align:right}
+.slider .ticks{display:flex;justify-content:space-between;margin-top:6px}
+.slider .ticks span{width:2px;height:7px;background:var(--ink-faint);filter:url(#torn-line)}
+
+/* ---- Tabs --------------------------------------------------------------- */
+.tabs{display:flex;gap:0;border-bottom:var(--bw) solid var(--line);filter:url(#torn-line)}
+.tab{font-family:var(--font-slab);letter-spacing:0.5px;text-transform:lowercase;
+  font-size:27px;font-weight:700;color:var(--ink);padding:10px 18px;
+  cursor:pointer;border-radius:9px 9px 0 0;margin-bottom:-2px}
+.tab::first-letter{text-transform:uppercase}
+.tab .bg{border-radius:9px 9px 0 0;background:transparent;border-color:transparent;border-bottom:0}
+.tab.active{color:var(--line)}
+.tab.active .bg{background:var(--teal-pale);border-color:var(--line)}
+
+/* ---- Breadcrumbs -------------------------------------------------------- */
+.crumbs{display:flex;align-items:center;gap:11px;font-family:var(--font-disp);
+  text-transform:uppercase;letter-spacing:.05em;font-size:13px}
+.crumbs a{color:var(--ink-soft);text-decoration:none}
+.crumbs .cur{color:var(--line);font-weight:600}
+.crumbs .chev{width:14px;height:14px;stroke:var(--ink-faint);stroke-width:2;fill:none;filter:url(#rough)}
+
+/* ---- Pagination (plain) ------------------------------------------------- */
+.pager{display:flex;gap:9px;align-items:center}
+.page{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--font-mono);font-size:13px;color:var(--line);cursor:pointer}
+.page .bg{border-radius:50%;background:var(--fill)}
+.page.cur{color:var(--on-dark)}
+.page.cur .bg{background:var(--teal);border-color:var(--teal-deep)}
+.page.dots{border:0;font-size:16px;color:var(--ink-faint);cursor:default}
+.page.dots .bg{display:none}
+.page .chev{width:15px;height:15px;stroke:var(--line);stroke-width:2;fill:none;filter:url(#rough)}
+
+/* ---- Pagination (tactile, raised torn-paper) ---------------------------- */
+.pager-tactile{display:flex;gap:13px;align-items:center}
+.ptab{width:46px;height:46px;border-radius:11px;display:grid;place-items:center;
+  position:relative;z-index:0;cursor:pointer;
+  font-family:var(--font-disp);font-weight:700;font-size:19px;
+  color:color-mix(in srgb,var(--castano) 55%,#2a1d0e)}
+.ptab > .bg{border:0;border-radius:11px;
+  background-color:var(--paper-piece);
+  background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);
+  background-size:4px 4px;
+  box-shadow:4px 5px 0 var(--sh-drop,rgba(59,47,23,.26)),inset 0 1px 0 rgba(255,255,255,.45);
+  filter:url(#torn-paper)}
+.ptab:active > .bg{box-shadow:2px 3px 0 var(--sh-drop,rgba(59,47,23,.24)),inset 0 1px 0 rgba(255,255,255,.4);transform:translateY(2px)}
+.ptab.cur{color:var(--on-dark)}
+.ptab.cur > .bg{background-color:var(--amber);box-shadow:4px 5px 0 var(--sh-drop,rgba(59,47,23,.30)),inset 0 1px 0 rgba(255,255,255,.3)}
+.ptab.dots{cursor:default;color:var(--ink-faint);font-size:22px;align-self:flex-end}
+.ptab.dots > .bg{display:none}
+.ptab .chev{width:18px;height:18px;stroke:color-mix(in srgb,var(--castano) 55%,#2a1d0e);
+  stroke-width:2.4;fill:none;filter:url(#rough)}
+
+/* ---- Stepper ------------------------------------------------------------ */
+.stepper{display:flex;align-items:center;gap:0;width:100%}
+.step{display:flex;flex-direction:column;align-items:center;gap:11px;flex:none}
+.step .node{width:46px;height:46px;border-radius:11px;display:grid;place-items:center;
+  font-family:var(--font-disp);font-weight:700;font-size:18px;position:relative;z-index:0;
+  color:color-mix(in srgb,var(--castano) 55%,#2a1d0e)}
+.step .node > .bg{border:0;border-radius:11px;
+  background-color:var(--paper-piece);
+  background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);
+  background-size:4px 4px;
+  box-shadow:4px 5px 0 var(--sh-drop,rgba(59,47,23,.26)),inset 0 1px 0 rgba(255,255,255,.45);
+  filter:url(#torn-paper)}
+.step .node:active > .bg{box-shadow:2px 3px 0 var(--sh-drop,rgba(59,47,23,.24)),inset 0 1px 0 rgba(255,255,255,.4);transform:translateY(2px)}
+.step.done .node,.step.current .node{color:var(--on-dark)}
+.step.done .node > .bg,.step.current .node > .bg{background-color:var(--amber);
+  box-shadow:4px 5px 0 var(--sh-drop,rgba(59,47,23,.30)),inset 0 1px 0 rgba(255,255,255,.3)}
+.step.done .node .check{position:absolute;inset:0;stroke:var(--on-dark);stroke-width:2.4;
+  fill:none;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)}
+.step .lbl{font-family:var(--font-disp);text-transform:uppercase;font-size:10px;
+  letter-spacing:.07em;color:var(--ink-soft);white-space:nowrap}
+.step.done .lbl,.step.current .lbl{color:var(--line)}
+.step-bar{flex:1;height:3px;background:color-mix(in srgb,var(--castano) 32%,var(--pergamino));
+  filter:url(#torn-line);margin:0 8px 25px}
+.step-bar.done{background:var(--amber)}
+
+/* ---- Navigation bar — Señor Lobo brand header -------------------------- */
+/* A full torn-paper band: owl mark + slab wordmark & tagline on the left,
+   slab-serif links, and actions (día/noche switch) pinned right. */
+.navbar{display:flex;align-items:center;gap:34px;padding:20px 32px 26px;position:relative;z-index:0}
+.navbar > .bg{border:0;border-radius:3px;background-color:var(--paper-piece);
+  background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+  box-shadow:0 7px 0 var(--sh-drop,rgba(59,47,23,.10));filter:url(#torn-paper)}
+
+/* brand — owl logo, wordmark, italic tagline */
+.navbar .brand{display:flex;align-items:center;gap:16px;flex:none;text-decoration:none}
+.navbar .mark{display:grid;place-items:center;position:relative;z-index:0;flex:none}
+.navbar .mark > .bg{display:none}
+.navbar .mark img{height:60px;width:auto;display:block}
+.navbar .mark svg{width:34px;height:34px;stroke:var(--bosque);stroke-width:1.7;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)}
+.navbar .word{display:flex;flex-direction:column;gap:3px;line-height:1;
+  font-family:var(--font-slab);text-transform:uppercase;letter-spacing:.05em;
+  font-weight:700;font-size:30px;color:var(--bosque);white-space:nowrap}
+.navbar .word .tagline{font-family:var(--font-body);text-transform:none;font-style:italic;
+  font-weight:400;font-size:16px;letter-spacing:.01em;color:var(--ink-soft)}
+
+/* links — slab serif, forest green, torn underline on hover / active */
+.navbar .nlinks{display:flex;align-items:center;gap:28px;align-self:center;margin-top:-11px}
+.navbar .nlink{font-family:var(--font-slab);text-transform:uppercase;letter-spacing:.03em;
+  font-size:20px;font-weight:700;color:var(--bosque);padding:4px 2px 9px;
+  position:relative;z-index:0;cursor:pointer;text-decoration:none;white-space:nowrap;
+  opacity:.92;transition:opacity .18s}
+.navbar .nlink > .bg{display:none}
+.navbar .nlink:hover{opacity:1}
+.navbar .nlink::after{content:"";position:absolute;left:2px;right:2px;bottom:2px;height:2px;
+  background:var(--bosque);filter:url(#torn-line);opacity:0;transition:opacity .18s}
+.navbar .nlink:hover::after,.navbar .nlink.active::after{opacity:1}
+.navbar .nlink.active{opacity:1}
+:root[data-theme="noche"] .navbar .word,
+:root[data-theme="noche"] .navbar .nlink,
+:root[data-theme="noche"] .navbar .mark svg,
+:root[data-theme="noche"] .navbar .nlink::after{color:var(--amber);stroke:var(--amber);background-color:var(--amber)}
+
+.navbar .nacts{margin-left:auto;display:flex;align-items:center;gap:14px;align-self:center}
+.iconbtn{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;position:relative;z-index:0;cursor:pointer}
+.iconbtn > .bg{border:0;border-radius:10px;background-color:var(--paper-piece);
+  background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+  box-shadow:4px 5px 0 var(--sh-drop,rgba(59,47,23,.24)),inset 0 1px 0 rgba(255,255,255,.45);filter:url(#torn-paper)}
+.iconbtn:active > .bg{box-shadow:2px 3px 0 var(--sh-drop,rgba(59,47,23,.22)),inset 0 1px 0 rgba(255,255,255,.4);transform:translateY(2px)}
+.iconbtn svg{width:19px;height:19px;stroke:color-mix(in srgb,var(--castano) 55%,#2a1d0e);
+  stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)}
+.iconbtn .ncount{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;padding:0 4px;
+  border-radius:10px;background:var(--ink);color:var(--on-dark);font-family:var(--font-mono);
+  font-size:10px;display:grid;place-items:center;z-index:2;border:2px solid var(--paper-piece)}
+.navbar .nav-avatar{width:42px;height:42px;border-radius:50%;position:relative;z-index:0;
+  display:grid;place-items:center;font-family:var(--font-disp);font-size:15px;font-weight:700;
+  color:var(--line);cursor:pointer}
+.navbar .nav-avatar > .bg{border-radius:50%;background:var(--teal-pale)}
+@media(max-width:760px){.navbar .nlinks{display:none}}
+
+/* ---- Navbar · brand header variant (Señor Lobo marketing bar) ----------- */
+/* A full-width paper band with a torn-paper bottom deckle, plain logo, green
+   slab wordmark + italic tagline, understated text links, and an actions slot. */
+.navbar.brandbar{position:relative;z-index:0;gap:30px;padding:20px 34px 24px;border-radius:0;margin-bottom:14px}
+.navbar.brandbar > .bg{border:0;border-radius:0;box-shadow:none;filter:none;
+  background-color:var(--paper-piece);
+  background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px}
+/* torn bottom edge: a paper strip that overhangs the bar and rips along its base */
+.navbar.brandbar::after{content:"";position:absolute;left:0;right:0;bottom:-13px;height:26px;z-index:-2;
+  background-color:var(--paper-piece);
+  background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+  filter:url(#torn-paper-2)}
+.navbar.brandbar .brand{display:flex;align-items:center;gap:15px;flex:none;text-decoration:none;cursor:pointer}
+/* plain logo — no amber chip */
+.navbar.brandbar .mark{width:auto;height:auto;border-radius:0;display:block;filter:none}
+.navbar.brandbar .mark > .bg{display:none}
+.navbar.brandbar .mark img{height:58px;width:auto;display:block}
+.navbar.brandbar .word{display:flex;flex-direction:column;gap:5px;line-height:1;
+  font-family:var(--font-disp);font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  font-size:29px;color:var(--bosque);white-space:nowrap}
+.navbar.brandbar .word .tagline{font-family:var(--font-body);font-style:italic;text-transform:none;
+  letter-spacing:.01em;font-weight:400;font-size:16px;color:var(--ink-soft)}
+.navbar.brandbar .nlinks{gap:6px;margin-left:52px}
+.navbar.brandbar .nlink{font-family:var(--font-disp);font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;font-size:18px;color:var(--bosque);padding:8px 6px;border-radius:0}
+.navbar.brandbar .nlink > .bg{display:none}
+.navbar.brandbar .nlink:hover,.navbar.brandbar .nlink.active{color:var(--bosque)}
+.navbar.brandbar .nlink:hover::after,.navbar.brandbar .nlink.active::after{content:"";position:absolute;
+  left:6px;right:6px;bottom:2px;height:2px;background:var(--amber);filter:url(#torn-line);z-index:1}
+.navbar.brandbar .nacts{gap:14px}
+/* día/noche switch — soft sage pill, cream sun, faint moon (no heavy black ring) */
+.navbar.brandbar .dn-switch > .bg{border-width:1.6px;
+  border-color:color-mix(in srgb,var(--bosque) 42%,var(--pergamino));
+  background:color-mix(in srgb,var(--bosque) 15%,var(--pergamino))}
+.navbar.brandbar .dn-switch .dn-knob > .bg{border-width:1.6px;
+  border-color:color-mix(in srgb,var(--amber) 62%,var(--castano))}
+.navbar.brandbar .dn-switch .dn-knob .face.sun svg{stroke:var(--on-dark)}
+.navbar.brandbar .dn-switch .dn-knob .face svg,
+.navbar.brandbar .dn-switch .glyph svg{width:18px;height:18px}
+.navbar.brandbar .dn-switch .glyph.moon svg{stroke:color-mix(in srgb,var(--bosque) 55%,var(--niebla))}
+.navbar.brandbar .dn-switch[data-mode="dia"] .glyph.moon{opacity:.5}
+:root[data-theme="noche"] .navbar.brandbar .dn-switch > .bg{
+  background:color-mix(in srgb,var(--tinta) 78%,var(--bosque));border-color:var(--tinta)}
+:root[data-theme="noche"] .navbar.brandbar .word,
+:root[data-theme="noche"] .navbar.brandbar .nlink{color:var(--amber)}
+:root[data-theme="noche"] .navbar.brandbar .word .tagline{color:var(--ink-soft)}
+@media(max-width:760px){.navbar.brandbar .nlinks{display:none}}
+
+/* ---- Card --------------------------------------------------------------- */
+.card{padding:0;border-radius:11px;overflow:hidden;display:flex;flex-direction:column}
+.card .bg{border-radius:11px}
+.card .ph{height:128px;margin:14px 14px 0;border-radius:8px;position:relative;
+  background:repeating-linear-gradient(45deg,var(--teal-tint) 0 7px,var(--fill-2) 7px 14px);
+  border:var(--bw) dashed var(--line);display:grid;place-items:center}
+.card .ph span{font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);
+  background:var(--fill);padding:3px 7px;text-transform:uppercase;letter-spacing:.05em}
+.card .body{padding:14px 16px 18px}
+.card h3{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.03em;
+  font-size:17px;color:var(--line);margin:0 0 6px}
+.card p{margin:0 0 12px;color:var(--ink-soft);font-size:13.5px}
+.card .more{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;
+  font-size:12px;color:var(--teal);font-weight:600;display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.card .more .chev{width:13px;height:13px;stroke:var(--teal);stroke-width:2.2;fill:none;filter:url(#rough)}
+
+/* ---- List items --------------------------------------------------------- */
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px}
+.list li{display:flex;align-items:center;gap:14px;padding:13px 15px;border-radius:9px}
+.list li .bg{border-radius:9px}
+.list .ico{width:36px;height:36px;border-radius:8px;flex:none;display:grid;place-items:center;position:relative;z-index:0}
+.list .ico .bg{border-radius:8px;background:var(--teal-pale)}
+.list .ico .icon{filter:url(#rough)}
+.list .txt{flex:1}
+.list .txt b{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.03em;
+  font-size:14px;color:var(--line);display:block}
+.list .txt small{color:var(--ink-soft);font-size:12.5px}
+.list .chev{width:16px;height:16px;stroke:var(--ink-faint);stroke-width:2;fill:none;filter:url(#rough)}
+
+/* ---- Badges ------------------------------------------------------------- */
+.badge{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;
+  font-size:11px;font-weight:600;padding:5px 11px;border-radius:13px;color:var(--line);
+  display:inline-flex;align-items:center;gap:7px}
+.badge .bg{border-radius:13px;background:transparent}
+.badge.fill{color:var(--on-dark)}
+.badge.fill .bg{background:var(--teal);border-color:var(--teal-deep)}
+.badge .dot-c{width:7px;height:7px;border-radius:50%;background:var(--amber)}
+.badge.count{padding-right:6px}
+.badge.count .num{background:var(--brown);color:var(--on-dark);border-radius:9px;
+  font-family:var(--font-mono);font-size:10px;padding:1px 6px;margin-left:2px}
+
+/* ---- Avatars ------------------------------------------------------------ */
+.avatars{display:flex}
+.avatar{width:42px;height:42px;border-radius:50%;margin-left:-12px;position:relative;z-index:0;
+  display:grid;place-items:center;font-family:var(--font-disp);color:var(--line);font-size:15px;
+  background:var(--paper-piece)}
+.avatar:first-child{margin-left:0}
+.avatar .bg{border-radius:50%;background:var(--teal-pale)}
+.avatar .status{position:absolute;right:0;bottom:1px;width:11px;height:11px;border-radius:50%;
+  background:var(--teal);border:2px solid var(--paper-piece);z-index:1}
+.avatar.away .status{background:var(--warn)}
+
+/* ---- Tooltip ------------------------------------------------------------ */
+.tooltip{display:inline-block;padding:9px 13px;border-radius:8px;font-size:13px;color:var(--line);position:relative}
+.tooltip .bg{border-radius:8px}
+.tooltip::after{content:"";position:absolute;bottom:-7px;left:24px;width:12px;height:12px;
+  background:var(--fill);border-right:var(--bw) solid var(--line);
+  border-bottom:var(--bw) solid var(--line);transform:rotate(45deg);filter:url(#rough)}
+
+/* ---- Table header ------------------------------------------------------- */
+.thead{display:grid;grid-template-columns:1.6fr 1fr 1fr .5fr;border-radius:9px 9px 0 0;overflow:hidden}
+.thead .bg{border-radius:9px 9px 0 0;background:var(--teal-pale)}
+.cell{padding:11px 14px;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;
+  font-size:12px;color:var(--line);display:flex;align-items:center;gap:7px;border:0}
+.cell .icon{width:13px;height:13px;stroke-width:2;stroke:var(--ink-soft);filter:url(#rough)}
+
+/* ---- Dialog / modal ----------------------------------------------------- */
+.modal{max-width:380px;padding:24px 24px 22px;border-radius:13px}
+.modal .bg{border-radius:13px;box-shadow:6px 8px 0 var(--sh-drop,rgba(46,58,46,.16))}
+.modal h3{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;
+  font-size:19px;color:var(--line);margin:0 0 10px}
+.modal p{margin:0 0 20px;color:var(--ink-soft);font-size:14px}
+.modal .actions{display:flex;gap:12px;justify-content:flex-end}
+
+/* ---- Toasts ------------------------------------------------------------- */
+.toasts{display:flex;flex-direction:column;gap:12px}
+.toast{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:9px;font-size:13.5px;color:var(--ink)}
+.toast .bg{border-radius:9px}
+.toast .ic{width:28px;height:28px;border-radius:7px;flex:none;display:grid;place-items:center;position:relative;z-index:0}
+.toast .ic .bg{border-radius:7px}
+.toast.success .ic .bg{background:var(--teal);border-color:var(--teal-deep)}
+.toast.info .ic .bg{background:var(--teal-pale)}
+.toast.warn .ic .bg{background:var(--error-tint);border-color:var(--warn)}
+.toast .ic .icon{filter:url(#rough)}
+.toast.success .ic .icon{stroke:var(--on-dark)}
+.toast .ic.warn-i .icon{stroke:var(--warn)}
+
+/* ---- Alert banner ------------------------------------------------------- */
+.alert{display:flex;align-items:center;gap:13px;padding:14px 17px;border-radius:9px;color:var(--error)}
+.alert .bg{border-radius:9px;background:var(--error-tint);border-color:var(--error)}
+.alert .icon{stroke:var(--error);width:22px;height:22px;flex:none;filter:url(#rough)}
+.alert b{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;color:var(--error)}
+.alert span{color:var(--ink);font-size:13.5px}
+
+/* ---- Skeleton ----------------------------------------------------------- */
+.skeleton{display:flex;flex-direction:column;gap:13px}
+.sk-row{display:flex;align-items:center;gap:13px}
+.sk-c{width:42px;height:42px;border-radius:50%;background:var(--gray);filter:url(#rough);
+  animation:pulse 1.5s ease-in-out infinite}
+.sk-lines{flex:1;display:flex;flex-direction:column;gap:8px}
+.sk-bar{height:11px;border-radius:6px;background:var(--gray);filter:url(#torn-line);
+  animation:pulse 1.5s ease-in-out infinite}
+.sk-bar.short{width:55%}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:.85}}
+
+/* ---- Empty state -------------------------------------------------------- */
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:34px 26px}
+.empty .icon{width:54px;height:54px;stroke-width:1.8;filter:url(#rough)}
+.empty h3{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.04em;
+  font-size:18px;color:var(--line);margin:0;white-space:nowrap}
+.empty p{margin:0;color:var(--ink-soft);font-size:13.5px;max-width:240px}
+
+/* ---- Progress ----------------------------------------------------------- */
+.progress{display:flex;flex-direction:column;gap:8px}
+.progress .track{position:relative;height:12px;border-radius:7px;z-index:0;overflow:hidden}
+.progress .track .bg{border-radius:7px;background:var(--fill-2)}
+.progress .track .fill{position:absolute;top:0;left:0;height:100%;background:var(--teal);
+  border-radius:7px;filter:url(#torn-line);
+  background-image:repeating-linear-gradient(45deg,rgba(245,237,216,.22) 0 5px,transparent 5px 10px)}
+.progress .pct{font-family:var(--font-mono);font-size:12px;color:var(--line);align-self:flex-end}
+
+/* ---- Book page (prose) -------------------------------------------------- */
+/* A storybook "page": optional chapter plate + illustration slot + justified
+   serif paragraphs with drop cap, highlights, small-caps and ornament dividers.
+   Use .book-page as the wrapper around any text-with-paragraphs content. */
+.book-page{max-width:720px;margin:0 auto;text-align:left}
+.book-page::after{content:"";display:block;clear:both}
+
+/* chapter plate — "Capítulo I" eyebrow + title, centred, full width */
+.chapter-plate{display:flex;flex-direction:column;align-items:center;gap:9px;width:100%;margin:0 0 22px}
+.chapter-no{position:relative;margin:0;padding:0 0 2px;display:flex;align-items:center;justify-content:center;gap:14px;
+  font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.42em;font-size:14px;font-weight:600;
+  color:var(--line);line-height:1}
+.chapter-no .dia{width:6px;height:6px;background:var(--line);transform:rotate(45deg);flex:none}
+.chapter-title{position:relative;margin:0;padding:6px 0 0;text-align:center;white-space:nowrap;
+  font-family:var(--font-slab);font-weight:700;text-transform:lowercase;letter-spacing:.5px;
+  font-size:clamp(26px,3.4vw,36px);line-height:1.04;color:var(--line)}
+.chapter-title::first-letter{text-transform:uppercase}
+
+/* illustration slot — reserved image, floats right; prose wraps around it */
+.book-fig{float:right;width:248px;margin:6px 0 14px 30px;display:flex;flex-direction:column;gap:9px;shape-margin:14px}
+.book-fig .plate{position:relative;aspect-ratio:4/5;border-radius:6px;
+  background-color:var(--paper-piece);
+  background-image:repeating-linear-gradient(45deg,color-mix(in srgb,var(--line) 12%,transparent) 0 1px,transparent 1px 9px);
+  display:grid;place-items:center;overflow:hidden}
+.book-fig .plate img{width:100%;height:100%;object-fit:cover;display:block}
+.book-fig .slot{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-soft);text-align:center;line-height:1.5;padding:0 14px}
+.book-fig figcaption{font-family:var(--font-body);font-style:italic;font-size:13.5px;line-height:1.4;
+  color:var(--ink-soft);text-align:center}
+
+/* opening epigraph — centred italic lead-in above the prose */
+.book-epigraph{font-family:var(--font-body);font-style:italic;font-size:22px;line-height:1.5;
+  text-align:center;color:var(--ink-soft);margin:0 auto 4px;max-width:560px;text-wrap:pretty}
+.book-epigraph .hl{font-style:normal;color:var(--bosque)}
+:root[data-theme="noche"] .book-epigraph .hl{color:var(--amber)}
+
+/* justified storybook serif paragraphs */
+.book-para{font-family:var(--font-body);font-size:20px;line-height:1.56;color:var(--ink);margin:0 0 17px;
+  text-align:justify;text-justify:inter-word;hyphens:auto}
+.book-para:last-child{margin-bottom:0}
+.book-para .hl{color:var(--bosque)}
+:root[data-theme="noche"] .book-para .hl{color:var(--amber)}
+.book-para .sl{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:.82em;color:var(--line)}
+.book-para.lead-cap::first-letter{float:left;font-family:var(--font-slab);font-weight:700;font-size:66px;line-height:.66;
+  padding:7px 12px 0 1px;color:var(--bosque)}
+:root[data-theme="noche"] .book-para.lead-cap::first-letter{color:var(--amber)}
+
+/* ornament divider between blocks */
+.nb-divider{display:flex;align-items:center;justify-content:center;gap:14px;margin:26px 0;clear:both}
+.nb-divider .ln{width:78px;height:0;border-top:var(--bw) solid color-mix(in srgb,var(--line) 55%,transparent);filter:url(#torn-line)}
+.nb-divider .cl{display:flex;align-items:center;gap:9px}
+.nb-divider .cl b{width:9px;height:9px;background:var(--bosque);transform:rotate(45deg);display:block;filter:url(#rough)}
+.nb-divider .cl b:nth-child(2){width:13px;height:13px}
+:root[data-theme="noche"] .nb-divider .cl b{background:var(--amber)}
+
+@media(max-width:560px){
+  .book-fig{float:none;width:100%;margin:8px 0 20px}
+  .chapter-title{white-space:normal}
+  .book-para{text-align:left;hyphens:none}
+}
+
+/* ---- Spinner ------------------------------------------------------------ */
+.spinner{width:40px;height:40px}
+.spinner circle{fill:none;stroke:var(--teal-pale);stroke-width:4}
+.spinner path{fill:none;stroke:var(--teal);stroke-width:4;stroke-linecap:round;
+  filter:url(#rough);transform-origin:center;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<script src="./ds-base.js"></script>
+<script src="assets/linea-runtime.js"></script>
+<style>
+.lg-demo{min-height:100vh;background:var(--kraft);
+  background-image:radial-gradient(rgba(59,47,23,.05) 1px,transparent 1px);background-size:5px 5px;
+  color:var(--ink);font-family:var(--font-body);display:flex;align-items:center;justify-content:center;padding:40px;}
+.lg-demo *{box-sizing:border-box;}
+.lg-demo-trigger.btn.primary > .bg{box-shadow:3px 4px 0 var(--sh-drop,rgba(59,47,23,.28));}
+.lobo-noche{display:none;}
+:root[data-theme="noche"] .lobo-dia{display:none;}
+:root[data-theme="noche"] .lobo-noche{display:block;}
+
+/* ---- modal a pantalla partida · libro abierto ---- */
+.lg-overlay{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:clamp(16px,4vw,52px);}
+.lg-overlay.lg-open{display:flex;}
+.lg-scrim{position:absolute;inset:0;background:rgba(31,24,10,.52);}
+.lg-modal{position:relative;z-index:1;width:min(940px,100%);}
+
+.lg-spread{position:relative;z-index:2;border-radius:6px;display:grid;grid-template-columns:1fr 40px 1fr;height:602px;}
+.lg-form .lg-submit-reg{margin-top:12px;}
+.lg-spread > .bg{border-radius:6px;box-shadow:6px 9px 0 var(--sh-drop,rgba(59,47,23,.28));}
+.lg-spread::before,.lg-spread::after{content:"";position:absolute;inset:0;border-radius:6px;pointer-events:none;
+  background-color:var(--pergamino);
+  background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+  filter:url(#torn-paper-2);}
+.lg-spread::before{transform:translate(8px,6px) rotate(1deg);z-index:-2;box-shadow:5px 7px 0 var(--sh-drop,rgba(59,47,23,.16));}
+.lg-spread::after{transform:translate(16px,9px) rotate(1deg);z-index:-3;box-shadow:5px 7px 0 var(--sh-drop,rgba(59,47,23,.12));}
+
+.lg-page{position:relative;padding:40px 44px;min-width:0;display:flex;flex-direction:column;}
+.lg-page-left{padding-right:34px;height:602px;box-sizing:border-box;align-self:start;}
+.lg-page-right{padding-left:34px;}
+.lg-spine{position:relative;}
+.lg-spine::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:2px;transform:translateX(-50%);
+  background:var(--line);opacity:.5;filter:url(#torn-line);
+  box-shadow:3px 0 0 rgba(59,47,23,.16),-3px 0 0 rgba(59,47,23,.16);}
+
+.lg-phead{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+.lg-phead.r{justify-content:flex-end;text-align:right;}
+.lg-pnum{font-family:var(--font-mono);font-size:13px;color:var(--ink-soft);letter-spacing:.04em;white-space:nowrap;}
+.lg-ptitle{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.08em;font-size:14px;color:var(--line);white-space:nowrap;}
+.lg-hrule{flex:1;height:2px;min-width:24px;background:var(--line);opacity:.5;filter:url(#torn-line);}
+
+.lg-left-body{flex:1;display:flex;flex-direction:column;gap:18px;}
+.lg-titleblock{min-height:118px;}
+.lg-eyebrow{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--ink-soft);}
+.lg-welcome{font-family:var(--font-slab);font-size:38px;line-height:1.02;color:var(--line);margin:2px 0 0;text-wrap:balance;}
+.lg-illus{flex:none;height:230px;display:grid;place-items:center;}
+.lg-illus span{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em;}
+.lg-illus img{width:auto;height:100%;max-width:100%;max-height:230px;object-fit:contain;filter:url(#rough);}
+
+.lg-form{flex:1;display:flex;flex-direction:column;}
+.lg-lede{font-family:var(--font-body);font-size:16px;line-height:1.55;color:var(--ink-soft);margin:0 0 22px;text-wrap:pretty;}
+.lg-field{display:flex;flex-direction:column;gap:9px;margin-bottom:20px;}
+.lg-field > label,.lg-labelrow > label{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.09em;font-size:12px;color:var(--line);}
+.lg-input{position:relative;z-index:0;border-radius:8px;}
+.lg-input > .bg{border-radius:8px;background:var(--fill);}
+.lg-input input{font-family:var(--font-body);font-size:15.5px;color:var(--ink);background:none;border:0;outline:0;padding:12px 15px;width:100%;border-radius:8px;}
+.lg-input input::placeholder{color:var(--ink-faint);}
+.lg-input:focus-within > .bg{border-color:var(--teal);box-shadow:0 0 0 4px var(--teal-pale);}
+.lg-pwd-field .lg-labelrow{display:flex;align-items:baseline;justify-content:space-between;gap:14px;}
+.lg-forgot{font-family:var(--font-body);font-size:13px;color:var(--teal-deep,var(--teal));border:0;background:none;cursor:pointer;padding:0;}
+.lg-forgot:hover{color:var(--line);text-decoration:underline;}
+.lg-remember{display:flex;align-items:center;gap:10px;cursor:pointer;border:0;background:none;padding:0;margin-bottom:22px;text-align:left;}
+.lg-check{position:relative;z-index:0;width:22px;height:22px;flex:none;border-radius:6px;display:grid;place-items:center;}
+.lg-check > .bg{border-radius:6px;background:var(--fill);}
+.lg-check svg{position:relative;z-index:1;width:14px;height:14px;fill:none;stroke:var(--on-dark);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;opacity:0;}
+.lg-remember.on .lg-check > .bg{background:var(--teal);border-color:var(--teal-deep);}
+.lg-remember.on .lg-check svg{opacity:1;}
+.lg-remember span{font-family:var(--font-body);font-size:14.5px;color:var(--ink);}
+.lg-submit{width:100%;justify-content:center;margin-top:12px;}
+.lg-submit.btn.primary > .bg{box-shadow:3px 4px 0 var(--sh-drop,rgba(59,47,23,.28));}
+.lg-submit.btn.primary:active > .bg{transform:translate(2px,2px);box-shadow:1px 2px 0 var(--sh-drop,rgba(59,47,23,.22));}
+.lg-sep{display:flex;align-items:center;gap:14px;margin:auto 0 20px;}
+.lg-sep .lg-hrule{opacity:.4;}
+.lg-sep span{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--ink-soft);text-transform:uppercase;}
+.lg-register{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;margin-top:auto;margin-bottom:20px;}
+.lg-register p{margin:0;font-family:var(--font-body);font-size:14.5px;color:var(--ink-soft);}
+.lg-register .lg-register-btn{align-self:center;margin-bottom:0;min-height:46px;}
+
+.lg-google{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;border:0;background:none;cursor:pointer;
+  position:relative;z-index:0;border-radius:10px;padding:13px 18px;margin-bottom:20px;filter:url(#rough);
+  font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:13px;color:var(--line);}
+.lg-google > .bg{border-radius:10px;background:var(--paper);border-width:1.6px;box-shadow:3px 4px 0 var(--sh-drop,rgba(59,47,23,.18));}
+.lg-google:hover > .bg{background:var(--paper-piece);}
+.lg-google:active > .bg{transform:translate(2px,2px);box-shadow:1px 2px 0 var(--sh-drop,rgba(59,47,23,.16));}
+.lg-google-g{position:relative;z-index:1;width:20px;height:20px;flex:none;fill:var(--line);}
+.lg-google:disabled{cursor:default;opacity:.55;}
+.lg-google:disabled:hover > .bg{background:var(--paper);}
+.lg-google-soon{margin:0 0 10px;text-align:center;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);}
+
+.lg-close{position:absolute;top:-15px;right:-15px;z-index:6;width:44px;height:44px;border:0;cursor:pointer;border-radius:50%;
+  display:grid;place-items:center;filter:url(#rough);background:none;padding:0;}
+.lg-close > .bg{border-radius:50%;background:var(--paper);box-shadow:3px 4px 0 var(--sh-drop,rgba(59,47,23,.24));}
+.lg-close svg{position:relative;z-index:1;width:20px;height:20px;fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.lg-close:hover > .bg{background:var(--amber);}
+
+@media(prefers-reduced-motion:no-preference){
+  .lg-overlay.lg-open .lg-scrim{animation:lg-fade .22s ease both;}
+  .lg-overlay.lg-open .lg-modal{animation:lg-rise .28s cubic-bezier(.2,.9,.3,1.1) both;}
+}
+@keyframes lg-fade{from{opacity:0;}to{opacity:1;}}
+@keyframes lg-rise{from{opacity:0;transform:translateY(18px) scale(.97);}to{opacity:1;transform:none;}}
+
+@media(max-width:760px){
+  .lg-spread{grid-template-columns:1fr;height:auto;min-height:0;}
+  .lg-spine,.lg-page-left{display:none;}
+  .lg-page{padding:30px 26px;}
+}
+</style>
+</helmet>
+<div class="lg-demo">
+  <button class="btn primary lg-demo-trigger" onClick="{{ openModal }}"><i class="bg"></i>Abrir modal de acceso</button>
+
+  <div class="lg-overlay {{ openCls }}">
+    <div class="lg-scrim" onClick="{{ closeModal }}"></div>
+    <div class="lg-modal">
+      <button class="lg-close" onClick="{{ closeModal }}" aria-label="Cerrar">
+        <i class="bg"></i>
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+      <div class="lg-spread"><i class="bg"></i>
+
+        <div class="lg-page lg-page-left">
+          <div class="lg-phead">
+            <span class="lg-pnum">Pág. 1</span>
+            <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}"><span class="lg-ptitle">INICIAR SESIÓN</span></sc-if>
+            <sc-if value="{{ isRegister }}" hint-placeholder-val="{{ false }}"><span class="lg-ptitle">REGISTRAR</span></sc-if>
+            <span class="lg-hrule"></span>
+          </div>
+          <div class="lg-left-body">
+            <div class="lg-titleblock">
+              <div class="lg-eyebrow">Senior Lobo · Cuentos personalizados</div>
+              <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}"><h2 class="lg-welcome">Qué alegría volver a verte</h2></sc-if>
+              <sc-if value="{{ isRegister }}" hint-placeholder-val="{{ false }}"><h2 class="lg-welcome">Únete a la familia</h2></sc-if>
+            </div>
+            <div class="lg-illus"><img class="lobo-dia" src="assets/senorlobo-dia.svg" alt="Senior Lobo"><img class="lobo-noche" src="assets/senorlobo-noche.svg" alt="Senior Lobo"></div>
+            <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+            <div class="lg-register">
+              <p>¿Aún no tienes cuenta?</p>
+              <button class="lg-google lg-register-btn" onClick="{{ goRegister }}"><i class="bg"></i>Regístrate</button>
+            </div>
+            </sc-if>
+            <sc-if value="{{ isRegister }}" hint-placeholder-val="{{ false }}">
+            <div class="lg-register">
+              <p>¿Ya tienes cuenta?</p>
+              <button class="lg-google lg-register-btn" onClick="{{ goLogin }}"><i class="bg"></i>Inicia sesión</button>
+            </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <div class="lg-spine"></div>
+
+        <div class="lg-page lg-page-right">
+          <div class="lg-phead r">
+            <span class="lg-hrule"></span>
+            <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}"><span class="lg-ptitle">Iniciar sesión</span></sc-if>
+            <sc-if value="{{ isRegister }}" hint-placeholder-val="{{ false }}"><span class="lg-ptitle">Registrar</span></sc-if>
+            <span class="lg-pnum">Pág. 2</span>
+          </div>
+          <div class="lg-form">
+            <sc-if value="{{ isRegister }}" hint-placeholder-val="{{ false }}">
+            <p class="lg-lede">Crea tu cuenta para empezar a crear tus cuentos</p>
+            <div class="lg-field">
+              <label>Nombre</label>
+              <div class="lg-input"><i class="bg"></i>
+                <input type="text" value="{{ name }}" onChange="{{ onName }}" placeholder="Tu nombre">
+              </div>
+            </div>
+            <div class="lg-field">
+              <label>Correo electrónico</label>
+              <div class="lg-input"><i class="bg"></i>
+                <input type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="tucorreo@ejemplo.com">
+              </div>
+            </div>
+            <button class="lg-remember {{ acceptCls }}" onClick="{{ toggleAccept }}">
+              <span class="lg-check"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg></span>
+              <span>Acepto la política de privacidad de Senior Lobo</span>
+            </button>
+            <button class="btn primary lg-submit lg-submit-reg"><i class="bg"></i>Solicitar registro
+              <svg class="icon s" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </button>
+            </sc-if>
+            <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+            <p class="lg-lede">Introduce tus datos para crear tus cuentos</p>
+            <div class="lg-field">
+              <label>Correo electrónico</label>
+              <div class="lg-input"><i class="bg"></i>
+                <input type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="tucorreo@ejemplo.com">
+              </div>
+            </div>
+            <div class="lg-field lg-pwd-field">
+              <div class="lg-labelrow">
+                <label>Contraseña</label>
+                <button class="lg-forgot">¿Olvidaste tu contraseña?</button>
+              </div>
+              <div class="lg-input"><i class="bg"></i>
+                <input type="password" value="{{ pwd }}" onChange="{{ onPwd }}" placeholder="••••••••">
+              </div>
+            </div>
+            <button class="lg-remember {{ rememberCls }}" onClick="{{ toggleRemember }}">
+              <span class="lg-check"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg></span>
+              <span>Recuérdame en este dispositivo</span>
+            </button>
+            <button class="btn primary lg-submit"><i class="bg"></i>Entrar
+              <svg class="icon s" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </button>
+            <div class="lg-sep"><span class="lg-hrule"></span><span>o</span><span class="lg-hrule"></span></div>
+            <div class="lg-google-soon">Próximamente</div>
+            <button class="lg-google" disabled><i class="bg"></i>
+              <svg class="lg-google-g" viewBox="0 0 24 24" aria-hidden="true"><path d="M22.60229,10.00391a1.00005,1.00005,0,0,0-.98388-.82227H12.2a.99974.99974,0,0,0-1,1V14.0498a.99974.99974,0,0,0,1,1h3.9624a3.65162,3.65162,0,0,1-1.13183,1.1875A5.0604,5.0604,0,0,1,12.2,17.02246a4.93525,4.93525,0,0,1-4.64624-3.4378L7.55347,13.583a4.90382,4.90382,0,0,1,0-3.167l.00024-.00165A4.9356,4.9356,0,0,1,12.2,6.97754,4.37756,4.37756,0,0,1,15.3313,8.19531a1.00053,1.00053,0,0,0,1.39844-.01562L19.5979,5.31152a.99918.99918,0,0,0-.02539-1.43847A10.62342,10.62342,0,0,0,12.2,1,10.949,10.949,0,0,0,2.37134,7.05878l-.00147.00177A10.92175,10.92175,0,0,0,1.2,12a11.07862,11.07862,0,0,0,1.16992,4.93945l.00147.00177A10.949,10.949,0,0,0,12.2,23a10.5255,10.5255,0,0,0,7.29468-2.687l.00073-.00049.00079-.00085.00019-.00013.00006-.00012a10.78575,10.78575,0,0,0,3.30365-8.08386A12.51533,12.51533,0,0,0,22.60229,10.00391ZM12.2,3a8.68219,8.68219,0,0,1,5.2085,1.67285L15.95483,6.126A6.46322,6.46322,0,0,0,12.2,4.97754,6.88648,6.88648,0,0,0,6.21069,8.52832L5.14148,7.69958l-.585-.45367A8.95257,8.95257,0,0,1,12.2,3ZM3.67944,14.90332a9.02957,9.02957,0,0,1,0-5.80664l1.78223,1.38184a6.85381,6.85381,0,0,0,0,3.042ZM12.2,21A8.9528,8.9528,0,0,1,4.5564,16.75391l.37841-.29352,1.27588-.98969A6.88482,6.88482,0,0,0,12.2,19.02246a7.27662,7.27662,0,0,0,3.30573-.75079L17.19739,19.585A8.88989,8.88989,0,0,1,12.2,21Zm6.52588-2.76074-.183-.142L17.16553,17.028a5.60626,5.60626,0,0,0,1.39966-2.79553.9998.9998,0,0,0-.9834-1.18262H13.2V11.18164h7.54883c.03418.3457.05127.69531.05127,1.0459A9.05156,9.05156,0,0,1,18.72583,18.23926Z"></path></svg>
+              Inicia sesión con Google
+            </button>
+            </sc-if>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { open: true, register: false, name: '', email: '', pwd: '', remember: true, accept: false };
+
+  componentDidMount() {
+    this._onKey = (e) => { if (e.key === 'Escape' && this.state.open) this.setState({ open: false }); };
+    document.addEventListener('keydown', this._onKey);
+  }
+  componentWillUnmount() {
+    if (this._onKey) document.removeEventListener('keydown', this._onKey);
+  }
+
+  renderVals() {
+    return {
+      openCls: this.state.open ? 'lg-open' : '',
+      openModal: () => this.setState({ open: true }),
+      closeModal: () => this.setState({ open: false }),
+      isLogin: !this.state.register,
+      isRegister: this.state.register,
+      goRegister: () => this.setState({ register: true }),
+      goLogin: () => this.setState({ register: false }),
+      name: this.state.name,
+      onName: (e) => this.setState({ name: e.target.value }),
+      email: this.state.email,
+      onEmail: (e) => this.setState({ email: e.target.value }),
+      pwd: this.state.pwd,
+      onPwd: (e) => this.setState({ pwd: e.target.value }),
+      rememberCls: this.state.remember ? 'on' : '',
+      toggleRemember: () => this.setState({ remember: !this.state.remember }),
+      acceptCls: this.state.accept ? 'on' : '',
+      toggleAccept: () => this.setState({ accept: !this.state.accept }),
+    };
+  }
+}
+</script>
+</body>
+</html>

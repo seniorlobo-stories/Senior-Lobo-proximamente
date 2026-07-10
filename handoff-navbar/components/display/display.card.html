@@ -1,0 +1,50 @@
+<!-- @dsCard group="Components" viewport="700x420" name="Display" subtitle="Cards, list items, avatars, badges" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body{margin:0;padding:26px;display:grid;grid-template-columns:260px 1fr;gap:24px 28px;align-items:start}
+  .cluster{display:flex;flex-direction:column;gap:13px}
+  .cluster > .panel-label{margin:0}
+</style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="ph"><span>image placeholder</span></div>
+    <div class="body">
+      <h3>Trazo a mano</h3>
+      <p>Cada contorno se dibuja con una capa filtrada para simular tinta sobre papel.</p>
+      <span class="more">Read More <svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+    </div>
+  </div>
+
+  <div class="cluster">
+    <p class="panel-label">List Items</p>
+    <ul class="list">
+      <li>
+        <span class="ico"><svg class="icon s" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span>
+        <span class="txt"><b>Documentos</b><small>24 archivos</small></span>
+        <svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </li>
+      <li>
+        <span class="ico"><svg class="icon s" viewBox="0 0 24 24"><path d="M12 2l2.6 6.3L21 9l-5 4.3L17.5 20 12 16.3 6.5 20 8 13.3 3 9l6.4-.7z"/></svg></span>
+        <span class="txt"><b>Favoritos</b><small>8 elementos</small></span>
+        <svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </li>
+    </ul>
+
+    <p class="panel-label" style="margin-top:8px">Avatars</p>
+    <div class="avatars">
+      <span class="avatar">A<span class="status"></span></span>
+      <span class="avatar">B<span class="status"></span></span>
+      <span class="avatar away">C<span class="status"></span></span>
+      <span class="avatar">+5</span>
+    </div>
+  </div>
+
+<script src="../../assets/linea-runtime.js"></script>
+</body>
+</html>

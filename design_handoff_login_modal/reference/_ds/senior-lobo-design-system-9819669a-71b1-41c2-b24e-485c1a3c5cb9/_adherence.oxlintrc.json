@@ -1,0 +1,356 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "assets/**",
+              "components/display/**",
+              "components/feedback/**",
+              "components/forms/**",
+              "components/navigation/**",
+              "handoff-navbar/assets/**",
+              "handoff-navbar/templates/configuracion-usuario/**",
+              "handoff-navbar/templates/login/**",
+              "handoff-navbar/templates/wizard/**",
+              "ui_kits/senorlobo/**",
+              "uploads/Senior Lobo Design System/assets/**",
+              "uploads/Senior Lobo Design System/templates/configuracion-usuario/**",
+              "uploads/Senior Lobo Design System/templates/login/**",
+              "uploads/Senior Lobo Design System/templates/wizard/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Wakerobin Compressed|Mick Caster|Cormorant Upright))/i]",
+        "message": "Font not provided by the design system. Available: Wakerobin Compressed, Mick Caster, Cormorant Upright."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Alert'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|key|ref|className|style|children)$/]",
+        "message": "<Alert> doesn't accept that prop. Declared props: children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Avatar'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|status|away|key|ref|className|style|children)$/]",
+        "message": "<Avatar> doesn't accept that prop. Declared props: children, status, away."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Badge'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|children|count|key|ref|className|style|children)$/]",
+        "message": "<Badge> doesn't accept that prop. Declared props: variant, children, count."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='BookChapterPlate'] > JSXAttribute > JSXIdentifier[name!=/^(?:chapter|title|key|ref|className|style|children)$/]",
+        "message": "<BookChapterPlate> doesn't accept that prop. Declared props: chapter, title."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Crumb'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|href|key|ref|className|style|children)$/]",
+        "message": "<Crumb> doesn't accept that prop. Declared props: label, href."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|icon|disabled|key|ref|className|style|children)$/]",
+        "message": "<Button> doesn't accept that prop. Declared props: variant, icon, disabled."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Card'] > JSXAttribute > JSXIdentifier[name!=/^(?:media|title|children|more|onMore|key|ref|className|style|children)$/]",
+        "message": "<Card> doesn't accept that prop. Declared props: media, title, children, more, onMore."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Checkbox'] > JSXAttribute > JSXIdentifier[name!=/^(?:checked|defaultChecked|onChange|children|key|ref|className|style|children)$/]",
+        "message": "<Checkbox> doesn't accept that prop. Declared props: checked, defaultChecked, onChange, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='DayNightSwitch'] > JSXAttribute > JSXIdentifier[name!=/^(?:mode|defaultMode|onChange|syncTheme|persist|storageKey|key|ref|className|style|children)$/]",
+        "message": "<DayNightSwitch> doesn't accept that prop. Declared props: mode, defaultMode, onChange, syncTheme, persist, storageKey."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Dialog'] > JSXAttribute > JSXIdentifier[name!=/^(?:title|children|confirmLabel|cancelLabel|onConfirm|onCancel|actions|key|ref|className|style|children)$/]",
+        "message": "<Dialog> doesn't accept that prop. Declared props: title, children, confirmLabel, cancelLabel, onConfirm, onCancel, actions."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='IconButton'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|badge|key|ref|className|style|children)$/]",
+        "message": "<IconButton> doesn't accept that prop. Declared props: children, badge."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ListItem'] > JSXAttribute > JSXIdentifier[name!=/^(?:icon|title|meta|trailing|key|ref|className|style|children)$/]",
+        "message": "<ListItem> doesn't accept that prop. Declared props: icon, title, meta, trailing."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='NavLink'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|href|active|key|ref|className|style|children)$/]",
+        "message": "<NavLink> doesn't accept that prop. Declared props: label, href, active."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Pagination'] > JSXAttribute > JSXIdentifier[name!=/^(?:pages|current|onChange|key|ref|className|style|children)$/]",
+        "message": "<Pagination> doesn't accept that prop. Declared props: pages, current, onChange."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Spinner'] > JSXAttribute > JSXIdentifier[name!=/^(?:size|key|ref|className|style|children)$/]",
+        "message": "<Spinner> doesn't accept that prop. Declared props: size."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Radio'] > JSXAttribute > JSXIdentifier[name!=/^(?:selected|onSelect|children|key|ref|className|style|children)$/]",
+        "message": "<Radio> doesn't accept that prop. Declared props: selected, onSelect, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Step'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|key|ref|className|style|children)$/]",
+        "message": "<Step> doesn't accept that prop. Declared props: label."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Switch'] > JSXAttribute > JSXIdentifier[name!=/^(?:checked|defaultChecked|onChange|key|ref|className|style|children)$/]",
+        "message": "<Switch> doesn't accept that prop. Declared props: checked, defaultChecked, onChange."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='TabItem'] > JSXAttribute > JSXIdentifier[name!=/^(?:value|label|key|ref|className|style|children)$/]",
+        "message": "<TabItem> doesn't accept that prop. Declared props: value, label."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='TextField'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|helper|state|type|value|defaultValue|placeholder|onChange|inputProps|key|ref|className|style|children)$/]",
+        "message": "<TextField> doesn't accept that prop. Declared props: label, helper, state, type, value, defaultValue, placeholder, onChange, inputProps."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Toast'] > JSXAttribute > JSXIdentifier[name!=/^(?:tone|children|key|ref|className|style|children)$/]",
+        "message": "<Toast> doesn't accept that prop. Declared props: tone, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Tooltip'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|key|ref|className|style|children)$/]",
+        "message": "<Tooltip> doesn't accept that prop. Declared props: children."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "Alert": {
+        "replaces": []
+      },
+      "Avatar": {
+        "replaces": []
+      },
+      "Badge": {
+        "replaces": []
+      },
+      "BookChapterPlate": {
+        "replaces": []
+      },
+      "Crumb": {
+        "replaces": []
+      },
+      "Button": {
+        "replaces": []
+      },
+      "Card": {
+        "replaces": []
+      },
+      "Checkbox": {
+        "replaces": []
+      },
+      "DayNightSwitch": {
+        "replaces": []
+      },
+      "Dialog": {
+        "replaces": []
+      },
+      "IconButton": {
+        "replaces": []
+      },
+      "ListItem": {
+        "replaces": []
+      },
+      "NavLink": {
+        "replaces": []
+      },
+      "Pagination": {
+        "replaces": []
+      },
+      "Spinner": {
+        "replaces": []
+      },
+      "Radio": {
+        "replaces": []
+      },
+      "Step": {
+        "replaces": []
+      },
+      "Switch": {
+        "replaces": []
+      },
+      "TabItem": {
+        "replaces": []
+      },
+      "TextField": {
+        "replaces": []
+      },
+      "Toast": {
+        "replaces": []
+      },
+      "Tooltip": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--amber",
+      "--bosque",
+      "--brown",
+      "--bw",
+      "--bw-thick",
+      "--bw-thin",
+      "--castano",
+      "--crema",
+      "--error",
+      "--error-tint",
+      "--fill",
+      "--fill-2",
+      "--font-body",
+      "--font-disp",
+      "--font-mono",
+      "--font-slab",
+      "--gray",
+      "--h",
+      "--ink",
+      "--ink-faint",
+      "--ink-soft",
+      "--kraft",
+      "--line",
+      "--niebla",
+      "--on-dark",
+      "--pad",
+      "--paper",
+      "--paper-2",
+      "--paper-piece",
+      "--pergamino",
+      "--r-0",
+      "--r-1",
+      "--r-2",
+      "--r-3",
+      "--r-4",
+      "--r-5",
+      "--r-pill",
+      "--sh",
+      "--sh-drop",
+      "--shadow-1",
+      "--shadow-2",
+      "--shadow-3",
+      "--shadow-modal",
+      "--shadow-paper",
+      "--space-1",
+      "--space-2",
+      "--space-3",
+      "--space-4",
+      "--space-5",
+      "--space-6",
+      "--space-7",
+      "--teal",
+      "--teal-deep",
+      "--teal-mid",
+      "--teal-pale",
+      "--teal-tint",
+      "--tinta",
+      "--track-caps",
+      "--track-label",
+      "--track-mono",
+      "--w",
+      "--warn"
+    ],
+    "tokenKinds": {
+      "--bosque": "color",
+      "--amber": "color",
+      "--pergamino": "color",
+      "--castano": "color",
+      "--niebla": "color",
+      "--tinta": "color",
+      "--crema": "color",
+      "--paper": "color",
+      "--paper-2": "color",
+      "--kraft": "color",
+      "--paper-piece": "color",
+      "--fill": "color",
+      "--fill-2": "color",
+      "--line": "color",
+      "--teal": "color",
+      "--teal-deep": "color",
+      "--teal-mid": "color",
+      "--teal-tint": "color",
+      "--teal-pale": "color",
+      "--ink": "color",
+      "--ink-soft": "color",
+      "--ink-faint": "color",
+      "--error": "color",
+      "--error-tint": "color",
+      "--warn": "color",
+      "--brown": "color",
+      "--gray": "color",
+      "--on-dark": "color",
+      "--sh-drop": "color",
+      "--font-disp": "font",
+      "--font-body": "font",
+      "--font-slab": "font",
+      "--font-mono": "font",
+      "--track-label": "spacing",
+      "--track-caps": "spacing",
+      "--track-mono": "spacing",
+      "--bw": "spacing",
+      "--bw-thin": "spacing",
+      "--bw-thick": "spacing",
+      "--r-0": "spacing",
+      "--r-1": "spacing",
+      "--r-2": "spacing",
+      "--r-3": "spacing",
+      "--r-4": "spacing",
+      "--r-5": "spacing",
+      "--r-pill": "spacing",
+      "--shadow-1": "shadow",
+      "--shadow-2": "shadow",
+      "--shadow-3": "shadow",
+      "--shadow-paper": "shadow",
+      "--shadow-modal": "shadow",
+      "--sh": "shadow",
+      "--space-1": "spacing",
+      "--space-2": "spacing",
+      "--space-3": "spacing",
+      "--space-4": "spacing",
+      "--space-5": "spacing",
+      "--space-6": "spacing",
+      "--space-7": "spacing",
+      "--w": "spacing",
+      "--h": "spacing",
+      "--pad": "spacing"
+    },
+    "fontFamilies": [
+      "Cormorant Upright",
+      "Mick Caster",
+      "Wakerobin Compressed"
+    ]
+  }
+}

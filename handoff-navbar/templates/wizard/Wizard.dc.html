@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Wizard · Libro abierto" description="Asistente multi-paso con forma de libro abierto: banderines superiores (Inicio, Ayuda, Salir), pestañas laterales por paso, lomo central, vista previa del cuento a la izquierda y formulario del paso a la derecha. Clicable, con Día/Noche y responsive." -->
+<helmet>
+<script src="./ds-base.js"></script>
+<script src="../../assets/linea-runtime.js"></script>
+<style>
+.wz-app{min-height:100vh;background:var(--kraft);
+  background-image:radial-gradient(rgba(59,47,23,.05) 1px,transparent 1px);background-size:5px 5px;
+  color:var(--ink);font-family:var(--font-body);padding:0 clamp(16px,3vw,44px) 60px;}
+.wz-app *{box-sizing:border-box;}
+.wz-amber{--wz-active:var(--amber);--wz-active-line:color-mix(in srgb,var(--amber) 55%,var(--tinta));--wz-active-text:var(--tinta);}
+.wz-bosque{--wz-active:var(--bosque);--wz-active-line:color-mix(in srgb,var(--bosque) 50%,#000);--wz-active-text:var(--pergamino);}
+:root[data-theme="noche"] .wz-bosque{--wz-active-line:color-mix(in srgb,var(--bosque) 30%,var(--line));--wz-active-text:var(--tinta);}
+
+/* ---- navbar · hoja rasgada de papel con sombra ---- */
+.wz-topbar{position:relative;z-index:5;margin:0 calc(-1 * clamp(16px,3vw,44px)) 34px;padding-top:7px;}
+.wz-topbar > .bg{position:absolute;inset:0;z-index:-1;border:0;border-radius:0;
+  background-color:var(--pergamino);background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+  box-shadow:4px 6px 0 rgba(59,47,23,.18);filter:url(#torn-paper);}
+.wz-nav-inner{position:relative;z-index:1;max-width:1200px;margin:0 auto;
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:20px clamp(16px,3vw,44px) 22px;}
+
+.wz-brand{display:flex;align-items:center;gap:14px;flex:none;border:0;background:none;cursor:pointer;text-align:left;padding:0;}
+.wz-brand .wz-mark{width:52px;height:52px;flex:none;display:grid;place-items:center;}
+.wz-brand .wz-mark img{width:100%;height:100%;object-fit:contain;filter:url(#rough);}
+.lobo-noche{display:none;}
+:root[data-theme="noche"] .lobo-dia{display:none;}
+:root[data-theme="noche"] .lobo-noche{display:block;}
+.wz-brand .wz-word{display:flex;flex-direction:column;gap:3px;line-height:1;}
+.wz-brand .wz-word b{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.14em;font-weight:700;font-size:21px;color:var(--line);white-space:nowrap;}
+.wz-brand .wz-word small{font-family:var(--font-body);font-style:italic;font-size:13.5px;color:var(--ink-soft);white-space:nowrap;}
+
+.wz-nav{display:flex;align-items:center;gap:5px;margin-left:12px;flex-wrap:wrap;}
+.wz-nlink{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.07em;font-size:12.5px;font-weight:600;
+  color:var(--ink-soft);padding:9px 14px;border-radius:9px;border:0;background:none;cursor:pointer;position:relative;white-space:nowrap;}
+.wz-nlink::after{content:"";position:absolute;left:14px;right:14px;bottom:4px;height:2px;background:var(--bosque);filter:url(#torn-line);opacity:0;transition:opacity .15s;}
+:root[data-theme="noche"] .wz-nlink::after{background:var(--amber);}
+.wz-nlink:hover{color:var(--line);}
+.wz-nlink:hover::after{opacity:.85;}
+
+:root[data-theme="noche"] .wz-topbar > .bg{box-shadow:4px 6px 0 rgba(245,237,216,.5);}
+
+.wz-tools{margin-left:auto;display:flex;align-items:center;gap:14px;}
+
+/* ---- avatar de usuario + menú desplegable (sesión iniciada) ---- */
+.cf-user{flex:none;}
+.wz-user{display:flex;align-items:center;gap:11px;flex:none;border:0;background:none;cursor:pointer;padding:0;}
+.cf-user > .wz-user{border-radius:26px;padding:3px;position:relative;z-index:3;}
+.cf-user > .wz-user.on{transform:translateY(1px);}
+.cf-menu{position:absolute;top:calc(100% - 18px);right:clamp(16px,3vw,44px);z-index:30;min-width:312px;padding:34px 30px 16px;display:none;}
+.cf-menu.open{display:block;}
+.cf-menu > .bg{position:absolute;inset:0;z-index:-1;border:0;background-color:var(--pergamino);
+  background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+  box-shadow:4px 6px 0 rgba(59,47,23,.24);filter:url(#torn-paper);}
+:root[data-theme="noche"] .cf-menu > .bg{box-shadow:4px 6px 0 rgba(245,237,216,.5);}
+.cf-menu-head{display:flex;align-items:center;gap:12px;padding:12px 12px 14px;}
+.cf-menu-head .avatar{flex:none;}
+.cf-menu-name{display:flex;flex-direction:column;gap:3px;line-height:1.15;min-width:0;}
+.cf-menu-name b{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:12.5px;color:var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cf-menu-name small{font-family:var(--font-body);font-size:12.5px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;}
+.cf-menu-rule{height:2px;margin:2px 8px 6px;background:var(--line);opacity:.4;filter:url(#torn-line);}
+.cf-menu-item{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;cursor:pointer;text-align:left;
+  padding:11px 12px;border-radius:8px;font-family:var(--font-body);font-size:14.5px;color:var(--ink);}
+.cf-menu-item svg{width:19px;height:19px;flex:none;fill:none;stroke:var(--ink-soft);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough);}
+.cf-menu-item:hover{background:var(--paper-piece);color:var(--line);}
+.cf-menu-item.cf-menu-danger{color:color-mix(in srgb,var(--error) 72%,var(--line));}
+.cf-menu-item.cf-menu-danger svg{stroke:var(--error);}
+.cf-menu-item.cf-menu-danger:hover{background:color-mix(in srgb,var(--error) 12%,transparent);color:var(--error);}
+@media(prefers-reduced-motion:no-preference){.cf-menu.open{animation:cf-pop .16s cubic-bezier(.2,.9,.3,1.1) both;}}
+@keyframes cf-pop{from{opacity:0;transform:translateY(-6px) scale(.98);}to{opacity:1;transform:none;}}
+
+/* ---- hamburguesa + menú móvil de navegación (sólo bajo 640px) ---- */
+.wz-burger{display:none;flex:none;width:44px;height:44px;border:0;background:none;cursor:pointer;padding:0;
+  place-items:center;border-radius:10px;position:relative;z-index:3;}
+.wz-burger svg{width:26px;height:26px;fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;overflow:visible;}
+.wz-burger svg .l{transition:transform .34s cubic-bezier(.2,.9,.3,1.25),opacity .18s ease;transform-box:fill-box;transform-origin:center;}
+.wz-burger.open .l-top{transform:translateY(5px) rotate(45deg);}
+.wz-burger.open .l-mid{opacity:0;transform:scaleX(.15);}
+.wz-burger.open .l-bot{transform:translateY(-5px) rotate(-45deg);}
+@media(prefers-reduced-motion:reduce){.wz-burger svg .l{transition:none;}}
+.wz-burger:active{transform:translateY(1px);}
+/* .wz-topbar-menu: menú de navegación móvil de la barra superior — con nombre
+   distinto de .wz-menu porque esa clase ya la usan los desplegables de los
+   selects personalizados del formulario del wizard. */
+.wz-topbar-menu{display:none;position:absolute;top:calc(100% - 18px);right:clamp(16px,3vw,44px);z-index:30;min-width:250px;
+  flex-direction:column;padding:30px 24px 14px;}
+.wz-topbar-menu.open{display:flex;}
+.wz-topbar-menu > .bg{position:absolute;inset:0;z-index:-1;border:0;background-color:var(--pergamino);
+  background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+  box-shadow:4px 6px 0 rgba(59,47,23,.20);filter:url(#torn-paper);}
+:root[data-theme="noche"] .wz-topbar-menu > .bg{box-shadow:4px 6px 0 rgba(245,237,216,.5);}
+.wz-topbar-menu .wz-nlink{width:100%;text-align:left;padding:12px 14px;border-radius:9px;}
+.wz-topbar-menu .wz-nlink::after{left:14px;right:auto;width:26px;bottom:6px;}
+.wz-menu-dn{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  margin-top:8px;padding:12px 14px 4px;border-top:2px dashed color-mix(in srgb,var(--line) 22%,transparent);}
+.wz-menu-dn span{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.07em;font-size:12.5px;font-weight:600;color:var(--ink-soft);}
+.wz-menu-dn .dn-lbl{color:var(--ink-faint);transition:color .2s;}
+:root[data-theme="dia"] .wz-menu-dn .dn-lbl-dia{color:var(--line);}
+:root[data-theme="noche"] .wz-menu-dn .dn-lbl-noche{color:var(--line);}
+.wz-menu-dn .dn-switch > .bg,.wz-menu-dn .dn-switch > .glyph,.wz-menu-dn .dn-switch > .stars{display:none;}
+.wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.sun{opacity:0;}
+.wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.moon{opacity:1;}
+.wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.moon{opacity:0;}
+.wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.sun{opacity:1;}
+.wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.moon svg{stroke:#3b2f17;}
+.wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob > .bg,
+:root[data-theme="noche"] .wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob > .bg{background:#253560;border-color:#1b2744;}
+.wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.sun svg{stroke:#f0e6c8;}
+@media(max-width:640px){
+  .wz-topbar .wz-nav-inner > .wz-nav{display:none;}
+  .wz-topbar .wz-tools > .dn-desktop{display:none;}
+  .wz-topbar .wz-burger{display:grid;}
+}
+
+/* ---- book ---- */
+.wz-book{position:relative;max-width:1200px;margin:0 auto;padding:0 168px 0 0;}
+.wz-spread{position:relative;z-index:2;border-radius:6px;display:grid;grid-template-columns:1fr 40px 1fr;min-height:602px;}
+.wz-spread.chip{z-index:2 !important;}
+.wz-spread > .bg{border-radius:6px;box-shadow:5px 7px 0 rgba(59,47,23,.20);}
+/* hojas apiladas detrás — sensación de que el libro tiene más páginas */
+.wz-spread::before,.wz-spread::after{content:"";position:absolute;inset:0;border-radius:6px;pointer-events:none;
+  background-color:var(--pergamino);
+  background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+  filter:url(#torn-paper-2);}
+.wz-spread::before{transform:translate(8px,6px) rotate(1deg);z-index:-2;box-shadow:5px 7px 0 rgba(59,47,23,.14);}
+.wz-spread::after{transform:translate(16px,9px) rotate(1deg);z-index:-3;box-shadow:5px 7px 0 rgba(59,47,23,.10);}
+.wz-nopreview .wz-spread{grid-template-columns:1fr;}
+.wz-nopreview .wz-spine,.wz-nopreview .wz-page-left{display:none;}
+.wz-page{position:relative;padding:34px 42px 98px;min-width:0;}
+.wz-page-left{padding-right:30px;padding-bottom:49px;}
+.wz-page-right{padding-left:30px;}
+.wz-spine{position:relative;}
+.wz-spine::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:var(--bw);transform:translateX(-50%);
+  background:var(--line);opacity:.5;filter:url(#torn-line);
+  box-shadow:3px 0 0 rgba(59,47,23,.16),-3px 0 0 rgba(59,47,23,.16);}
+
+/* running head */
+.wz-phead{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
+.wz-phead.r{justify-content:flex-end;text-align:right;}
+.wz-pnum{font-family:var(--font-mono);font-size:14px;color:var(--ink-soft);letter-spacing:.04em;white-space:nowrap;}
+.wz-ptitle{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.08em;font-size:15px;color:var(--line);white-space:nowrap;}
+.wz-hrule{flex:1;height:2px;min-width:24px;background:var(--line);opacity:.5;filter:url(#torn-line);}
+
+/* ---- side bookmark flags ---- */
+.wz-tabs{position:absolute;top:34px;right:0;width:208px;z-index:0;display:flex;flex-direction:column;gap:12px;}
+.wz-tab{position:relative;filter:url(#rough) drop-shadow(3px 4px 0 rgba(59,47,23,.20));cursor:pointer;border:0;background:none;padding:0;text-align:left;
+  min-height:62px;transform:translateX(-10px);transition:transform .18s ease;}
+.wz-tab::before,.wz-tab::after{content:"";position:absolute;clip-path:polygon(0 0,100% 0,84% 50%,100% 100%,0 100%);}
+.wz-tab::before{inset:0;background:var(--flag-line,var(--line));}
+.wz-tab::after{inset:2.5px;background:var(--flag-fill,var(--paper));}
+.wz-tab > span{position:relative;z-index:2;display:block;padding:12px 34px 12px 78px;}
+.wz-tab-top{display:block;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:12.5px;color:var(--line);}
+.wz-tab-sub{display:block;font-family:var(--font-body);font-size:14.5px;color:var(--ink-soft);margin-top:1px;}
+.wz-tab.done .wz-tab-sub{color:var(--ink);}
+.wz-tab:hover{transform:translateX(6px);z-index:2;}
+.wz-tab.on{--flag-fill:var(--wz-active);--flag-line:var(--wz-active-line);transform:translateX(24px);z-index:3;}
+.wz-tab.on:hover{transform:translateX(24px);}
+.wz-tab.locked{cursor:not-allowed;opacity:.48;filter:url(#rough) drop-shadow(2px 3px 0 rgba(59,47,23,.12));}
+.wz-tab.locked,.wz-tab.locked:hover{transform:translateX(-10px);}
+.wz-tab.locked .wz-tab-top,.wz-tab.locked .wz-tab-sub{color:var(--ink-faint);}
+.wz-tab.on .wz-tab-top,.wz-tab.on .wz-tab-sub{color:var(--wz-active-text);}
+
+/* ---- aviso flotante que sigue al cursor (banderines/botón bloqueados) ----
+   Anclado a nivel de página con z-index muy alto → INDEPENDIENTE del apilamiento
+   del libro, de modo que los banderines siguen tucados DETRÁS de las hojas. */
+.wz-foot-btns .btn{position:relative;}
+.wz-foot-btns .btn.primary > .bg,.wz-foot-btns .btn.ghost > .bg{box-shadow:3px 4px 0 rgba(59,47,23,.22);}
+.wz-foot-btns .btn.primary:active > .bg,.wz-foot-btns .btn.ghost:active > .bg{transform:translateY(2px);box-shadow:2px 2px 0 rgba(59,47,23,.22);}
+.wz-cursor-tip{position:fixed;left:0;top:0;z-index:2147483000;transform:translate(-50%,-100%);
+  width:max-content;max-width:248px;margin-top:-6px;pointer-events:none;opacity:0;
+  font-family:var(--font-body);font-size:12.5px;line-height:1.42;color:var(--ink);text-align:left;
+  background:var(--paper);border:1.5px solid var(--line);border-radius:9px;padding:9px 12px;
+  box-shadow:3px 4px 0 rgba(59,47,23,.18);text-wrap:pretty;filter:url(#rough);
+  transition:opacity .12s ease;}
+.wz-cursor-tip.on{opacity:1;}
+
+/* ---- botón hoja rasgada con renglones (al lado / abajo del libro) ---- */
+.wz-sheetbtn{position:absolute;right:112px;bottom:2px;margin-left:20px;z-index:1;border:0;cursor:pointer;padding:0;background:none;
+  width:47px;height:59px;filter:url(#rough);transition:transform .18s ease;display:block;transform:rotate(90deg);}
+.wz-sheetbtn > .bg{position:absolute;inset:0;border:1.5px solid var(--line);border-radius:4px;
+  background:var(--pergamino);background-image:radial-gradient(rgba(120,90,40,.05) 1px,transparent 1px);background-size:4px 4px;
+  box-shadow:2px 3px 0 rgba(59,47,23,.18);filter:url(#torn-paper);}
+.wz-sheet-lines{position:absolute;left:8px;right:8px;top:11px;bottom:9px;z-index:1;
+  background:repeating-linear-gradient(var(--line) 0 1.5px,transparent 1.5px 8px);opacity:.55;}
+.wz-sheetbtn:hover{transform:translateX(6px) rotate(90deg);}
+.wz-sheetbtn.on > .bg{background-color:var(--amber);border-color:color-mix(in srgb,var(--amber) 55%,var(--tinta));}
+.wz-sheetbtn.on .wz-sheet-lines{background:repeating-linear-gradient(var(--tinta) 0 2px,transparent 2px 15px);opacity:.75;}
+
+/* ---- form ---- */
+.wz-formbody{max-width:580px;}
+.wz-lede{font-family:var(--font-body);font-size:16.5px;line-height:1.55;color:var(--ink-soft);margin:0 0 22px;text-wrap:pretty;}
+.wz-field{display:flex;flex-direction:column;gap:9px;margin-bottom:24px;}
+.wz-row2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
+.wz-row2 .wz-field{margin-bottom:24px;}
+@media(max-width:560px){.wz-row2{grid-template-columns:1fr;gap:0;}}
+.wz-field > label,.wz-labelrow > label{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.09em;font-size:12px;color:var(--line);}
+.wz-help{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-soft);}
+.wz-labelrow{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+.wz-req{color:var(--error);}
+.wz-fillex{display:inline-flex;align-items:center;gap:6px;border:0;background:none;cursor:pointer;padding:2px 4px;
+  font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;font-size:11.5px;color:var(--teal-deep,var(--teal));}
+.wz-fillex .icon{width:14px;height:14px;}
+.wz-fillex:hover{color:var(--line);}
+.wz-fillex:active{color:var(--amber);}
+.wz-counter{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-soft);align-self:flex-start;}
+.wz-input{position:relative;z-index:0;border-radius:8px;}
+.wz-input > .bg{border-radius:8px;background:var(--fill);}
+.wz-input input,.wz-input textarea{font-family:var(--font-body);font-size:15.5px;color:var(--ink);
+  background:none;border:0;outline:0;padding:12px 15px;width:100%;border-radius:8px;resize:vertical;}
+.wz-select{font-family:var(--font-body);font-size:15.5px;color:var(--ink);background:none;border:0;outline:0;
+  padding:12px 40px 12px 15px;width:100%;border-radius:8px;cursor:pointer;position:relative;z-index:1;
+  -webkit-appearance:none;appearance:none;}
+.wz-caret{width:18px;height:18px;pointer-events:none;flex:none;
+  fill:none;stroke:var(--ink-soft);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s ease;}
+
+/* ---- custom select ---- */
+.wz-sel{position:relative;}
+.wz-sel-trigger{position:relative;z-index:0;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+  font-family:var(--font-body);font-size:15.5px;color:var(--ink);background:none;border:0;outline:0;cursor:pointer;
+  padding:12px 15px;border-radius:8px;text-align:left;}
+.wz-sel-trigger > .bg{border-radius:8px;background:var(--fill);}
+.wz-sel-trigger > span{position:relative;z-index:1;}
+.wz-sel-trigger > .wz-caret{position:relative;z-index:1;}
+.wz-sel.open .wz-sel-trigger > .bg{border-color:var(--teal);box-shadow:0 0 0 4px var(--teal-pale);}
+.wz-sel.open .wz-caret{transform:rotate(180deg);}
+.wz-menu{position:absolute;z-index:40;top:calc(100% + 8px);left:0;right:0;padding:7px;border-radius:10px;
+  display:none;flex-direction:column;gap:2px;filter:url(#rough);}
+.wz-menu > .bg{border-radius:10px;background:var(--paper);box-shadow:4px 6px 0 rgba(59,47,23,.20);}
+.wz-sel.open .wz-menu{display:flex;}
+.wz-opt{position:relative;z-index:1;font-family:var(--font-body);font-size:15px;color:var(--ink);text-align:left;
+  background:none;border:0;cursor:pointer;padding:10px 13px;border-radius:7px;transition:background .12s,color .12s;}
+.wz-opt:hover{background:var(--paper-piece);}
+.wz-opt.on{background:var(--teal);color:var(--on-dark);}
+.wz-chip-mas{border-style:dashed;min-width:200px;justify-content:center;}
+.wz-chip-mas > .bg{border-style:dashed;}
+.wz-menu-mas{left:auto;right:0;width:max-content;min-width:236px;max-width:340px;padding:7px;}
+.wz-menu-list{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:3px;max-height:250px;overflow-y:auto;}
+.wz-menu-edad{width:max-content;min-width:220px;}
+.wz-menu-edad-list{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:2px;max-height:240px;overflow-y:auto;}
+.wz-menu-edad-list .wz-opt{text-align:center;padding:9px 8px;}
+.wz-sel-input{padding:0;}
+.wz-sel-input .wz-caret{margin-right:15px;}
+.wz-edad-input{position:relative;z-index:1;flex:1;min-width:0;font-family:var(--font-body);font-size:15.5px;color:var(--ink);
+  background:none;border:0;outline:0;padding:12px 0 12px 15px;}
+.wz-edad-input::placeholder{color:var(--ink-faint);}
+.wz-menu-head{grid-column:1 / -1;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.09em;
+  font-size:10.5px;color:var(--ink-soft);padding:8px 13px 4px;}
+.wz-input input::placeholder,.wz-input textarea::placeholder{color:var(--ink-faint);}
+.wz-input textarea.wz-trama,.wz-input input.wz-trama{color:var(--ink-faint);font-style:italic;}
+.wz-input textarea.wz-trama:focus,.wz-input input.wz-trama:focus{color:var(--ink);font-style:normal;}
+.wz-input:focus-within > .bg{border-color:var(--teal);box-shadow:0 0 0 4px var(--teal-pale);}
+
+.wz-choicerow{display:flex;flex-wrap:wrap;gap:10px;}
+.wz-lbl-ic{width:16px;height:16px;flex:none;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px;}
+.wz-lbl-ic.pos{stroke:var(--bosque);}
+.wz-lbl-ic.neg{stroke:var(--error);}
+.wz-opt-tag{font-family:var(--font-body);font-weight:400;text-transform:none;letter-spacing:0;font-size:.82em;color:var(--ink-soft);}
+.wz-choicerow.neg .wz-chip.on{color:var(--on-dark);}
+.wz-choicerow.neg .wz-chip.on > .bg{background:var(--error);border-color:color-mix(in srgb,var(--error) 68%,#000);}
+.wz-chip{position:relative;z-index:0;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.05em;
+  font-size:13px;color:var(--line);background:none;border:0;cursor:pointer;padding:9px 16px;border-radius:9px;
+  display:inline-flex;align-items:center;gap:7px;}
+.wz-chip > .bg{border-radius:9px;background:var(--paper-piece);}
+.wz-chip:active > .bg{box-shadow:inset 2px 3px 0 rgba(46,58,46,.22);}
+.wz-chip.on{color:var(--on-dark);}
+.wz-chip.on > .bg{background:var(--teal);border-color:var(--teal-deep);}
+.wz-chip.wz-chip-off{opacity:.42;cursor:not-allowed;}
+.wz-chip.wz-chip-off:active > .bg{box-shadow:none;}
+
+.wz-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.wz-card{position:relative;z-index:0;cursor:pointer;border:0;background:none;padding:15px;text-align:left;border-radius:11px;}
+.wz-card > .bg{border-radius:11px;background:var(--paper-piece);}
+.wz-card.on > .bg{background:var(--teal-pale);border-width:3px;}
+.wz-hatch{height:82px;border-radius:7px;border:1.5px dashed var(--teal-tint);
+  background:repeating-linear-gradient(45deg,var(--teal-pale) 0 6px,transparent 6px 12px);margin-bottom:11px;}
+.wz-card-t{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:12.5px;color:var(--line);}
+.wz-card-s{font-family:var(--font-body);font-size:13.5px;color:var(--ink-soft);margin-top:2px;}
+.wz-badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;}
+
+/* ---- número de páginas ---- */
+.wz-pages{display:flex;flex-wrap:wrap;gap:8px;}
+.wz-pagebtn{position:relative;z-index:0;font-family:var(--font-slab);font-size:13px;line-height:1;color:var(--line);
+  background:none;border:0;cursor:pointer;min-width:41px;height:41px;padding:0 11px;border-radius:999px;
+  display:grid;place-items:center;transition:transform .14s ease;outline:0;-webkit-tap-highlight-color:transparent;}
+.wz-pagebtn:focus-visible{outline:0;}
+.wz-pagebtn:focus-visible > .bg{box-shadow:0 0 0 3px color-mix(in srgb,var(--line) 22%,transparent);}
+.wz-pagebtn > .bg{border-radius:999px;background:var(--paper);}
+.wz-pagebtn > span{position:relative;z-index:1;}
+.wz-pagebtn:hover{transform:translateY(-2px);}
+.wz-pagebtn.on{color:var(--wz-active-text);filter:url(#rough);}
+.wz-pagebtn.on > .bg{background:var(--wz-active);border-color:var(--wz-active-line);border-width:2px;
+  box-shadow:3px 4px 0 rgba(59,47,23,.18);}
+
+/* ---- versión audiolibro ---- */
+.wz-audio{position:relative;z-index:0;display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:15px;align-items:center;
+  padding:15px 17px;border-radius:11px;transition:transform .14s ease;}
+.wz-audio > .bg{border-radius:11px;background:var(--paper-piece);}
+.wz-audio.on{filter:url(#rough);}
+.wz-audio.on > .bg{background:var(--teal-pale);border-width:2.5px;border-color:var(--teal);}
+.wz-audio-ic{position:relative;z-index:1;width:30px;height:30px;flex:none;fill:none;stroke:var(--ink-soft);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.wz-audio.on .wz-audio-ic{stroke:var(--teal-deep,var(--teal));}
+.wz-audio-info{position:relative;z-index:1;min-width:0;}
+.wz-audio-t{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:13px;color:var(--line);}
+.wz-audio-desc{font-family:var(--font-body);font-size:13px;line-height:1.5;color:var(--ink-soft);margin:2px 0 0;text-wrap:pretty;}
+.wz-audio-price{position:relative;z-index:1;font-family:var(--font-disp);letter-spacing:.04em;font-size:12.5px;
+  color:var(--wz-active-text,var(--tinta));padding:5px 11px;border-radius:999px;background:var(--wz-active,var(--amber));white-space:nowrap;filter:url(#rough);}
+@media(max-width:560px){
+  .wz-audio{grid-template-columns:auto minmax(0,1fr) auto;}
+  .wz-audio-price{grid-column:2 / -1;justify-self:start;}
+}
+.wz-voz{grid-column:1 / -1;position:relative;z-index:1;margin-top:13px;display:flex;flex-direction:column;gap:9px;}
+.wz-voz-label{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.09em;font-size:12px;color:var(--line);}
+.wz-voz-ic{width:15px;height:15px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ---- tono de la historia · día / noche ---- */
+.wz-tono-grid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center;}
+.wz-tono-switch{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:12px;}
+.wz-tono-title{justify-content:flex-start;}
+.wz-tono-title .wz-tono-ic{stroke:var(--teal-deep,var(--teal));}
+.wz-tono-title.wz-tono-noche .wz-tono-ic{stroke:var(--line);fill:var(--line);}
+.wz-tono-panel{min-width:0;display:flex;flex-direction:column;gap:9px;}
+@media(max-width:560px){
+  .wz-tono-grid{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;}
+  .wz-tono-panel{display:contents;}
+  .wz-tono-switch{order:1;flex:none;}
+  .wz-tono-title{order:2;margin-left:auto;justify-content:flex-end;}
+  .wz-tono-desc{order:3;flex-basis:100%;width:100%;margin-top:2px;}
+}
+.wz-tono{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:560px){.wz-tono{grid-template-columns:1fr;}}
+.wz-tono-opt{position:relative;z-index:0;cursor:pointer;border:0;background:none;padding:15px 16px 16px;text-align:left;border-radius:11px;display:flex;flex-direction:column;gap:9px;transition:transform .14s ease;}
+.wz-tono-opt:hover{transform:translateY(-2px);}
+.wz-tono-opt > .bg{border-radius:11px;background:var(--paper-piece);}
+.wz-tono-opt.on{filter:url(#rough);}
+.wz-tono-opt.on > .bg{background:var(--teal-pale);border-width:3px;border-color:var(--teal);}
+.wz-tono-opt.wz-tono-noche.on > .bg{background:color-mix(in srgb,var(--tinta,var(--line)) 12%,var(--paper-piece));border-color:var(--line);}
+.wz-tono-head{position:relative;z-index:1;display:flex;align-items:center;gap:10px;}
+.wz-tono-ic{width:24px;height:24px;flex:none;fill:none;stroke:var(--ink-soft);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.wz-tono-opt.on .wz-tono-ic{stroke:var(--teal-deep,var(--teal));}
+.wz-tono-opt.wz-tono-noche.on .wz-tono-ic{stroke:var(--line);fill:var(--line);}
+.wz-tono-t{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.06em;font-size:13px;color:var(--line);}
+.wz-tono-desc{position:relative;z-index:1;font-family:var(--font-body);font-size:13px;line-height:1.5;color:var(--ink-soft);margin:0;text-wrap:pretty;}
+
+/* ---- preview page ---- */
+.wz-pv-toggle{display:none;flex:none;width:34px;height:34px;border:0;cursor:pointer;border-radius:9px;
+  background:var(--paper-piece);place-items:center;padding:0;filter:url(#rough);}
+.wz-pv-toggle:hover{background:var(--teal-pale);}
+.wz-pv-toggle-ic{width:20px;height:20px;fill:none;stroke:var(--line);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s ease;}
+.wz-page-left.wz-collapsed .wz-pv-toggle-ic{transform:rotate(-90deg);}
+.wz-pv{display:flex;flex-direction:column;gap:17px;}
+.wz-pv-eyebrow{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--ink-soft);}
+.wz-pv-title{font-family:var(--font-slab);font-size:34px;line-height:1.04;color:var(--line);margin:3px 0 0;}
+.wz-pv-illus{height:204px;border-radius:9px;border:1.5px dashed var(--teal-tint);
+  background:repeating-linear-gradient(45deg,var(--teal-pale) 0 7px,transparent 7px 14px);display:grid;place-items:center;}
+.wz-pv-illus span{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em;}
+.wz-pcard{position:relative;z-index:0;display:grid;grid-template-columns:104px 1fr;gap:16px;align-items:center;padding:14px;border-radius:11px;}
+.wz-pcard{cursor:pointer;transition:transform .14s ease;}
+.wz-pcard:hover{transform:translateX(3px);}
+.wz-pcard > .bg{border-radius:11px;background:var(--paper-piece);}
+.wz-pcard.on{filter:url(#rough);}
+.wz-pcard.on > .bg{background:color-mix(in srgb,var(--wz-active) 22%,var(--paper-piece));border-color:var(--wz-active-line);border-width:2.5px;box-shadow:inset 4px 0 0 var(--wz-active);}
+.wz-pcard.on .wz-pcard-name{color:var(--wz-active-line);}
+.wz-pcard-illus{position:relative;z-index:1;height:120px;border-radius:7px;border:1.5px dashed var(--teal-tint);
+  background:repeating-linear-gradient(45deg,var(--teal-pale) 0 7px,transparent 7px 14px);display:grid;place-items:center;}
+.wz-pcard-illus span{font-family:var(--font-mono);font-size:9.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;}
+.wz-pcard-badge{margin-top:9px}
+.wz-pcard-info{position:relative;z-index:1;min-width:0;}
+.wz-pcard-name{font-family:var(--font-slab);font-size:24px;line-height:1.05;color:var(--line);margin:2px 0 6px;text-wrap:balance;}
+.wz-pcard-rasgos{font-family:var(--font-body);font-size:14px;color:var(--ink-soft);text-wrap:pretty;}
+.wz-pcard{position:relative;}
+.wz-pcard-del{position:absolute;z-index:2;top:10px;right:10px;width:30px;height:30px;border:0;cursor:pointer;
+  border-radius:8px;background:var(--paper-piece);display:grid;place-items:center;opacity:0;transition:opacity .12s;}
+.wz-pcard:hover .wz-pcard-del,.wz-pcard.on .wz-pcard-del{opacity:1;}
+.wz-pcard-del svg{width:16px;height:16px;fill:none;stroke:var(--ink-soft);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.wz-pcard-del:hover{background:color-mix(in srgb,var(--error) 16%,var(--paper-piece));}
+.wz-pcard-del:hover svg{stroke:var(--error);}
+.wz-addchar{width:100%;border:0;background:none;cursor:pointer;position:relative;z-index:0;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;gap:11px;padding:15px 18px;filter:url(#rough);
+  font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.08em;font-size:13px;color:var(--line);text-align:center;}
+.wz-addchar > .bg{border-radius:9px;border-style:dashed;border-width:2px;border-color:var(--teal-tint);background:var(--paper-piece);}
+.wz-addchar:hover > .bg{border-color:var(--teal);background:var(--teal-pale);}
+.wz-addchar:active > .bg{box-shadow:inset 2px 3px 0 rgba(46,58,46,.18);}
+.wz-addchar .wz-addchar-plus{position:relative;z-index:1;width:32px;height:32px;flex:none;border-radius:50%;display:grid;place-items:center;
+  background:var(--teal);color:var(--on-dark);font-family:var(--font-slab);font-size:23px;line-height:1;}
+.wz-addchar span{position:relative;z-index:1;text-wrap:balance;}
+.wz-narr{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;margin-top:14px;border:0;cursor:pointer;padding:8px 15px 8px 8px;border-radius:999px;position:relative;z-index:0;filter:url(#rough);color:var(--line);transition:transform .14s ease;}
+.wz-narr::before{content:"";position:absolute;inset:0;border-radius:999px;border:1.5px solid var(--line);background:var(--paper-piece);z-index:-1;}
+.wz-narr:hover{transform:translateY(-1px);}
+.wz-narr:hover::before{background:var(--teal-pale);}
+.wz-narr.on::before{background:color-mix(in srgb,var(--amber) 30%,var(--paper-piece));border-color:color-mix(in srgb,var(--amber) 55%,var(--tinta));}
+.wz-narr-ico{position:relative;z-index:1;width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;background:var(--teal);color:var(--on-dark);}
+.wz-narr.on .wz-narr-ico{background:var(--tinta,var(--line));color:var(--amber);}
+.wz-narr-ico svg{grid-area:1/1;width:15px;height:15px;fill:currentColor;stroke:none;}
+.wz-narr-ico .ic-pause{display:none;}
+.wz-narr.on .wz-narr-ico .ic-play{display:none;}
+.wz-narr.on .wz-narr-ico .ic-pause{display:block;}
+.wz-narr-bars{display:inline-flex;align-items:center;gap:2.5px;height:18px;color:var(--ink-soft);}
+.wz-narr.on .wz-narr-bars{color:color-mix(in srgb,var(--amber) 60%,var(--tinta));}
+.wz-narr-bar{width:3px;height:6px;border-radius:2px;background:currentColor;opacity:.55;}
+.wz-narr.on .wz-narr-bar{opacity:1;animation:wz-eq .85s ease-in-out infinite;}
+.wz-narr.on .wz-narr-bar:nth-child(1){animation-delay:0s;}
+.wz-narr.on .wz-narr-bar:nth-child(2){animation-delay:.15s;}
+.wz-narr.on .wz-narr-bar:nth-child(3){animation-delay:.3s;}
+.wz-narr.on .wz-narr-bar:nth-child(4){animation-delay:.45s;}
+.wz-narr.on .wz-narr-bar:nth-child(5){animation-delay:.6s;}
+@keyframes wz-eq{0%,100%{height:5px;}50%{height:18px;}}
+.wz-prose{font-family:var(--font-body);font-size:17.5px;line-height:1.62;color:var(--ink);text-align:justify;text-wrap:pretty;margin:0;}
+.wz-prose strong{font-weight:650;color:var(--amber);text-decoration:none;}
+.wz-prose::first-letter{font-family:var(--font-slab);font-size:3em;line-height:.78;float:left;padding:7px 11px 0 0;color:var(--amber);}
+.wz-pv-meta{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);letter-spacing:.03em;}
+
+/* ---- resumen ---- */
+.wz-resumen{display:flex;flex-direction:column;gap:16px;}
+.wz-rcard{position:relative;z-index:0;padding:20px 24px;border-radius:11px;}
+.wz-rcard > .bg{border-radius:11px;}
+.wz-rcard-title{font-family:var(--font-slab);font-size:27px;color:var(--line);margin:2px 0 14px;line-height:1.05;}
+.wz-dl{display:flex;flex-direction:column;gap:11px;margin:0;}
+.wz-dl > div{display:grid;grid-template-columns:132px 1fr;gap:12px;align-items:baseline;}
+.wz-dl dt{font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.07em;font-size:11px;color:var(--ink-soft);}
+.wz-dl dd{margin:0;font-size:15.5px;color:var(--ink);}
+.wz-ded{font-family:var(--font-body);font-size:16.5px;font-style:italic;line-height:1.55;color:var(--ink);margin:6px 0 0;}
+
+/* ---- footer nav ---- */
+.wz-foot{position:absolute;left:42px;right:42px;bottom:26px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;}
+.wz-foot .wz-invisible{display:none;}
+.wz-foot-btns{display:flex;align-items:center;gap:12px;margin-left:auto;}
+.wz-progress{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-soft);letter-spacing:.04em;white-space:nowrap;}
+
+/* ---- página derecha con altura fija: el cuerpo hace scroll, el pie queda anclado ---- */
+.wz-page-right{display:flex;flex-direction:column;padding-bottom:30px;}
+.wz-page-right .wz-phead{flex:none;}
+.wz-page-right .wz-formbody{flex:1 1 auto;min-height:0;overflow-y:auto;padding-right:16px;margin-right:-8px;}
+.wz-page-right .wz-foot{position:relative;flex:none;margin-top:18px;left:auto;right:auto;bottom:auto;
+  padding-top:19px;border-top:0;}
+.wz-page-right .wz-foot::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--line);opacity:.5;filter:url(#torn-line);}
+
+/* ---- responsive ---- */
+@media(max-width:900px){
+  .wz-book{display:flex;flex-direction:column;padding:0;}
+
+  /* navbar (hoja rasgada) conserva su aspecto; sólo se compacta */
+  .wz-nav-inner{gap:12px;padding:15px clamp(16px,3vw,44px) 17px;}
+  .wz-brand .wz-mark{width:44px;height:44px;}
+  .wz-brand .wz-word b{font-size:17px;}
+  .wz-nav{margin-left:6px;gap:2px;}
+  .wz-nlink{padding:8px 11px;font-size:11.5px;}
+  .wz-sheetbtn{display:none;}
+
+  /* --- pestañas de páginas: banderolas que asoman POR ARRIBA de la hoja --- */
+  .wz-tabs{position:static;order:2;flex-direction:row;overflow-x:auto;width:auto;gap:6px;z-index:0;
+    margin:42px 2px -18px;padding:22px 2px 0;max-width:1520px;-webkit-overflow-scrolling:touch;}
+  .wz-tab{transform:translateY(0);min-width:92px;flex:0 0 auto;min-height:0;}
+  .wz-tab:hover{transform:translateY(-12px);}
+  .wz-tab.on,.wz-tab.on:hover{transform:translateY(-12px);}
+  .wz-tab::before,.wz-tab::after{clip-path:polygon(0 0,50% 22%,100% 0,100% 100%,0 100%);}
+  .wz-tab > span{padding:34px 10px 22px;}
+  .wz-tab-top{font-size:10.5px;}
+  .wz-tab-sub{font-size:12.5px;}
+
+  .wz-spread{order:3;grid-template-columns:1fr;min-height:0;position:relative;z-index:2;}
+  .wz-spine{display:none;}
+  .wz-page{padding:26px 24px;}
+  .wz-page-left{padding-bottom:26px;}
+  .wz-pv-toggle{display:grid;}
+  .wz-page-left.wz-collapsed{padding-bottom:14px;}
+  .wz-page-left.wz-collapsed .wz-phead{margin-bottom:0;}
+  .wz-page-left.wz-collapsed .wz-pv{display:none;}
+  .wz-page-right{padding-bottom:100px;height:auto !important;display:block;}
+  .wz-page-right .wz-formbody{overflow:visible;padding-right:0;margin-right:0;}
+  .wz-page-right .wz-foot{position:absolute;margin-top:0;border-top:0;padding-top:0;}
+  .wz-page-right .wz-foot::before{display:none;}
+  .wz-foot{left:24px;right:24px;}
+}
+@media(max-width:560px){
+  .wz-cards{grid-template-columns:1fr;}
+  .wz-foot-btns{width:100%;margin-left:0;}
+  .wz-foot-btns .btn{flex:1;justify-content:center;}
+}
+@media(max-width:480px){
+  /* en móvil estrecho sólo caben 3 banderolas: la activa + las dos anteriores */
+  .wz-tab:not(.mwin){display:none;}
+}
+</style>
+</helmet>
+<div class="wz-app {{ colorCls }}">
+
+  <div class="wz-topbar">
+    <i class="bg"></i>
+    <div class="wz-nav-inner">
+      <button class="wz-brand" onClick="{{ goInicio }}">
+        <span class="wz-mark"><img class="lobo-dia" src="../../assets/senorlobo-dia.svg" alt="Senior Lobo"><img class="lobo-noche" src="../../assets/senorlobo-noche.svg" alt="Senior Lobo"></span>
+        <span class="wz-word"><b>Senior Lobo</b><small>Cuentos personalizados</small></span>
+      </button>
+      <nav class="wz-nav">
+        <button class="wz-nlink" onClick="{{ goInicio }}">Inicio</button>
+        <button class="wz-nlink" onClick="{{ goQueEs }}">¿Qué es Senior Lobo?</button>
+        <button class="wz-nlink" onClick="{{ goCuentos }}">Mis cuentos</button>
+        <button class="wz-nlink" onClick="{{ goAyuda }}">Ayuda</button>
+      </nav>
+      <div class="wz-tools">
+        <div class="dn-desktop"><x-import component-from-global-scope="SeOrLoboDesignSystem_981966.DayNightSwitch" hint-size="80px,40px"></x-import></div>
+        <div class="cf-user">
+          <button class="wz-user {{ avatarBtnCls }}" onClick="{{ toggleAvatar }}">
+            <span class="avatar"><i class="bg"></i>JG<i class="status"></i></span>
+          </button>
+          <div class="cf-menu {{ avatarMenuCls }}">
+            <i class="bg"></i>
+            <div class="cf-menu-head">
+              <span class="avatar"><i class="bg"></i>JG<i class="status"></i></span>
+              <span class="cf-menu-name"><b>John Galt</b><small>johngalt@atlantis.com</small></span>
+            </div>
+            <div class="cf-menu-rule"></div>
+            <button class="cf-menu-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-3.5 3.5-6 8-6s8 2.5 8 6"></path></svg>
+              Mi perfil
+            </button>
+            <button class="cf-menu-item" onClick="{{ goCuentos }}">
+              <svg viewBox="0 0 24 24"><path d="M12 6.5C10.5 5 8 4.5 5 5v13c3-.5 5.5 0 7 1.5M12 6.5C13.5 5 16 4.5 19 5v13c-3-.5-5.5 0-7 1.5M12 6.5v13"></path></svg>
+              Mis cuentos
+            </button>
+            <button class="cf-menu-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              Configuración
+            </button>
+            <div class="cf-menu-rule"></div>
+            <button class="cf-menu-item cf-menu-danger" onClick="{{ goSalir }}">
+              <svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M11 8l-4 4 4 4M7 12h9"></path></svg>
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
+        <button class="wz-burger {{ burgerCls }}" onClick="{{ toggleBurger }}" aria-label="Menú"><svg viewBox="0 0 24 24"><line class="l l-top" x1="4" y1="7" x2="20" y2="7"/><line class="l l-mid" x1="4" y1="12" x2="20" y2="12"/><line class="l l-bot" x1="4" y1="17" x2="20" y2="17"/></svg></button>
+      </div>
+      <div class="wz-topbar-menu {{ burgerCls }}">
+        <i class="bg"></i>
+        <button class="wz-nlink" onClick="{{ goInicio }}">Inicio</button>
+        <button class="wz-nlink" onClick="{{ goQueEs }}">¿Qué es Senior Lobo?</button>
+        <button class="wz-nlink" onClick="{{ goCuentos }}">Mis cuentos</button>
+        <button class="wz-nlink" onClick="{{ goAyuda }}">Ayuda</button>
+        <div class="wz-menu-dn"><span class="dn-lbl dn-lbl-dia">Día</span><x-import component-from-global-scope="SeOrLoboDesignSystem_981966.DayNightSwitch" hint-size="64px,32px"></x-import><span class="dn-lbl dn-lbl-noche">Noche</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wz-book {{ bookCls }}">
+    <div class="wz-spread chip"><i class="bg"></i>
+
+      
+
+      <div class="wz-page wz-page-left {{ leftCollapsedCls }}">
+        <div class="wz-phead">
+          <span class="wz-pnum">Pág. {{ headNum }}</span>
+          <span class="wz-ptitle">VISTA PREVIA</span>
+          <span class="wz-hrule"></span>
+          <button class="wz-pv-toggle" onClick="{{ toggleLeft }}" title="Mostrar u ocultar la vista previa" aria-label="Mostrar u ocultar la vista previa">
+            <svg class="wz-pv-toggle-ic" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
+          </button>
+        </div>
+        <div class="wz-pv">
+          <sc-if value="{{ leftStory }}" hint-placeholder-val="{{ false }}">
+            <div class="wz-pv-eyebrow">Tu cuento</div>
+            <h3 class="wz-pv-title">{{ pvTituloDisplay }}</h3>
+            <div class="wz-pv-meta">{{ storyMeta }}</div>
+            <sc-if value="{{ pvIllusOn }}" hint-placeholder-val="{{ false }}">
+              <div class="wz-pv-illus"><span>{{ pvEstilo }}</span></div>
+            </sc-if>
+            {{ narrProse }}
+            <sc-if value="{{ narrOnStep4 }}" hint-placeholder-val="{{ false }}">
+              <button class="wz-narr {{ narrOnCls }}" onClick="{{ toggleNarr }}" title="Escuchar una vista previa de la narración" aria-label="Escuchar una vista previa de la narración">
+                <span class="wz-narr-ico">
+                  <svg class="ic-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                  <svg class="ic-pause" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
+                </span>
+                <span class="wz-narr-bars">
+                  <span class="wz-narr-bar"></span><span class="wz-narr-bar"></span><span class="wz-narr-bar"></span><span class="wz-narr-bar"></span><span class="wz-narr-bar"></span>
+                </span>
+              </button>
+            </sc-if>
+          </sc-if>
+          <sc-if value="{{ leftChars }}" hint-placeholder-val="{{ true }}">
+            <div class="wz-pv-eyebrow">REPARTO PRINCIPAL · {{ charsCountLabel }}</div>
+            <sc-for list="{{ leftCards }}" as="c" hint-placeholder-count="1">
+              <div class="wz-pcard {{ c.cls }}" onClick="{{ c.onClick }}"><i class="bg"></i>
+                <button class="wz-pcard-del" title="Eliminar personaje" onClick="{{ c.onDelete }}">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V5h6v2M5.5 9.2l1 10.3h11l1-10.3M10 12v5M14 12v5"></path></svg>
+                </button>
+                <div class="wz-pcard-illus"><span>ILUSTRACIÓN</span></div>
+                <div class="wz-pcard-info">
+                  <div class="wz-pv-eyebrow">{{ c.rol }}</div>
+                  <div class="wz-pcard-name">{{ c.nombre }}</div>
+                  <div class="wz-pcard-rasgos">{{ c.rasgos }}</div>
+                  <span class="badge {{ c.badgeCls }} wz-pcard-badge"><i class="bg"></i>{{ c.badgeLabel }}</span>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ canAddChar }}" hint-placeholder-val="{{ true }}">
+              <button class="wz-addchar" onClick="{{ addChar }}"><i class="bg"></i>
+                <span class="wz-addchar-plus">+</span>
+                <span>Añadir nuevo personaje</span>
+              </button>
+            </sc-if>
+          </sc-if>
+        </div>
+      </div><div class="wz-spine"></div>
+
+      <div class="wz-page wz-page-right" style="height: 800px">
+        <div class="wz-phead r">
+          <span class="wz-hrule"></span>
+          <span class="wz-ptitle">{{ rightTitle }}</span>
+          <span class="wz-pnum">Pág. {{ headNum }}</span>
+        </div>
+
+        <div class="wz-formbody">
+          <sc-if value="{{ isStep0 }}" hint-placeholder-val="{{ true }}">
+            <p class="wz-lede">{{ personajesLede }}</p>
+            <div class="wz-field">
+              <label>NOMBRE DEL PERSONAJE</label>
+              <div class="wz-input"><i class="bg"></i>
+                <input type="text" value="{{ nombre }}" onChange="{{ onNombre }}" placeholder="p. ej. Mateo">
+              </div>
+            </div>
+            <div class="wz-row2">
+              <div class="wz-field">
+                <label>Edad</label>
+                <div class="wz-sel {{ edadOpenCls }}">
+                  <div class="wz-sel-trigger wz-sel-input"><i class="bg"></i>
+                    <input class="wz-edad-input" type="text" inputmode="numeric" value="{{ edadInput }}" onChange="{{ onEdadInput }}" onKeyDown="{{ onEdadKey }}" onFocus="{{ openEdad }}" placeholder="Escribe o elige…">
+                    <svg class="wz-caret" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
+                  </div>
+                  <div class="wz-menu wz-menu-edad"><i class="bg"></i>
+                    <div class="wz-menu-edad-list">
+                      <sc-for list="{{ edadOpts }}" as="op" hint-placeholder-count="12">
+                        <button class="wz-opt {{ op.cls }}" onClick="{{ op.onClick }}">{{ op.label }}</button>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="wz-field">
+                <label>GÉNERO</label>
+                <div class="wz-sel {{ pronOpenCls }}">
+                  <button class="wz-sel-trigger" onClick="{{ togglePron }}"><i class="bg"></i>
+                    <span>{{ pronLabel }}</span>
+                    <svg class="wz-caret" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
+                  </button>
+                  <div class="wz-menu"><i class="bg"></i>
+                    <sc-for list="{{ pronOpts }}" as="op" hint-placeholder-count="2">
+                      <button class="wz-opt {{ op.cls }}" onClick="{{ op.onClick }}">{{ op.label }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="wz-field">
+              <label>Tipo de rol</label>
+              <div class="wz-choicerow">
+                <sc-for list="{{ roles }}" as="op" hint-placeholder-count="4">
+                  <button class="wz-chip {{ op.cls }}" onClick="{{ op.onClick }}" data-tip="{{ op.tip }}"><i class="bg"></i>{{ op.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div class="wz-field">
+              <label><svg class="wz-lbl-ic pos" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M8 14s1.4 2 4 2 4-2 4-2"></path><path d="M9 9h.01M15 9h.01"></path></svg>RASGOS DE CARÁCTER POSITIVO</label>
+              <div class="wz-choicerow">
+                <sc-for list="{{ rasgos }}" as="op" hint-placeholder-count="8">
+                  <button class="wz-chip {{ op.cls }}" onClick="{{ op.onClick }}"><i class="bg"></i>{{ op.label }}</button>
+                </sc-for>
+                <div class="wz-sel {{ masOpenCls }}">
+                  <button class="wz-chip wz-chip-mas" onClick="{{ toggleMas }}"><i class="bg"></i>+ rasgos de carácter</button>
+                  <div class="wz-menu wz-menu-mas"><i class="bg"></i>
+                    <div class="wz-menu-list">
+                      <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ true }}">
+                        <div class="wz-menu-head">Seleccionados</div>
+                        <sc-for list="{{ rasgosSel }}" as="op" hint-placeholder-count="2">
+                          <button class="wz-opt on" onClick="{{ op.onClick }}">{{ op.label }}</button>
+                        </sc-for>
+                        <div class="wz-menu-head">Más rasgos</div>
+                      </sc-if>
+                      <sc-for list="{{ rasgosMas }}" as="op" hint-placeholder-count="16">
+                        <button class="wz-opt {{ op.cls }}" onClick="{{ op.onClick }}">{{ op.label }}</button>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="wz-field">
+              <label><svg class="wz-lbl-ic neg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M8 15.5s1.4-2 4-2 4 2 4 2"></path><path d="M9 9h.01M15 9h.01"></path></svg>RASGOS DE CARÁCTER NEGATIVO <span class="wz-opt-tag">(opcional)</span></label>
+              <div class="wz-choicerow neg">
+                <sc-for list="{{ rasgosNeg }}" as="op" hint-placeholder-count="6">
+                  <button class="wz-chip {{ op.cls }}" onClick="{{ op.onClick }}"><i class="bg"></i>{{ op.label }}</button>
+                </sc-for>
+                <div class="wz-sel {{ masNegOpenCls }}">
+                  <button class="wz-chip wz-chip-mas" onClick="{{ toggleMasNeg }}"><i class="bg"></i>+ rasgos de carácter</button>
+                  <div class="wz-menu wz-menu-mas"><i class="bg"></i>
+                    <div class="wz-menu-list">
+                      <sc-if value="{{ hasSelNeg }}" hint-placeholder-val="{{ true }}">
+                        <div class="wz-menu-head">Seleccionados</div>
+                        <sc-for list="{{ rasgosNegSel }}" as="op" hint-placeholder-count="2">
+                          <button class="wz-opt on" onClick="{{ op.onClick }}">{{ op.label }}</button>
+                        </sc-for>
+                        <div class="wz-menu-head">Más rasgos</div>
+                      </sc-if>
+                      <sc-for list="{{ rasgosNegMas }}" as="op" hint-placeholder-count="16">
+                        <button class="wz-opt {{ op.cls }}" onClick="{{ op.onClick }}">{{ op.label }}</button>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="wz-field">
+              <div class="wz-labelrow">
+                <label>Detalles adicionales <span class="wz-opt-tag">(opcional)</span><span class="wz-req"></span></label>
+                <button class="wz-fillex" onClick="{{ fillDetalles }}">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M12 3l1.8 6.2L20 11l-6.2 1.8L12 19l-1.8-6.2L4 11z"></path></svg>Usar sugerencia
+                </button>
+              </div>
+              <span class="wz-help">Describe cómo es el protagonista ayudando a la IA a crear un personaje más coherente</span>
+              <div class="wz-input"><i class="bg"></i>
+                <textarea rows="4" maxlength="500" value="{{ detalles }}" onChange="{{ onDetalles }}" placeholder="Ej.: Le encanta la aventura, a veces es un poco traviesa, le cuesta dormirse por las noches pero es muy cariñosa con sus seres queridos..."></textarea>
+              </div>
+              <span class="wz-counter">{{ detallesCount }}</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isStep1 }}">
+            <p class="wz-lede">{{ historiaLede }}</p>
+            <div class="wz-field">
+              <label>Tono de la historia</label>
+              <div class="wz-tono-grid">
+                <div class="wz-tono-switch">
+                  <x-import component-from-global-scope="SeOrLoboDesignSystem_981966.DayNightSwitch" mode="{{ cuentoTonoMode }}" onChange="{{ setCuentoTono }}" sync-theme="{{ false }}" hint-size="80px,40px"></x-import>
+                </div>
+                <div class="wz-tono-panel">
+                  <sc-if value="{{ isTonoDia }}" hint-placeholder-val="{{ true }}">
+                    <div class="wz-tono-head wz-tono-title wz-tono-dia">
+                      <svg class="wz-tono-ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"></path></svg>
+                      <span class="wz-tono-t">Cuento de día</span>
+                    </div>
+                    <p class="wz-tono-desc">Activa toda su imaginación, mantenle despierto y entretenido con su historia. Ideal para momentos en los que necesitan concentración, viajes largos…</p>
+                  </sc-if>
+                  <sc-if value="{{ isTonoNoche }}" hint-placeholder-val="{{ false }}">
+                    <div class="wz-tono-head wz-tono-title wz-tono-noche">
+                      <svg class="wz-tono-ic" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>
+                      <span class="wz-tono-t">Cuento de noche</span>
+                    </div>
+                    <p class="wz-tono-desc">Historias preparadas para que entre en juego la serotonina, con ritmos de lectura más suaves y relajados, listos para descansar su mente.</p>
+                  </sc-if>
+                </div>
+              </div>
+            </div>
+            <div class="wz-field">
+              <label>GÉNERO</label>
+              <div class="wz-choicerow">
+                <sc-for list="{{ tonos }}" as="op" hint-placeholder-count="6">
+                  <button class="wz-chip {{ op.cls }}" onClick="{{ op.onClick }}"><i class="bg"></i>{{ op.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div class="wz-field">
+              <div class="wz-labelrow">
+                <label>Escenario</label>
+                <button class="wz-fillex" onClick="{{ useEscenarioSug }}">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M12 3l1.8 6.2L20 11l-6.2 1.8L12 19l-1.8-6.2L4 11z"></path></svg>Usar sugerencia
+                </button>
+              </div>
+              <div class="wz-choicerow">
+                <sc-for list="{{ escenarios }}" as="op" hint-placeholder-count="3">
+                  <button class="wz-chip {{ op.cls }}" onClick="{{ op.onClick }}"><i class="bg"></i>{{ op.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div class="wz-field">
+              <div class="wz-labelrow">
+                <label>TÍTULO</label>
+                <button class="wz-fillex" onClick="{{ useTituloSug }}">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M12 3l1.8 6.2L20 11l-6.2 1.8L12 19l-1.8-6.2L4 11z"></path></svg>Usar sugerencia
+                </button>
+              </div>
+              <div class="wz-input"><i class="bg"></i>
+                <input class="wz-trama" type="text" value="{{ tituloValue }}" onFocus="{{ onTituloFocus }}" onChange="{{ onTitulo }}" placeholder="Escribe el título…">
+              </div>
+              
+            </div>
+            <div class="wz-field">
+              <div class="wz-labelrow">
+                <label>TRAMA</label>
+                <button class="wz-fillex" onClick="{{ useGiroSug }}">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M12 3l1.8 6.2L20 11l-6.2 1.8L12 19l-1.8-6.2L4 11z"></path></svg>Usar sugerencia
+                </button>
+              </div>
+              <div class="wz-input"><i class="bg"></i>
+                <textarea class="wz-trama" rows="6" value="{{ giroValue }}" onFocus="{{ onGiroFocus }}" onChange="{{ onGiro }}" placeholder="Toda buena historia necesita un giro…"></textarea>
+              </div>
+              <span class="wz-help">Te sugerimos esta trama según el género y escenario escogidos, puedes modifcarla</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isStep2 }}">
+            <p class="wz-lede">Diseña cómo se verán las ilustraciones de {{ protNombre }}</p>
+            <div class="wz-field">
+              <label>Estilo de ilustración</label>
+              <div class="wz-cards">
+                <sc-for list="{{ estilos }}" as="c" hint-placeholder-count="4">
+                  <button class="wz-card {{ c.cls }}" onClick="{{ c.onClick }}"><i class="bg"></i>
+                    <div class="wz-hatch"></div>
+                    <div class="wz-card-t">{{ c.label }}</div>
+                    <div class="wz-card-s">{{ c.sub }}</div>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isStep3 }}">
+            <p class="wz-lede">Ya casi está, añade los últimos detalles</p>
+            <div class="wz-field">
+              <label>Número de páginas</label>
+              <div class="wz-pages">
+                <sc-for list="{{ paginasOpts }}" as="op" hint-placeholder-count="7">
+                  <button class="wz-pagebtn {{ op.cls }}" onClick="{{ op.onClick }}"><i class="bg"></i><span>{{ op.label }}</span></button>
+                </sc-for>
+              </div>
+              <span class="wz-help">{{ paginasHelp }}</span>
+            </div>
+            <div class="wz-field">
+              <div class="wz-labelrow">
+                <label>Dedicatoria</label>
+                <button class="wz-fillex" onClick="{{ useDedicSug }}">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M12 3l1.8 6.2L20 11l-6.2 1.8L12 19l-1.8-6.2L4 11z"></path></svg>Usar sugerencia
+                </button>
+              </div>
+              <div class="wz-input"><i class="bg"></i>
+                <textarea rows="4" value="{{ dedic }}" onChange="{{ onDedic }}" placeholder="Para tu peque: que nunca dejes de ser valiente…"></textarea>
+              </div>
+              <span class="wz-help"><br></span>
+            </div>
+            <div class="wz-field">
+              <label>Versión audiolibro </label>
+              <div class="wz-audio {{ audioOnCls }}"><i class="bg"></i>
+                <svg class="wz-audio-ic" viewBox="0 0 24 24"><path d="M4 10v4M8 6v12M12 3v18M16 8v8M20 11v2"></path></svg>
+                <div class="wz-audio-info">
+                  <div class="wz-audio-t">Añadir audiolibro</div>
+                </div>
+                <span class="wz-audio-price">+0,50 €</span>
+                <x-import component-from-global-scope="SeOrLoboDesignSystem_981966.Switch" checked="{{ audiolibro }}" onChange="{{ setAudiolibro }}" hint-size="56px,32px"></x-import>
+                <sc-if value="{{ audiolibro }}" hint-placeholder-val="{{ false }}">
+                  <div class="wz-voz">
+                    <span class="wz-voz-label">Voz del narrador</span>
+                    <div class="wz-choicerow">
+                      <sc-for list="{{ vozOpts }}" as="op" hint-placeholder-count="2">
+                        <button class="wz-chip {{ op.cls }}" onClick="{{ op.onClick }}"><i class="bg"></i>{{ op.label }}</button>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+              <span class="wz-help">Incluye la narración del cuento para escucharlo en cualquier momento.</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isFinal }}">
+            <p class="wz-lede">Revisa el cuento de {{ protNombre }} antes de crearlo.</p>
+            <div class="wz-pv-eyebrow">Tu cuento personalizado</div><div class="wz-rcard-title">{{ pvTitulo }}</div><div class="wz-resumen">
+              <div class="wz-rcard chip">
+                
+                
+                <dl class="wz-dl">
+                  <sc-for list="{{ resumen }}" as="row" hint-placeholder-count="4">
+                    <div><dt>{{ row.dt }}</dt><dd>{{ row.dd }}</dd></div>
+                  </sc-for>
+                </dl>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div class="wz-foot">
+          <span class="wz-progress">{{ progress }}</span>
+          <div class="wz-foot-btns">
+            <button class="btn ghost {{ prevHideCls }}" onClick="{{ prev }}"><i class="bg"></i>
+              <svg class="icon s" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>{{ prevLabel }}
+            </button>
+            <button class="btn {{ nextCls }}" onClick="{{ next }}"><i class="bg"></i>{{ nextLabel }}
+              <svg class="icon s" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wz-tabs">
+      <sc-for list="{{ sideTabs }}" as="t" hint-placeholder-count="5">
+        <button class="wz-tab {{ t.cls }}" onClick="{{ t.onClick }}">
+          <span>
+            <span class="wz-tab-top">{{ t.top }}</span>
+            <span class="wz-tab-sub">{{ t.sub }}</span>
+          </span>
+        </button>
+      </sc-for>
+    </div>
+    <button class="wz-sheetbtn {{ sheetOnCls }}" onClick="{{ toggleSheet }}" title="Ver hojas del cuento" aria-label="Ver hojas del cuento">
+      <i class="bg"></i>
+      <span class="wz-sheet-lines"></span>
+    </button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;stepLabels&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Personajes, Historia, Ilustración, Extras, FINAL&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Pasos&quot;},&quot;stepCount&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:3,&quot;max&quot;:5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Pasos&quot;},&quot;showPreview&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Presentación&quot;},&quot;activeColor&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;ámbar&quot;,&quot;options&quot;:[&quot;ámbar&quot;,&quot;bosque&quot;],&quot;tsType&quot;:&quot;'ámbar' | 'bosque'&quot;,&quot;section&quot;:&quot;Presentación&quot;}}">
+class Component extends DCLogic {
+  DEFAULT_CHIPS = ['Valiente', 'Curioso', 'Bondadoso', 'Soñador', 'Travieso', 'Leal'];
+  DEFAULT_CHIPS_NEG = ['Egoísta', 'Mentiroso', 'Perezoso', 'Presumido', 'Cobarde', 'Terco'];
+
+  state = {
+    step: 0,
+    chars: [
+      { nombre: 'Mateo', edad: '8', pron: 'Él', rol: 'Protagonista',
+        rasgos: ['Valiente', 'Curioso'],
+        chipsList: ['Valiente', 'Curioso', 'Bondadoso', 'Soñador', 'Travieso', 'Leal'],
+        rasgosNeg: [],
+        chipsListNeg: ['Egoísta', 'Mentiroso', 'Perezoso', 'Presumido', 'Cobarde', 'Terco'],
+        detalles: '' },
+    ],
+    activeChar: 0,
+    cuentoTono: 'día',
+    tono: '', escenario: '', escenOff: 0, titulo: '', tituloTouched: false, giro: '', giroTouched: false,
+    estilo: '', paleta: 'Bosque', paginas: 0, dedic: '', audiolibro: false, voz: 'Femenina',
+    openSel: null,
+    leftCollapsed: false,
+    maxUnlocked: 0,
+    sheetOn: false,
+    narrPlaying: false, narrIndex: 0,
+    avatarOpen: false,
+    burger: false,
+  };
+
+  // Texto que narra la vista previa (la trama escrita o la sugerida).
+  narrationText() {
+    return (this.state.giro || '').trim() || 'Sin descripción del cuento';
+  }
+  startNarr() {
+    this.stopNarr();
+    const total = this.narrationText().length;
+    this._ni = this.state.narrIndex >= total ? 0 : (this.state.narrIndex || 0);
+    this.setState({ narrPlaying: true, narrIndex: this._ni });
+    this._narrTimer = setInterval(() => {
+      const t = this.narrationText().length;
+      this._ni += 1;
+      if (this._ni >= t) { this.setState({ narrIndex: t }); this.stopNarr(); }
+      else this.setState({ narrIndex: this._ni });
+    }, 52);
+  }
+  stopNarr() {
+    if (this._narrTimer) { clearInterval(this._narrTimer); this._narrTimer = null; }
+    if (this.state.narrPlaying) this.setState({ narrPlaying: false });
+  }
+
+  cur() { return this.state.chars[this.state.activeChar] || {}; }
+  setCur(patch) {
+    const chars = this.state.chars.slice();
+    chars[this.state.activeChar] = Object.assign({}, chars[this.state.activeChar], patch);
+    this.setState({ chars });
+  }
+  selectChar(i) { this.set({ activeChar: i, step: 0, openSel: null }); }
+  blankChar() {
+    return { nombre: '', edad: '', pron: '', rol: 'Protagonista',
+      rasgos: [], chipsList: this.DEFAULT_CHIPS.slice(),
+      rasgosNeg: [], chipsListNeg: this.DEFAULT_CHIPS_NEG.slice(), detalles: '' };
+  }
+  removeChar(i) {
+    let chars = this.state.chars.slice();
+    if (chars.length <= 1) {
+      // último personaje: se vacía su formulario en vez de dejar cero tarjetas
+      this.setState({ chars: [this.blankChar()], activeChar: 0, step: 0, openSel: null });
+      return;
+    }
+    chars.splice(i, 1);
+    let active = this.state.activeChar;
+    if (active > i) active -= 1;
+    else if (active === i) active = Math.min(i, chars.length - 1);
+    // Siempre debe haber un protagonista: si se eliminó, asciende al primero.
+    if (!chars.some((ch) => (ch.rol || '') === 'Protagonista')) {
+      chars[0] = Object.assign({}, chars[0], { rol: 'Protagonista' });
+    }
+    this.setState({ chars, activeChar: active, openSel: null });
+  }
+
+  componentDidMount() {
+    this._onDocClick = (e) => {
+      if (this.state.openSel && !(e.target.closest && e.target.closest('.wz-sel'))) {
+        this.set({ openSel: null });
+      }
+      if (this.state.avatarOpen && !(e.target.closest && e.target.closest('.cf-user'))) {
+        this.set({ avatarOpen: false });
+      }
+      if (this.state.burger && !(e.target.closest && (e.target.closest('.wz-topbar-menu') || e.target.closest('.wz-burger')))) {
+        this.set({ burger: false });
+      }
+    };
+    document.addEventListener('click', this._onDocClick, true);
+    this._onNavKey = (e) => {
+      if (e.key !== 'Escape') return;
+      if (this.state.avatarOpen) this.set({ avatarOpen: false });
+      if (this.state.burger) this.set({ burger: false });
+    };
+    document.addEventListener('keydown', this._onNavKey);
+
+    // Aviso flotante que sigue al cursor sobre elementos bloqueados (banderines
+    // de páginas no accesibles y botón «Continuar» deshabilitado). Se ancla a
+    // nivel de documento con z-index alto: es independiente del libro, por lo
+    // que los banderines siguen dibujándose DETRÁS de las hojas.
+    const tip = document.createElement('div');
+    tip.className = 'wz-cursor-tip';
+    const DEFAULT_TIP = 'Completa los campos obligatorios para desbloquear las siguientes páginas.';
+    tip.textContent = DEFAULT_TIP;
+    document.body.appendChild(tip);
+    this._tipEl = tip;
+    this._onTipMove = (e) => {
+      const hit = e.target && e.target.closest && e.target.closest('.wz-tab.locked, .wz-foot-btns .btn.disabled, .wz-chip-off');
+      if (!hit) { tip.classList.remove('on'); return; }
+      tip.textContent = hit.getAttribute('data-tip') || DEFAULT_TIP;
+      tip.classList.add('on');
+      const pad = 12;
+      const half = tip.offsetWidth / 2;
+      const x = Math.max(pad + half, Math.min(window.innerWidth - pad - half, e.clientX));
+      tip.style.left = x + 'px';
+      tip.style.top = (e.clientY - 14) + 'px';
+    };
+    this._onTipLeave = () => { if (this._tipEl) this._tipEl.classList.remove('on'); };
+    document.addEventListener('mousemove', this._onTipMove, true);
+    document.addEventListener('mouseleave', this._onTipLeave, true);
+  }
+  componentWillUnmount() {
+    if (this._onDocClick) document.removeEventListener('click', this._onDocClick, true);
+    if (this._onNavKey) document.removeEventListener('keydown', this._onNavKey);
+    if (this._onTipMove) document.removeEventListener('mousemove', this._onTipMove, true);
+    if (this._onTipLeave) document.removeEventListener('mouseleave', this._onTipLeave, true);
+    if (this._tipEl && this._tipEl.parentNode) this._tipEl.parentNode.removeChild(this._tipEl);
+    if (this._narrTimer) clearInterval(this._narrTimer);
+  }
+
+  HEADS = ['Configuración de personajes', 'El hilo de la historia', 'Estilo de ilustración', 'Extras', 'Todo listo'];
+  RASGOS = ['Valiente', 'Curioso', 'Bondadoso', 'Soñador', 'Travieso', 'Leal', 'Ingenioso', 'Tímido'];
+  RASGOS_MAS = ['Curioso', 'Empático', 'Resiliente', 'Creativo', 'Compañero', 'Sincero', 'Entusiasta', 'Generoso', 'Adaptable', 'Autónomo', 'Perseverante', 'Respetuoso', 'Optimista', 'Responsable', 'Solidario', 'Paciente', 'Agradecido', 'Valiente', 'Amable', 'Cooperativo'];
+  RASGOS_NEG_MAS = ['Egoísta', 'Mentiroso', 'Perezoso', 'Presumido (fanfarrón)', 'Cobarde', 'Envidioso', 'Terco (obstinado)', 'Impaciente', 'Grosero', 'Mandón (autoritario)', 'Codicioso (avaro)', 'Chismoso', 'Rencoroso', 'Malhumorado', 'Irresponsable', 'Vanidoso', 'Manipulador', 'Desconfiado', 'Quejica (se queja de todo)', 'Berrinchudo (propenso a rabietas)'];
+  TONOS = ['Aventuras', 'Misterio', 'Fantasía', 'Histórica', 'Ciencia ficción', 'Amistad'];
+  ESCEN_MAP = {
+    'Aventuras': ['Isla perdida', 'Jungla secreta', 'Montaña nevada'],
+    'Misterio': ['Mansión abandonada', 'Biblioteca antigua', 'Pueblo con niebla'],
+    'Fantasía': ['Bosque encantado', 'Reino bajo el mar', 'Castillo antiguo'],
+    'Histórica': ['Antiguo Egipto', 'Roma antigua', 'Castillo medieval'],
+    'Ciencia ficción': ['Estación espacial', 'Planeta desconocido', 'Ciudad del futuro'],
+    'Amistad': ['Campamento de verano', 'Escuela mágica', 'Granja familiar'],
+  };
+  escenList(tono) { return this.ESCEN_MAP[tono || this.state.tono] || this.ESCEN_MAP['Aventuras']; }
+  // Pool amplio de escenarios por género, usado sólo por «Usar sugerencia».
+  ESCEN_SUG = {
+    'Fantasía': ['Valle de dragones', 'Torre de estrellas', 'Jardín encantado', 'Aldea de duendes', 'Lago de cristal', 'Montaña mágica', 'Cueva luminosa', 'Mercado de hechizos', 'Palacio flotante', 'Bosque de susurros', 'Bosque de hadas', 'Puente arcoíris', 'Isla de los gigantes', 'Castillo de hielo', 'Pradera brillante', 'Río de luna', 'Laberinto encantado', 'Nido de fénix'],
+    'Aventuras': ['Desierto dorado', 'Isla volcánica', 'Río salvaje', 'Cueva del tesoro', 'Selva escondida', 'Faro solitario', 'Montaña prohibida', 'Ruinas antiguas', 'Camino secreto', 'Valle perdido', 'Cañón escondido', 'Isla de los piratas', 'Cascada secreta', 'Bosque tropical', 'Acantilado del viento', 'Pantano misterioso', 'Túnel perdido', 'Bahía escondida'],
+    'Misterio': ['Casa del reloj', 'Museo cerrado', 'Jardín olvidado', 'Hotel antiguo', 'Callejón secreto', 'Faro en la niebla', 'Teatro vacío', 'Escuela silenciosa', 'Circo abandonado', 'Torre del cuervo', 'Mansión en penumbra', 'Estación abandonada', 'Puente viejo', 'Librería secreta', 'Parque desierto', 'Sótano oculto', 'Plaza vacía', 'Observatorio antiguo'],
+    'Histórica': ['Villa romana', 'Mercado medieval', 'Puerto vikingo', 'Palacio renacentista', 'Aldea prehistórica', 'Ruta de caravanas', 'Ciudad maya', 'Templo griego', 'Fortaleza samurái', 'Taller de inventores', 'Castillo templario', 'Foro romano', 'Campamento legionario', 'Corte de faraones', 'Ciudad amurallada', 'Monasterio antiguo', 'Carabela real', 'Plaza colonial'],
+    'Ciencia ficción': ['Nave exploradora', 'Luna habitada', 'Robotópolis', 'Escuela orbital', 'Jardín marciano', 'Base lunar', 'Portal galáctico', 'Tren estelar', 'Isla holográfica', 'Planeta de robots', 'Colonia submarina', 'Asteroide minero', 'Ciudad interplanetaria', 'Puerto espacial', 'Cúpula marciana', 'Satélite artificial', 'Bosque biotecnológico', 'Centro de clones'],
+    'Amistad': ['Club secreto', 'Casa del árbol', 'Playa tranquila', 'Barrio colorido', 'Refugio de animales', 'Biblioteca escolar', 'Jardín comunitario', 'Taller de arte', 'Equipo deportivo', 'Fiesta del pueblo', 'Campamento escolar', 'Patio del colegio', 'Huerto compartido', 'Excursión al bosque', 'Cafetería del barrio', 'Campamento junto al lago', 'Taller de música', 'Plaza del vecindario'],
+  };
+  escenSugList(tono) { return this.ESCEN_SUG[tono || this.state.tono] || this.escenList(tono); }
+  // Ventana de 3 escenarios que se muestra como chips; el offset avanza de 3
+  // en 3 con «Usar sugerencia» y da la vuelta al llegar al final.
+  escenWindow() {
+    const list = this.escenSugList();
+    const n = list.length;
+    const off = ((this.state.escenOff || 0) % n + n) % n;
+    const win = [];
+    for (let i = 0; i < Math.min(3, n); i++) win.push(list[(off + i) % n]);
+    return win;
+  }
+  ESTILOS = [
+    { label: 'Acuarela', sub: 'Trazos suaves y luminosos' },
+    { label: 'Tinta y línea', sub: 'Contornos marcados, aire clásico' },
+    { label: 'Collage', sub: 'Papeles y texturas recortadas' },
+    { label: 'Pastel', sub: 'Colores cálidos y algodonosos' },
+  ];
+  PALETAS = ['Bosque', 'Ámbar', 'Crepúsculo', 'Océano'];
+
+  labelsArr() {
+    const raw = this.props.stepLabels != null ? String(this.props.stepLabels) : 'Personajes, Historia, Ilustración, Extras, FINAL';
+    let arr = raw.split(',').map((s) => s.trim()).filter(Boolean);
+    const fallback = ['Personajes', 'Historia', 'Ilustración', 'Extras', 'FINAL'];
+    if (!arr.length) arr = fallback.slice();
+    let n = this.props.stepCount != null ? (this.props.stepCount | 0) : arr.length;
+    n = Math.max(3, Math.min(5, n || arr.length));
+    while (arr.length < n) arr.push(fallback[arr.length] || ('Página ' + (arr.length + 1)));
+    return arr.slice(0, n);
+  }
+
+  set(patch) { this.setState(patch); }
+  // Varias variantes de título por género; cada clic en «Usar sugerencia»
+  // elige una distinta. El nombre del protagonista se usa si está disponible.
+  TITULO_TPL = {
+    'Aventuras': (n, e) => [`La gran aventura en ${e}`, `${n} y el mapa de ${e}`, `Rumbo a ${e}`, `El tesoro escondido de ${e}`, `${n}, explorador de ${e}`],
+    'Misterio': (n, e) => [`El misterio de ${e}`, `${n} y el enigma de ${e}`, `El secreto oculto de ${e}`, `Las pistas de ${e}`, `¿Qué pasó en ${e}?`],
+    'Fantasía': (n, e) => [`El secreto de ${e}`, `${n} y la magia de ${e}`, `El hechizo de ${e}`, `Las puertas de ${e}`, `${n} en el reino de ${e}`],
+    'Histórica': (n, e) => [`Crónicas de ${e}`, `${n} viaja a ${e}`, `El tiempo perdido de ${e}`, `Una promesa en ${e}`, `${n} y los secretos de ${e}`],
+    'Ciencia ficción': (n, e) => [`Viaje a ${e}`, `${n} y la señal de ${e}`, `Rumbo a ${e}`, `El misterio de ${e}`, `${n}, explorador del cosmos`],
+    'Amistad': (n, e) => [`Amigos en ${e}`, `${n} y sus amigos de ${e}`, `Una promesa en ${e}`, `El verano en ${e}`, `${n} nunca está solo`],
+  };
+  tituloVariants() {
+    const esc = this.state.escenario;
+    const n = (this.protagonistChar().nombre || '').trim() || 'El pequeño héroe';
+    const fn = this.TITULO_TPL[this.state.tono];
+    return fn ? fn(n, esc) : [`El ${esc}`];
+  }
+  // Sugerencia estable para el placeholder / texto de ayuda: sólo cambia si
+  // cambian género, escenario o nombre; así no parpadea en cada render.
+  suggestTitulo() {
+    if (!this.state.tono || !this.state.escenario) return '';
+    const key = this._giroKey ? this._giroKey() : (this.state.tono + '|' + this.state.escenario);
+    if (!this._tituloCache || this._tituloCache.key !== key) {
+      this._tituloCache = { key, val: this.tituloVariants()[0] };
+    }
+    return this._tituloCache.val;
+  }
+  // Elige una variante al azar, evitando repetir la que ya está puesta.
+  suggestTituloRandom() {
+    const vars = this.tituloVariants();
+    const cur = (this.state.titulo || '').trim();
+    const pool = vars.filter((t) => t !== cur);
+    const list = pool.length ? pool : vars;
+    return list[Math.floor(Math.random() * list.length)];
+  }
+  // Plantilla interna de 5 tiempos por género; cada tiempo tiene varias
+  // variantes y se elige una al azar, de modo que cada clic en «Usar
+  // sugerencia» compone una trama nueva de 3-4 frases.
+  GIRO_TPL = {
+    'Aventuras': {
+      inicio: (n, e) => [`${n} llega a ${e} sin saber lo que le espera`, `Un viejo mapa lleva a ${n} hasta ${e}`, `${n} descubre un sendero oculto que baja hasta ${e}`],
+      objetivo: () => [`y debe encontrar un tesoro perdido antes de que caiga la noche`, `y se propone rescatar a un amigo atrapado`, `y decide proteger el lugar de quienes quieren arrasarlo`],
+      obstaculo: () => [`Puentes que se balancean, mapas engañosos y una tormenta ponen a prueba su valentía`, `Trampas antiguas y un guardián misterioso le cierran el paso una y otra vez`, `El camino se derrumba y tendrá que confiar en su ingenio para seguir`],
+      aprendizaje: () => [`En el camino aprende que la verdadera aventura es atreverse a dar el primer paso`, `Poco a poco descubre que pedir ayuda también es de valientes`, `Comprende que el mayor tesoro son los amigos que hace por el camino`],
+      cierre: (n) => [`Al final ${n} lo consigue y vuelve a casa transformado`, `${n} regresa con una historia que nadie creerá y un corazón más grande`, `Y ${n} vuelve sabiendo que ya nada le da miedo`],
+    },
+    'Misterio': {
+      inicio: (n, e) => [`${n} encuentra una pista extraña en ${e}`, `Algo no encaja desde que ${n} pisa ${e}`, `Una puerta que no debería estar abierta recibe a ${n} en ${e}`],
+      objetivo: () => [`y decide descubrir qué se esconde tras el enigma`, `y se propone resolver el misterio antes que nadie`, `y quiere averiguar qué ocurrió realmente allí`],
+      obstaculo: () => [`Cada respuesta trae una pregunta nueva y las pistas parecen contradecirse`, `Ruidos, sombras y falsas pistas intentan despistarle`, `Nadie quiere contarle la verdad y el tiempo se agota`],
+      aprendizaje: () => [`En el proceso aprende a observar con calma y a confiar en su intuición`, `Descubre que la paciencia y las preguntas correctas valen más que la prisa`, `Comprende que la verdad casi siempre estaba a la vista`],
+      cierre: (n) => [`Al final ${n} resuelve el enigma y todo cobra sentido`, `${n} destapa el secreto y devuelve la calma al lugar`, `Y ${n} regresa convertido en un pequeño detective`],
+    },
+    'Fantasía': {
+      inicio: (n, e) => [`${n} cruza un umbral mágico y aparece en ${e}`, `Una luz misteriosa guía a ${n} hasta ${e}`, `${n} despierta en ${e}, un mundo que no conocía`],
+      objetivo: () => [`y debe romper un antiguo hechizo`, `y se propone ayudar a una criatura en apuros`, `y busca devolver la magia que ha desaparecido`],
+      obstaculo: () => [`Criaturas caprichosas y acertijos encantados se cruzan en su camino`, `Un hechizo pone el mundo del revés y nada es lo que parece`, `Debe superar pruebas mágicas que ponen a prueba su corazón`],
+      aprendizaje: () => [`En su viaje aprende que la bondad es la magia más poderosa`, `Descubre que creer en sí mismo abre puertas imposibles`, `Comprende que la amistad puede más que cualquier hechizo`],
+      cierre: (n) => [`Al final ${n} restaura la magia y vuelve a casa distinto`, `${n} deshace el hechizo y regresa con un amigo mágico`, `Y ${n} vuelve sabiendo que la magia también vive en él`],
+    },
+    'Histórica': {
+      inicio: (n, e) => [`${n} viaja hasta ${e} en una época muy lejana`, `Un objeto antiguo lleva a ${n} de vuelta a ${e}`, `${n} despierta en pleno ${e}, siglos atrás`],
+      objetivo: () => [`y debe cumplir una promesa olvidada por el tiempo`, `y se propone descubrir un secreto del pasado`, `y quiere ayudar a quienes vivieron allí`],
+      obstaculo: () => [`Costumbres desconocidas y peligros de otra época lo complican todo`, `Nadie le cree y el tiempo corre en su contra`, `Un obstáculo del pasado amenaza con cambiarlo todo`],
+      aprendizaje: () => [`En el camino aprende a valorar de dónde venimos`, `Descubre que el coraje no tiene época`, `Comprende que las pequeñas acciones cambian la historia`],
+      cierre: (n) => [`Al final ${n} cumple su misión y regresa a su tiempo`, `${n} vuelve con una lección que el pasado le enseñó`, `Y ${n} regresa transformado por lo que vivió`],
+    },
+    'Ciencia ficción': {
+      inicio: (n, e) => [`${n} recibe una señal desde ${e}`, `Una nave lleva a ${n} hasta ${e}`, `${n} despierta a bordo de ${e}, muy lejos de casa`],
+      objetivo: () => [`y debe reparar algo antes de que sea tarde`, `y se propone descubrir quién envió la señal`, `y busca el camino de vuelta a casa`],
+      obstaculo: () => [`Fallos, robots despistados y un misterio del espacio lo ponen a prueba`, `El tiempo se agota y la tecnología no coopera`, `Un imprevisto cósmico lo cambia todo`],
+      aprendizaje: () => [`En el viaje aprende que la curiosidad lo lleva lejos`, `Descubre que trabajar en equipo salva el día`, `Comprende que hasta lo desconocido puede ser amigo`],
+      cierre: (n) => [`Al final ${n} lo resuelve y vuelve a casa con nuevas ideas`, `${n} regresa convertido en un pequeño explorador del cosmos`, `Y ${n} vuelve mirando las estrellas de otra manera`],
+    },
+    'Amistad': {
+      inicio: (n, e) => [`${n} llega a ${e} y conoce a alguien especial`, `En ${e}, ${n} hace un amigo inesperado`, `${n} pasa unos días en ${e} junto a sus amigos`],
+      objetivo: () => [`y juntos se proponen lograr algo importante`, `y deciden ayudar a quien más lo necesita`, `y quieren cumplir una promesa que se hicieron`],
+      obstaculo: () => [`Un malentendido pone a prueba su amistad`, `Las cosas se tuercen y tendrán que confiar el uno en el otro`, `Un reto los separa justo cuando más se necesitan`],
+      aprendizaje: () => [`En el camino aprenden que perdonar une más que nada`, `Descubren que juntos son más fuertes`, `Comprenden que un buen amigo siempre vuelve`],
+      cierre: (n) => [`Al final ${n} y sus amigos lo consiguen, más unidos que nunca`, `${n} regresa con una amistad para toda la vida`, `Y ${n} vuelve sabiendo que nunca está solo`],
+    },
+  };
+  _giroKey() {
+    // Incluye nombre + rol de todo el reparto: cambiar quién es el protagonista
+    // (o su nombre) refresca la sugerencia de trama.
+    const roster = this.state.chars.map((ch) => (ch.nombre || '').trim() + ':' + (ch.rol || '')).join(',');
+    return this.state.tono + '|' + this.state.escenario + '|' + roster;
+  }
+  // EL PROTAGONISTA siempre lleva el peso de la trama, sea cual sea el
+  // personaje que se esté editando. Es el personaje con rol «Protagonista»
+  // (o, en su defecto, el primero con nombre).
+  protagonistChar() {
+    const named = this.state.chars.filter((ch) => (ch.nombre || '').trim());
+    return this.state.chars.find((ch) => (ch.rol || '') === 'Protagonista' && (ch.nombre || '').trim())
+      || named[0] || this.cur();
+  }
+  // Personaje secundario para la trama (nunca el protagonista): se prioriza
+  // co-protagonista > secundario > antagonista. Devuelve { nombre, esAntagonista } o null.
+  companion() {
+    const prot = this.protagonistChar();
+    const order = { 'Co-protagonista': 0, 'Secundario': 1, 'Antagonista': 2 };
+    const other = this.state.chars
+      .filter((ch) => ch !== prot && (ch.nombre || '').trim())
+      .sort((a, b) => (order[a.rol] ?? 3) - (order[b.rol] ?? 3))[0];
+    if (!other) return null;
+    return { nombre: other.nombre.trim(), esAntagonista: (other.rol || '') === 'Antagonista' };
+  }
+  // Sugerencia estable para el placeholder: se recalcula sólo si cambian
+  // género, escenario o nombre; así no parpadea en cada render.
+  giroSugStable() {
+    if (!this.state.tono || !this.state.escenario) return '';
+    const key = this._giroKey();
+    if (!this._giroCache || this._giroCache.key !== key) {
+      this._giroCache = { key, val: this.suggestGiro() };
+    }
+    return this._giroCache.val;
+  }
+  suggestGiro() {
+    const n = (this.protagonistChar().nombre || '').trim() || 'el protagonista';
+    const e = (this.state.escenario || 'un lugar lejano').toLowerCase();
+    const tpl = this.GIRO_TPL[this.state.tono] || this.GIRO_TPL['Aventuras'];
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const beats = [
+      pick(tpl.inicio(n, e)),
+      pick(tpl.objetivo(n, e)),
+      pick(tpl.obstaculo(n, e)),
+      pick(tpl.aprendizaje(n, e)),
+      pick(tpl.cierre(n, e)),
+    ];
+    // Componemos 3-4 frases: unimos inicio+objetivo en una, y el resto sueltas.
+    // El protagonista siempre lleva el peso de la trama. Si hay un segundo
+    // personaje, entra como secundario: aliado que acompaña o rival que se
+    // interpone, pero nunca como protagonista.
+    const comp = this.companion();
+    if (comp) {
+      const compSent = comp.esAntagonista
+        ? pick([
+            `En su camino se cruza ${comp.nombre}, que intentará ponérselo difícil`,
+            `Pero ${comp.nombre} tiene otros planes y se convierte en su mayor obstáculo`,
+            `Tendrá que ingeniárselas para no dejarse vencer por ${comp.nombre}`,
+          ])
+        : pick([
+            `A su lado, ${comp.nombre} le echa una mano cuando más lo necesita`,
+            `Le acompaña ${comp.nombre}, un fiel apoyo en los momentos difíciles`,
+            `Y ${comp.nombre}, siempre cerca, le ayuda a no rendirse`,
+          ]);
+      return `${beats[0]}, ${beats[1]}. ${beats[2]}. ${compSent}. ${beats[3]}. ${beats[4]}.`;
+    }
+    return `${beats[0]}, ${beats[1]}. ${beats[2]}. ${beats[3]}. ${beats[4]}.`;
+  }
+  toggleRasgo(r) {
+    const c = this.cur();
+    const sel = c.rasgos || [];
+    if (sel.includes(r)) { this.setCur({ rasgos: sel.filter((x) => x !== r) }); return; }
+    if (sel.length >= 6) return;
+    let chips = (c.chipsList || []).slice();
+    if (!chips.includes(r)) {
+      const idx = chips.findIndex((x) => !sel.includes(x));
+      if (idx >= 0) chips[idx] = r; else chips.push(r);
+    }
+    this.setCur({ rasgos: [...sel, r], chipsList: chips });
+  }
+  toggleRasgoNeg(r) {
+    const c = this.cur();
+    const sel = c.rasgosNeg || [];
+    if (sel.includes(r)) { this.setCur({ rasgosNeg: sel.filter((x) => x !== r) }); return; }
+    if (sel.length >= 6) return;
+    let chips = (c.chipsListNeg || []).slice();
+    if (!chips.includes(r)) {
+      const idx = chips.findIndex((x) => !sel.includes(x));
+      if (idx >= 0) chips[idx] = r; else chips.push(r);
+    }
+    this.setCur({ rasgosNeg: [...sel, r], chipsListNeg: chips });
+  }
+  goTo(i) { this.stopNarr(); this.set({ step: i, narrIndex: 0 }); }
+  // Genera descripciones a partir de nombre, edad, género (pronombre) y rasgos.
+  detSugList() {
+    const c = this.cur();
+    const nombre = (c.nombre || '').trim();
+    const edad = String(c.edad || '').trim();
+    const fem = c.pron === 'Ella';
+    const pos = (c.rasgos || []).map((s) => String(s).toLowerCase());
+    const neg = (c.rasgosNeg || []).map((s) => String(s).toLowerCase());
+    const N = nombre || (fem ? 'Ella' : 'Él');
+    const nino = fem ? 'una niña' : 'un niño';
+    const laLo = fem ? 'la' : 'lo';
+    const edadFrag = edad ? ` de ${edad} años` : '';
+    const join = (arr) => arr.length <= 1 ? (arr[0] || '') : arr.slice(0, -1).join(', ') + ' y ' + arr[arr.length - 1];
+    const posTxt = join(pos.slice(0, 3));
+    const negTxt = join(neg.slice(0, 2));
+    const s1 = `${N} es ${nino}${edadFrag}${posTxt ? ', ' + posTxt + ' por naturaleza' : ' con muchísima imaginación'}. ${negTxt ? 'A veces puede ser ' + negTxt + ', pero eso ' + laLo + ' hace único y muy real.' : 'Le encanta descubrir mundos nuevos y vivir grandes aventuras.'}`;
+    const s2 = `A ${N} le fascina explorar y hacerse preguntas sobre todo lo que ${laLo} rodea.${posTxt ? ' Es ' + posTxt + ',' : ''} y en cada historia aprende algo que ${laLo} hace crecer un poquito más.`;
+    const s3 = `Con ${edad ? 'sus ' + edad + ' años' : 'su gran corazón'}, ${N} es ${posTxt || (fem ? 'valiente y cariñosa' : 'valiente y cariñoso')}. Le gusta imaginar mundos mágicos y compartir cada aventura con las personas que más quiere.`;
+    return [s1, s2, s3].map((t) => t.slice(0, 500));
+  }
+  // ¿Están correctamente rellenos los campos obligatorios del personaje (paso 1)?
+  step0Valid() {
+    return this.charValid(this.cur());
+  }
+  // Página 2 (Historia): género, escenario, título y trama deben estar rellenos.
+  step1Valid() {
+    return !!(
+      (this.state.tono || '').trim() &&
+      (this.state.escenario || '').trim() &&
+      (this.state.titulo || '').trim() &&
+      (this.state.giro || '').trim()
+    );
+  }
+  // Página 3 (Ilustración): debe haberse elegido un estilo.
+  step2Valid() {
+    return !!((this.state.estilo || '').trim());
+  }
+  // Página 4 (Extras): debe haberse elegido el número de páginas.
+  step3Valid() {
+    return !!this.state.paginas;
+  }
+  // ¿Tiene un personaje rellenos todos los campos obligatorios? (mismos que step 1)
+  charValid(c) {
+    if (!c) return false;
+    return !!((c.nombre || '').trim() && c.edad && (c.pron || '').trim() && (c.rasgos || []).length >= 2);
+  }
+  // Índice de la página más alta accesible. Sin el paso de personaje válido,
+  // sólo la página 1 es accesible; al completarlo se abre SÓLO la página 2
+  // (índice 1) y, a partir de ahí, cada «Continuar» abre la siguiente.
+  maxReachable() {
+    if (!this.step0Valid()) return 0;
+    let reach = Math.max(1, this.state.maxUnlocked || 0);
+    // Sin la Historia completa (pág. 2), no se puede pasar de la pág. 2.
+    if (!this.step1Valid()) reach = Math.min(reach, 1);
+    // Con la Historia completa, se desbloquea también la pág. 3 (índice 2).
+    else {
+      reach = Math.max(reach, 2);
+      // Sin estilo de ilustración elegido (pág. 3), no se pasa de la pág. 3.
+      if (!this.step2Valid()) reach = Math.min(reach, 2);
+      else {
+        reach = Math.max(reach, 3);
+        // Sin número de páginas elegido (pág. 4), no se llega a la pág. 5.
+        if (!this.step3Valid()) reach = Math.min(reach, 3);
+        else reach = Math.max(reach, 4);
+      }
+    }
+    return reach;
+  }
+  canNext() {
+    if (this.state.step === 0) return this.step0Valid();
+    if (this.state.step === 1) return this.step1Valid();
+    if (this.state.step === 2) return this.step2Valid();
+    if (this.state.step === 3) return this.step3Valid();
+    return true;
+  }
+
+  renderVals() {
+    const labels = this.labelsArr();
+    const total = labels.length;
+    const step = Math.max(0, Math.min(total - 1, this.state.step));
+    const c = this.cur();
+    // El PROTAGONISTA lleva el peso: la vista previa, las descripciones de la
+    // historia y el resumen final siempre se refieren a él, sin importar qué
+    // personaje se esté editando en ese momento.
+    const prot = this.protagonistChar();
+    const protRasgos = prot.rasgos || [];
+    const chip = (label, active, onClick, extra) => Object.assign({ label, cls: active ? 'on' : '', onClick }, extra || {});
+
+    const mStart = Math.max(0, Math.min(step - 2, Math.max(0, total - 3)));
+    const reach = this.maxReachable();
+    const sideTabs = labels.map((lb, i) => {
+      const fin = lb.trim().toUpperCase() === 'FINAL';
+      const inWin = i >= mStart && i < mStart + 3;
+      const locked = i > reach;
+      return {
+        top: fin ? 'Final' : ('Página ' + (i + 1)),
+        sub: fin ? '– Resumen –' : ('– ' + lb + ' –'),
+        cls: (i === step ? 'on' : '') + (i < step ? ' done' : '') + (inWin ? ' mwin' : '') + (locked ? ' locked' : ''),
+        onClick: locked ? () => {} : () => this.goTo(i),
+      };
+    });
+
+    const curRasgos = c.rasgos || [];
+    const curRasgosNeg = c.rasgosNeg || [];
+    const nombre = (prot.nombre || '').trim() || 'tu peque';
+    const rasgo0 = (protRasgos[0] || 'valiente').toLowerCase();
+    const quien = prot.pron === 'Ella' ? 'una niña' : prot.pron === 'Le' ? 'alguien' : 'un niño';
+    const tituloSug = this.suggestTitulo();
+    const giroSug = this.giroSugStable();
+    const pvTitulo = (this.state.titulo || '').trim() || tituloSug;
+    const pvProsa = `Aquella mañana, ${nombre} despertó y supo que su aventura le esperaba en ${this.state.escenario}. Dicen que solo ${quien} de corazón ${rasgo0} podía cruzar sus lindes, y que hasta los árboles aprendían su nombre al verle pasar.`;
+    const rasgosTxt = protRasgos.length ? protRasgos.join(', ').toLowerCase() : rasgo0;
+    const pvMeta = `${prot.edad} años · ${rasgosTxt}`;
+
+    const dedicPreview = this.state.dedic.trim() || `Para ${nombre}: que nunca dejes de ser ${rasgo0}. Con cariño, de toda tu familia.`;
+
+    const nChars = this.state.chars.length;
+    // Filas del reparto secundario: co-protagonistas, secundarios y antagonistas
+    // (todo personaje con nombre que no sea el protagonista), con sus rasgos.
+    const otrosRows = this.state.chars
+      .filter((ch) => ch !== prot && (ch.nombre || '').trim())
+      .sort((a, b) => {
+        const order = { 'Co-protagonista': 0, 'Secundario': 1, 'Antagonista': 2 };
+        return (order[a.rol] ?? 3) - (order[b.rol] ?? 3);
+      })
+      .map((ch) => {
+        const rg = (ch.rasgos || []);
+        return {
+          dt: ch.rol || 'Secundario',
+          dd: `${ch.nombre.trim()}${ch.edad ? `, ${ch.edad} años` : ''}${rg.length ? ` · ${rg.join(' · ')}` : ''}`,
+        };
+      });
+    const tipoRelato = this.state.cuentoTono === 'noche' ? 'Noche · calma' : 'Día · energía';
+    const resumen = [
+      { dt: 'Tono de la historia', dd: tipoRelato },
+      { dt: 'Historia', dd: `${this.state.tono} · ${this.state.escenario}` },
+      { dt: 'Personajes', dd: `${nChars} ${nChars === 1 ? 'personaje' : 'personajes'}` },
+      { dt: 'Protagonista', dd: `${prot.nombre || '—'}${prot.edad ? `, ${prot.edad} años` : ''}${protRasgos.length ? ` · ${protRasgos.join(' · ')}` : ''}` },
+      ...otrosRows,
+      { dt: 'Ilustración', dd: `${this.state.estilo}` },
+      { dt: 'Páginas', dd: `${this.state.paginas} págs` },
+      { dt: 'Dedicatoria', dd: 'Sí' },
+      { dt: 'Audiolibro', dd: this.state.audiolibro ? `Sí · voz ${this.state.voz.toLowerCase()} · +0,50 €` : 'No' },
+    ];
+
+    const isLast = step === total - 1;
+
+    const charView = (ch, i) => ({
+      rol: (ch.rol || 'Protagonista').toUpperCase(),
+      nombre: ch.nombre && ch.nombre.trim() ? ch.nombre : 'Nuevo personaje',
+      rasgos: (ch.rasgos && ch.rasgos.length) ? ch.rasgos.join(' · ') : 'Sin características',
+      done: this.charValid(ch),
+      badgeLabel: this.charValid(ch) ? 'Completado' : 'Sin completar',
+      badgeCls: this.charValid(ch) ? 'fill' : '',
+      cls: i === this.state.activeChar ? 'on' : '',
+      onClick: () => this.selectChar(i),
+      onDelete: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.removeChar(i); },
+    });
+    const leftCards = this.state.chars.map((ch, i) => charView(ch, i));
+
+    const nCharsMeta = this.state.chars.length;
+    const charsFrag = `${nCharsMeta} ${nCharsMeta === 1 ? 'personaje' : 'personajes'}`;
+    const storyTipo = [this.state.tono, this.state.escenario, charsFrag].filter(Boolean).join(' · ');
+    const storyMeta = (step === 3 || step === 4)
+      ? [storyTipo, this.state.paginas ? `${this.state.paginas} págs` : null, this.state.audiolibro ? `audiolibro (voz ${this.state.voz.toLowerCase()})` : null].filter(Boolean).join(' · ')
+      : storyTipo;
+    // La vista previa muestra la trama: lo que el usuario haya escrito, o si
+    // no ha tocado el campo, la sugerencia generada.
+    const storyResumen = this.narrationText();
+
+    // Prosa con «karaoke»: las letras ya narradas se resaltan en ámbar (strong).
+    // Se agrupan por palabra (nowrap) para que ninguna se parta a media línea.
+    const hi = this.state.narrIndex || 0;
+    const narrWords = storyResumen.split(' ');
+    let _gi = 0;
+    const narrNodes = [];
+    narrWords.forEach((w, wi) => {
+      const letters = [];
+      for (let k = 0; k < w.length; k++) {
+        const idx = _gi++;
+        const ch = w[k];
+        letters.push(idx < hi ? React.createElement('strong', { key: idx }, ch) : ch);
+      }
+      narrNodes.push(React.createElement('span', { key: 'w' + wi, style: { whiteSpace: 'nowrap' } }, letters));
+      if (wi < narrWords.length - 1) { narrNodes.push(' '); _gi++; }
+    });
+    const narrProse = React.createElement('p', { className: 'wz-prose' }, narrNodes);
+
+    return {
+      leftCards,
+      charsCountLabel: `${nChars} ${nChars === 1 ? 'personaje' : 'personajes'}`,
+      canAddChar: nChars < 4,
+      leftCollapsedCls: this.state.leftCollapsed ? 'wz-collapsed' : '',
+      toggleLeft: () => this.set({ leftCollapsed: !this.state.leftCollapsed }),
+      leftStory: step === 1 || step === 2 || step === 3 || step === 4,
+      leftChars: step === 0,
+      storyTipo, storyResumen, storyMeta, narrProse,
+      pvIllusOn: (step === 2 && !!this.state.estilo) || step === 3 || step === 4,
+      narrOnStep4: step === 3 || step === 4,
+      narrOnCls: this.state.narrPlaying ? 'on' : '',
+      narrLabel: this.state.narrPlaying ? 'Narrando…' : 'Escuchar la trama',
+      toggleNarr: () => { if (this.state.narrPlaying) this.stopNarr(); else this.startNarr(); },
+      colorCls: this.props.activeColor === 'bosque' ? 'wz-bosque' : 'wz-amber',
+      bookCls: this.props.showPreview === false ? 'wz-nopreview' : '',
+      sideTabs,
+      headNum: String(step + 1),
+      rightTitle: (labels[step] || '').toUpperCase(),
+      headTitle: this.HEADS[step] || labels[step],
+      isStep0: step === 0, isStep1: step === 1, isStep2: step === 2, isStep3: step === 3,
+      isFinal: step >= 4,
+
+      tonoDiaCls: this.state.cuentoTono === 'día' ? 'on' : '',
+      tonoNocheCls: this.state.cuentoTono === 'noche' ? 'on' : '',
+      setTonoDia: () => this.set({ cuentoTono: 'día' }),
+      setTonoNoche: () => this.set({ cuentoTono: 'noche' }),
+      cuentoTonoMode: this.state.cuentoTono === 'noche' ? 'noche' : 'dia',
+      setCuentoTono: (m) => this.set({ cuentoTono: m === 'noche' ? 'noche' : 'día' }),
+      isTonoDia: this.state.cuentoTono !== 'noche',
+      isTonoNoche: this.state.cuentoTono === 'noche',
+
+      nombre: c.nombre,
+      protNombre: nombre,
+      onNombre: (e) => this.setCur({ nombre: e.target.value }),
+      edadInput: c.edad,
+      edadOpenCls: this.state.openSel === 'edad' ? 'open' : '',
+      openEdad: () => this.set({ openSel: 'edad' }),
+      onEdadInput: (e) => { this.setCur({ edad: e.target.value.replace(/[^\d+]/g, '').slice(0, 3) }); this.set({ openSel: 'edad' }); },
+      onEdadKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); this.set({ openSel: null }); } },
+      edadOpts: (() => {
+        const all = Array.from({ length: 99 }, (_, i) => String(i + 1)).concat('+99');
+        const q = String(c.edad || '').trim();
+        const list = q ? all.filter((a) => a.startsWith(q)) : all;
+        return list.map((a) => ({
+          label: a, cls: c.edad === a ? 'on' : '',
+          onClick: () => { this.setCur({ edad: a }); this.set({ openSel: null }); },
+        }));
+      })(),
+      pronLabel: c.pron || 'Elige…',
+      pronOpenCls: this.state.openSel === 'pron' ? 'open' : '',
+      togglePron: () => this.set({ openSel: this.state.openSel === 'pron' ? null : 'pron' }),
+      pronOpts: ['Él', 'Ella'].map((p) => ({
+        label: p, cls: c.pron === p ? 'on' : '',
+        onClick: () => { this.setCur({ pron: p }); this.set({ openSel: null }); },
+      })),
+      roles: (() => {
+        // El protagonista sólo puede ser protagonista: su tarjeta no ofrece más
+        // opciones (siempre debe existir uno).
+        if (c.rol === 'Protagonista') {
+          return [{ label: 'Protagonista', cls: 'on', onClick: () => {}, tip: '' }];
+        }
+        // Sólo puede haber un protagonista: si otro personaje ya lo es, este
+        // no puede serlo (salvo que ya sea el protagonista actual).
+        const otherProt = this.state.chars.some((ch, i) => i !== this.state.activeChar && (ch.rol || '') === 'Protagonista');
+        return ['Protagonista', 'Co-protagonista', 'Secundario', 'Antagonista'].map((r) => {
+          const off = r === 'Protagonista' && otherProt && c.rol !== 'Protagonista';
+          return {
+            label: r,
+            cls: (c.rol === r ? 'on' : '') + (off ? ' wz-chip-off' : ''),
+            onClick: off ? () => {} : () => this.setCur({ rol: r }),
+            tip: off ? 'Ya tienes un protagonista. Puedes convertir este personaje en co-protagonista para que tenga mucho peso en la historia' : '',
+          };
+        });
+      })(),
+      rolLabel: (c.rol || 'Protagonista').toUpperCase(),
+      rasgos: (c.chipsList || []).map((r) => chip(r, curRasgos.includes(r), () => this.toggleRasgo(r))),
+      masOpenCls: this.state.openSel === 'mas' ? 'open' : '',
+      toggleMas: () => this.set({ openSel: this.state.openSel === 'mas' ? null : 'mas' }),
+      hasSel: curRasgos.length > 0,
+      rasgosSel: curRasgos.map((r) => chip(r, true, () => this.toggleRasgo(r))),
+      rasgosMas: this.RASGOS_MAS.filter((r) => !(c.chipsList || []).includes(r) && !curRasgos.includes(r)).map((r) => chip(r, false, () => this.toggleRasgo(r))),
+      rasgosNeg: (c.chipsListNeg || []).map((r) => chip(r, curRasgosNeg.includes(r), () => this.toggleRasgoNeg(r))),
+      masNegOpenCls: this.state.openSel === 'masNeg' ? 'open' : '',
+      toggleMasNeg: () => this.set({ openSel: this.state.openSel === 'masNeg' ? null : 'masNeg' }),
+      hasSelNeg: curRasgosNeg.length > 0,
+      rasgosNegSel: curRasgosNeg.map((r) => chip(r, true, () => this.toggleRasgoNeg(r))),
+      rasgosNegMas: this.RASGOS_NEG_MAS.filter((r) => !(c.chipsListNeg || []).includes(r) && !curRasgosNeg.includes(r)).map((r) => chip(r, false, () => this.toggleRasgoNeg(r))),
+      detalles: c.detalles || '',
+      onDetalles: (e) => this.setCur({ detalles: e.target.value.slice(0, 500) }),
+      detallesCount: `${(c.detalles || '').length}/500 caracteres`,
+      fillDetalles: () => {
+        const list = this.detSugList();
+        const i = (this.state.detSugIdx || 0) % list.length;
+        const chars = this.state.chars.slice();
+        chars[this.state.activeChar] = Object.assign({}, chars[this.state.activeChar], { detalles: list[i] });
+        this.setState({ chars, detSugIdx: i + 1 });
+      },
+
+      personajesLede: (c.rol || 'Protagonista') === 'Protagonista'
+        ? 'Da vida a los personajes del cuento'
+        : `Añade un personaje ${(c.rol || '').toLowerCase()} al cuento de ${nombre}.`,
+      historiaLede: 'Describe el mundo por el que viajarán los personajes',
+      tonos: this.TONOS.map((t) => chip(t, this.state.tono === t, () => {
+        // Cambiar de género reinicia el escenario: el usuario debe elegirlo.
+        this.set({ tono: t, escenario: '', escenOff: 0 });
+      })),
+      escenarios: (this.state.tono ? this.escenWindow() : []).map((s) => chip(s, this.state.escenario === s, () => this.set({ escenario: s }))),
+      // Avanza la ventana 3 posiciones (en bucle) para mostrar los 3 siguientes.
+      useEscenarioSug: () => this.set({ escenOff: (this.state.escenOff || 0) + 3 }),
+      titulo: this.state.titulo,
+      tituloValue: this.state.tituloTouched ? this.state.titulo : tituloSug,
+      onTituloFocus: () => { if (!this.state.tituloTouched) this.set({ titulo: tituloSug, tituloTouched: true }); },
+      onTitulo: (e) => this.set({ titulo: e.target.value, tituloTouched: true }),
+      tituloSug,
+      useTituloSug: () => this.set({ titulo: this.suggestTituloRandom(), tituloTouched: true }),
+      giro: this.state.giro,
+      // Antes de tocar el campo, mostramos la sugerencia como texto fantasma
+      // (gris); al enfocar se adopta en negro y queda editable.
+      giroValue: this.state.giroTouched ? this.state.giro : giroSug,
+      giroGhostCls: this.state.giroTouched ? '' : 'wz-ghost',
+      onGiroFocus: () => { if (!this.state.giroTouched) this.set({ giro: giroSug, giroTouched: true }); },
+      onGiro: (e) => this.set({ giro: e.target.value, giroTouched: true }),
+      giroSug,
+      useGiroSug: () => { const g = this.suggestGiro(); this._giroCache = { key: this._giroKey(), val: g }; this.set({ giro: g, giroTouched: true }); },
+
+      estilos: this.ESTILOS.map((o) => chip(o.label, this.state.estilo === o.label, () => this.set({ estilo: o.label }), { sub: o.sub })),
+      paletas: this.PALETAS.map((p) => chip(p, this.state.paleta === p, () => this.set({ paleta: p }))),
+
+      paginasOpts: [12, 14, 16, 18, 20, 22, 24].map((n) => ({
+        label: String(n), cls: this.state.paginas === n ? 'on' : '',
+        onClick: () => this.set({ paginas: n }),
+      })),
+      paginasHelp: this.state.paginas
+        ? `${this.state.paginas} páginas = ${this.state.paginas / 2} escenas ilustradas: cada escena ocupa una doble página (texto + ilustración).`
+        : 'Elige la extensión del cuento: cada escena ocupa una doble página (texto + ilustración).',
+
+      dedic: this.state.dedic,
+      onDedic: (e) => this.set({ dedic: e.target.value }),
+      audiolibro: this.state.audiolibro,
+      audioOnCls: this.state.audiolibro ? 'on' : '',
+      setAudiolibro: (v) => this.set({ audiolibro: !!v }),
+      vozOpts: ['Femenina', 'Masculina'].map((v) => chip(v, this.state.voz === v, () => this.set({ voz: v }))),
+      useDedicSug: () => {
+        const nom = (prot.nombre || '').trim() || 'tu peque';
+        const rg = rasgo0;
+        const vars = [
+          `Para ${nom}: que nunca dejes de ser ${rg} y que tu imaginación no tenga límites. Con todo nuestro cariño.`,
+          `Para ${nom}, nuestro pequeño gran héroe. Que este cuento te recuerde lo especial que eres. Te queremos.`,
+          `Querido ${nom}: guarda este cuento y, con él, la certeza de que siempre estaremos a tu lado. Con amor.`,
+          `Para ${nom}: cada noche, una aventura; cada día, un motivo para soñar. Con cariño, de toda tu familia.`,
+        ];
+        const curr = (this.state.dedic || '').trim();
+        const pool = vars.filter((v) => v !== curr);
+        const list = pool.length ? pool : vars;
+        this.set({ dedic: list[Math.floor(Math.random() * list.length)] });
+      },
+
+      pvTitulo, pvProsa, pvMeta, pvEstilo: this.state.estilo,
+      pvTituloDisplay: (this.state.titulo || '').trim() || 'Sin título',
+      resumen, dedicPreview,
+
+      prev: () => this.goTo(Math.max(0, step - 1)),
+      next: () => {
+        if (!this.canNext()) return;
+        if (step < total - 1) {
+          const ns = step + 1;
+          this.setState({ maxUnlocked: Math.max(this.state.maxUnlocked || 0, ns) });
+          this.goTo(ns);
+        }
+      },
+      nextCls: this.canNext() ? 'primary' : 'disabled',
+      prevLabel: step === 0 ? 'Cancelar' : 'Atrás',
+      nextLabel: isLast ? 'Crear el cuento' : 'Continuar',
+      progress: `Página ${step + 1} de ${total}`,
+      showPrev: step > 0,
+      prevHideCls: step > 0 ? '' : 'wz-invisible',
+      addChar: () => { if (this.state.chars.length >= 4) return; this.set({
+        chars: [...this.state.chars, {
+          nombre: '', edad: '', pron: '', rol: 'Co-protagonista',
+          rasgos: [], chipsList: this.DEFAULT_CHIPS.slice(),
+          rasgosNeg: [], chipsListNeg: this.DEFAULT_CHIPS_NEG.slice(), detalles: '',
+        }],
+        activeChar: this.state.chars.length,
+        step: 0,
+        openSel: null,
+      }); },
+      sheetOnCls: this.state.sheetOn ? 'on' : '',
+      toggleSheet: () => this.set({ sheetOn: !this.state.sheetOn }),
+      goInicio: () => this.goTo(0),
+      goQueEs: () => {},
+      goCuentos: () => {},
+      goAyuda: () => {},
+      goSalir: () => {},
+      avatarBtnCls: this.state.avatarOpen ? 'on' : '',
+      avatarMenuCls: this.state.avatarOpen ? 'open' : '',
+      toggleAvatar: () => this.set({ avatarOpen: !this.state.avatarOpen, burger: false }),
+      burgerCls: this.state.burger ? 'open' : '',
+      toggleBurger: () => this.set({ burger: !this.state.burger, avatarOpen: false }),
+    };
+  }
+}
+</script>
+</body>
+</html>

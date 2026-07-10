@@ -1,0 +1,38 @@
+/* =========================================================================
+   Surfaces — Línea Tactile Design System
+   Borders, radii, the hard-offset (never blurred) shadow ladder, and spacing.
+   The kit's shadows are ALWAYS hard offsets (X+3 / Y+4, blur 0) to read as
+   stacked paper, never soft elevation.
+   ========================================================================= */
+:root{
+  /* border weight */
+  --bw:2px;                 /* default hand-drawn stroke weight */
+  --bw-thin:1.5px;
+  --bw-thick:7px;
+
+  /* radius ladder */
+  --r-0:0px;
+  --r-1:6px;
+  --r-2:9px;
+  --r-3:11px;
+  --r-4:13px;
+  --r-5:16px;
+  --r-pill:26px;
+
+  /* hard-offset shadow ladder (blur is always 0 — stacked-paper, not glow) */
+  --shadow-1:3px 4px 0 var(--sh-drop,rgba(46,58,46,.16));
+  --shadow-2:3px 4px 0 var(--sh-drop,rgba(46,58,46,.20));
+  --shadow-3:3px 4px 0 var(--sh-drop,rgba(46,58,46,.24));
+  --shadow-paper:4px 5px 0 var(--sh-drop,rgba(59,47,23,.26)), inset 0 1px 0 rgba(255,255,255,.45);
+  --shadow-modal:6px 8px 0 var(--sh-drop,rgba(46,58,46,.16));
+  --sh:drop-shadow(0 2px 0 rgba(46,58,46,.12)); /* @kind shadow */
+
+  /* spacing scale */
+  --space-1:6px;
+  --space-2:11px;
+  --space-3:14px;
+  --space-4:22px;
+  --space-5:32px;
+  --space-6:48px;
+  --space-7:64px;
+}

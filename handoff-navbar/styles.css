@@ -1,0 +1,15 @@
+/* =========================================================================
+   Línea — Tactile Line-Art Design System
+   Root style entry. Consumers link THIS one file. Import-only by contract.
+
+   Load order: fonts → tokens → base (the .bg system) → components.
+   The hand-drawn look also needs the SVG filter <defs> in the document —
+   include assets/linea-runtime.js once per page (it injects #rough,
+   #torn-paper, etc. and the auto .bg layer for plain-HTML usage).
+   ========================================================================= */
+@import url('./tokens/fonts.css');
+@import url('./tokens/colors.css');
+@import url('./tokens/typography.css');
+@import url('./tokens/surfaces.css');
+@import url('./base/base.css');
+@import url('./components/components.css');

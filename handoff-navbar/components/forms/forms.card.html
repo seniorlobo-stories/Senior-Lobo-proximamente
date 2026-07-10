@@ -1,0 +1,93 @@
+<!-- @dsCard group="Components" viewport="700x560" name="Forms" subtitle="Buttons, inputs, checkbox/radio, switches" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body{margin:0;padding:26px;display:flex;flex-direction:column;gap:24px}
+  .cluster{display:flex;flex-direction:column;gap:13px}
+  .cluster > .panel-label{margin:0}
+  .row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+  /* sombra dura — offset solid shadow on buttons */
+  .btn .bg{box-shadow:4px 5px 0 rgba(59,47,23,.26),inset 0 1px 0 rgba(255,255,255,.25)}
+  .btn.primary .bg{box-shadow:4px 5px 0 rgba(59,47,23,.22)}
+  .btn.ghost .bg{box-shadow:4px 5px 0 rgba(59,47,23,.22),inset 0 1px 0 rgba(255,255,255,.4)}
+  .btn:active .bg{transform:translate(2px,2px);box-shadow:2px 3px 0 rgba(59,47,23,.24),inset 0 1px 0 rgba(255,255,255,.25)}
+  .btn.primary:active .bg{transform:translate(2px,2px);box-shadow:2px 3px 0 rgba(59,47,23,.20)}
+  .btn.pressed .bg{box-shadow:inset 2px 3px 0 rgba(46,58,46,.40)}
+  .btn.disabled .bg{box-shadow:none}
+  /* Correo field — same hard shadow as the Ghost button */
+  .field.focus .input-wrap > .bg{box-shadow:4px 5px 0 rgba(59,47,23,.22),inset 0 1px 0 rgba(255,255,255,.4)}
+  /* Contraseña field — same hard shadow */
+  .field.error .input-wrap > .bg{box-shadow:4px 5px 0 rgba(59,47,23,.22),inset 0 1px 0 rgba(255,255,255,.4)}
+</style>
+</head>
+<body>
+
+  <div class="cluster">
+    <p class="panel-label">Buttons</p>
+    <div class="row">
+      <button class="btn primary">Primary</button>
+      <button class="btn ghost"><svg class="icon s" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Ghost</button>
+      <button class="btn pressed">Pressed</button>
+      <button class="btn disabled" disabled>Disabled</button>
+    </div>
+  </div>
+
+  <div class="cluster">
+    <p class="panel-label">Text Field</p>
+    <div class="row" style="align-items:flex-start">
+      <div class="field focus" style="width:230px">
+        <label>Correo</label>
+        <span class="input-wrap"><input type="text" value="hola@probatia.com"></span>
+        <span class="helper">Estado focus · sombra dura</span>
+      </div>
+      <div class="field error" style="width:230px">
+        <label>Contraseña</label>
+        <span class="input-wrap"><input type="password" value="123"></span>
+        <span class="helper">Mínimo 8 caracteres</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cluster">
+    <p class="panel-label">Checkbox · Radio · Switch</p>
+    <div class="row" style="gap:26px">
+      <label class="opt on"><span class="box"><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 5 10-11"/></svg></span>Activo</label>
+      <label class="opt"><span class="box"></span>Inactivo</label>
+      <label class="opt on"><span class="dot"></span>Opción A</label>
+      <label class="opt"><span class="dot"></span>Opción B</label>
+      <span class="switch on"><span class="knob"></span></span>
+      <span class="switch"><span class="knob"></span></span>
+    </div>
+  </div>
+
+  <div class="cluster">
+    <p class="panel-label">Day / Night Switch</p>
+    <div class="row">
+      <span class="dn-switch" data-mode="dia" role="switch" aria-checked="false" tabindex="0" aria-label="Modo día o noche">
+        <span class="glyph sun"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.2v2.6M12 19.2v2.6M2.2 12h2.6M19.2 12h2.6M5 5l1.9 1.9M17.1 17.1L19 19M19 5l-1.9 1.9M6.9 17.1L5 19"/></svg></span>
+        <span class="glyph moon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.4 6.4 0 0 0 10.5 10.5z"/></svg></span>
+        <span class="stars"><i></i><i></i><i></i></span>
+        <span class="dn-knob">
+          <span class="face sun"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.2v2.6M12 19.2v2.6M2.2 12h2.6M19.2 12h2.6M5 5l1.9 1.9M17.1 17.1L19 19M19 5l-1.9 1.9M6.9 17.1L5 19"/></svg></span>
+          <span class="face moon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.4 6.4 0 0 0 10.5 10.5z"/></svg></span>
+        </span>
+      </span>
+      <span class="cap" style="margin:0">Toca para alternar · recoloca toda la página</span>
+    </div>
+  </div>
+
+<script src="../../assets/linea-runtime.js"></script>
+<script>
+  document.querySelectorAll('.switch').forEach(s=>s.addEventListener('click',()=>s.classList.toggle('on')));
+  document.querySelectorAll('.dn-switch').forEach(dn=>{
+    dn.addEventListener('click',()=>{
+      const next=dn.dataset.mode==='dia'?'noche':'dia';
+      dn.dataset.mode=next; dn.setAttribute('aria-checked', next==='noche');
+    });
+  });
+</script>
+</body>
+</html>
