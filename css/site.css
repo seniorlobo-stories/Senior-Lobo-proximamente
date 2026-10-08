@@ -377,12 +377,14 @@ main { flex: 1; width: 100%; }
 /* banda diagonal «Próximamente»: se coloca respecto a .banda-separadora (primer ancestro
    posicionado), así queda en la esquina derecha de la pantalla; va por debajo de los
    bordes rasgados (z-index 2), que tapan su extremo como si la banda entrara en la página */
-.brindis-soon { position: absolute; z-index: 1; top: 84px; right: -64px; width: 280px; transform: rotate(40deg);
-  padding: 9px 0 8px; text-align: center; pointer-events: none;
+.brindis-soon { position: absolute; z-index: 1; top: 84px; right: -64px; width: 280px; transform: rotate(40deg); }
+/* aspecto común de las bandas «Próximamente» (brindis y modal de registro) */
+.brindis-soon, .soon-band { padding: 9px 0 8px; text-align: center; pointer-events: none;
   background: var(--bosque); color: var(--pergamino); border-block: 2px solid var(--line);
   box-shadow: 0 4px 0 rgba(59,47,23,.22);
   font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .28em; font-size: 14px; font-weight: 600; line-height: 1; }
-:root[data-theme="noche"] .brindis-soon { background: var(--amber); color: var(--tinta); box-shadow: 0 4px 0 rgba(240,230,200,.25); }
+:root[data-theme="noche"] .brindis-soon,
+:root[data-theme="noche"] .soon-band { background: var(--amber); color: var(--tinta); box-shadow: 0 4px 0 rgba(240,230,200,.25); }
 
 /* burbujas: salen del borde de la copa (15% / 45% del recorte) y suben oscilando hasta desvanecerse */
 .burbujas { position: absolute; left: 15%; top: 45%; width: 0; height: 0; pointer-events: none; }
@@ -1222,6 +1224,14 @@ html:has(.shot-lb[open]) { overflow: hidden; }
 :root[data-theme="noche"] .lg-illus img.lobo-noche { opacity: 1; }
 
 .lg-form { flex: 1; display: flex; flex-direction: column; }
+/* registro cerrado: los campos siguen maquetando como hijos del form (display: contents)
+   pero son inertes; encima, un velo de papel cruzado por la banda «Próximamente» */
+.lg-form.lg-only-register { position: relative; }
+.lg-form-lock { display: contents; }
+.lg-soon { position: absolute; inset: -10px; z-index: 5; display: grid; place-items: center; overflow: hidden;
+  border-radius: 6px; background: color-mix(in srgb, var(--fill) 55%, transparent);
+  -webkit-backdrop-filter: blur(1.5px); backdrop-filter: blur(1.5px); }
+.lg-soon .soon-band { width: 150%; transform: rotate(-16deg); padding: 14px 0 13px; font-size: 18px; letter-spacing: .32em; }
 .lg-modal[data-mode="login"] .lg-form.lg-only-register,
 .lg-modal[data-mode="login"] .lg-only-register,
 .lg-modal[data-mode="register"] .lg-form.lg-only-login,

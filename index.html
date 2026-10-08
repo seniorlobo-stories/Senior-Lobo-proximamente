@@ -152,26 +152,30 @@
           </div>
 
           <div class="lg-form lg-only-register">
-            <p class="lg-lede">Crea tu cuenta para empezar a crear tus cuentos</p>
-            <div class="lg-field">
-              <label for="lgName">Nombre</label>
-              <div class="lg-input"><i class="bg"></i>
-                <input id="lgName" type="text" placeholder="Tu nombre" autocomplete="name">
+            <!-- registro aún cerrado: campos inertes y banda «Próximamente» por encima -->
+            <div class="lg-soon"><span class="soon-band">Próximamente</span></div>
+            <div class="lg-form-lock" inert>
+              <p class="lg-lede">Crea tu cuenta para empezar a crear tus cuentos</p>
+              <div class="lg-field">
+                <label for="lgName">Nombre</label>
+                <div class="lg-input"><i class="bg"></i>
+                  <input id="lgName" type="text" placeholder="Tu nombre" autocomplete="name">
+                </div>
               </div>
-            </div>
-            <div class="lg-field">
-              <label for="lgRegEmail">Correo electrónico</label>
-              <div class="lg-input"><i class="bg"></i>
-                <input id="lgRegEmail" type="email" placeholder="tucorreo@ejemplo.com" autocomplete="email">
+              <div class="lg-field">
+                <label for="lgRegEmail">Correo electrónico</label>
+                <div class="lg-input"><i class="bg"></i>
+                  <input id="lgRegEmail" type="email" placeholder="tucorreo@ejemplo.com" autocomplete="email">
+                </div>
               </div>
+              <button class="lg-remember" type="button" id="lgAccept">
+                <span class="lg-check"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg></span>
+                <span>Acepto la política de privacidad de Senior Lobo</span>
+              </button>
+              <button class="btn primary lg-submit lg-submit-reg" type="button" id="lgSubmitRegister" disabled><i class="bg"></i>Solicitar registro
+                <svg class="lg-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+              </button>
             </div>
-            <button class="lg-remember" type="button" id="lgAccept">
-              <span class="lg-check"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg></span>
-              <span>Acepto la política de privacidad de Senior Lobo</span>
-            </button>
-            <button class="btn primary lg-submit lg-submit-reg" type="button" id="lgSubmitRegister" disabled><i class="bg"></i>Solicitar registro
-              <svg class="lg-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-            </button>
           </div>
 
           <div class="lg-form lg-only-login">

@@ -160,7 +160,8 @@
 
   function validate() {
     if (submitLogin) submitLogin.disabled = !(isEmail(email.value) && pwd.value.length > 0);
-    if (submitRegister) submitRegister.disabled = !(name.value.trim().length > 0 && isEmail(regEmail.value) && accept.classList.contains('on'));
+    // registro aún cerrado («Próximamente»): «Solicitar registro» siempre desactivado
+    if (submitRegister) submitRegister.disabled = true;
   }
 
   [email, pwd, name, regEmail].forEach(function (input) {
