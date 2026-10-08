@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dia">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¿Qué es Senior Lobo? — Senior Lobo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Cormorant+Upright:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preload" href="../fonts/wakerobin-compressed.otf" as="font" type="font/otf" crossorigin />
+  <link rel="preload" href="../fonts/Mick_Caster.otf" as="font" type="font/otf" crossorigin />
+  <link rel="stylesheet" href="../css/site.css" />
+  <script>
+    // Aplica el modo día/noche guardado antes de pintar (ver js/site.js).
+    try { if (localStorage.getItem('sl-theme') === 'noche') document.documentElement.dataset.theme = 'noche'; } catch (e) {}
+  </script>
+</head>
+<body>
+
+  <!-- ── SVG Filters (one time, hidden) ── -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <filter id="rough" x="-6%" y="-6%" width="112%" height="112%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.018 0.022" numOctaves="2" seed="3" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="torn-paper" x="-18%" y="-22%" width="136%" height="150%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.03 0.034" numOctaves="4" seed="6" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" result="p"/>
+        <feDropShadow in="p" dx="0" dy="5" stdDeviation="0" flood-color="#3b2f17" flood-opacity="0.20"/>
+      </filter>
+      <filter id="torn-paper-up" x="-18%" y="-22%" width="136%" height="150%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.03 0.034" numOctaves="4" seed="6" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" result="p"/>
+        <feDropShadow in="p" dx="0" dy="-5" stdDeviation="0" flood-color="#3b2f17" flood-opacity="0.20"/>
+      </filter>
+      <filter id="torn-line" x="-20%" y="-60%" width="140%" height="220%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.06 0.25" numOctaves="2" seed="4" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="torn-paper-2" x="-18%" y="-22%" width="136%" height="150%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.028 0.036" numOctaves="4" seed="14" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="9.5" xChannelSelector="R" yChannelSelector="G" result="p"/>
+        <feDropShadow in="p" dx="3" dy="4" stdDeviation="0" flood-color="#3b2f17" flood-opacity="0.20"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- ── Topband ── -->
+  <div class="topband"></div>
+
+  <!-- ── Navbar: componente universal, misma barra en toda la web ── -->
+  <div class="navbar-wrap">
+    <nav class="wz-topbar">
+      <i class="bg"></i>
+
+      <div class="wz-nav-inner">
+        <a href="/" class="wz-brand">
+          <span class="wz-mark">
+            <img class="brand-logo-dia" src="../Logos/Logo_banner_senior_lobo_dia.svg" alt="Senior Lobo" />
+            <img class="brand-logo-noche" src="../Logos/Senior_lobo_noche.svg" alt="" aria-hidden="true" />
+          </span>
+          <span class="wz-brand-text">
+            <span class="wz-word">Senior Lobo</span>
+            <span class="wz-tagline">Cuentos personalizados</span>
+          </span>
+        </a>
+
+        <nav class="wz-nav">
+          <a class="wz-nlink" href="/">Inicio</a>
+          <a class="wz-nlink" href="/que-es-senior-lobo/" aria-current="page">¿Qué es Senior Lobo?</a>
+        </nav>
+
+        <div class="wz-tools">
+          <div class="dn-desktop dn-switch-mount"></div>
+
+          <button class="btn ghost wz-login" type="button"><i class="bg"></i>Iniciar sesión</button>
+
+          <button class="wz-burger" id="wzBurger" aria-label="Menú" aria-expanded="false" aria-controls="wzMenu">
+            <svg viewBox="0 0 24 24">
+              <line class="l l-top" x1="4" y1="7" x2="20" y2="7"/>
+              <line class="l l-mid" x1="4" y1="12" x2="20" y2="12"/>
+              <line class="l l-bot" x1="4" y1="17" x2="20" y2="17"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="wz-menu" id="wzMenu">
+        <i class="bg"></i>
+        <a class="cf-menu-item" href="/"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h4v-5h4v5h4v-9"></path></svg><span class="cf-menu-label">Inicio</span></a>
+        <a class="cf-menu-item" href="/que-es-senior-lobo/" aria-current="page"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01M11 12h1v4h1"></path></svg><span class="cf-menu-label">¿Qué es Senior Lobo?</span></a>
+        <button class="cf-menu-item wz-login" type="button"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path></svg><span class="cf-menu-label">Iniciar sesión</span></button>
+        <div class="wz-menu-dn">
+          <span class="dn-lbl dn-lbl-dia">Día</span>
+          <span class="dn-switch-mount"></span>
+          <span class="dn-lbl dn-lbl-noche">Noche</span>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <!-- ===================== MODAL: Iniciar sesión / Registrar ===================== -->
+  <div class="lg-overlay" id="lgOverlay">
+    <button class="lg-scrim" type="button" data-lg-close aria-label="Cerrar"></button>
+    <div class="lg-modal" id="lgModal" data-mode="login" role="dialog" aria-modal="true" aria-labelledby="lgTitleLogin lgTitleRegister">
+      <button class="lg-close" type="button" data-lg-close aria-label="Cerrar">
+        <i class="bg"></i>
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+
+      <div class="lg-spread"><i class="bg"></i>
+
+        <div class="lg-page lg-page-left">
+          <div class="lg-phead">
+            <span class="lg-pnum">Pág. 1</span>
+            <span class="lg-ptitle lg-only-login">Iniciar sesión</span>
+            <span class="lg-ptitle lg-only-register">Registrar</span>
+            <span class="lg-hrule"></span>
+          </div>
+          <div class="lg-left-body">
+            <div class="lg-titleblock">
+              <div class="lg-eyebrow">Senior Lobo · Cuentos personalizados</div>
+              <h2 class="lg-welcome lg-only-login" id="lgTitleLogin">Qué alegría volver a verte</h2>
+              <h2 class="lg-welcome lg-only-register" id="lgTitleRegister">Únete a la familia</h2>
+            </div>
+            <div class="lg-illus">
+              <img class="lobo-dia" src="../Logos/Logo_banner_senior_lobo_dia.svg" alt="Senior Lobo" />
+              <img class="lobo-noche" src="../Logos/Senior_lobo_noche.svg" alt="" aria-hidden="true" />
+            </div>
+            <div class="lg-register lg-only-login">
+              <p>¿Aún no tienes cuenta?</p>
+              <button class="lg-google lg-register-btn lg-go-register" type="button" id="lgGoRegister"><i class="bg"></i>Regístrate</button>
+            </div>
+            <div class="lg-register lg-only-register">
+              <p>¿Ya tienes cuenta?</p>
+              <button class="lg-google lg-register-btn lg-go-login" type="button" id="lgGoLogin"><i class="bg"></i>Inicia sesión</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg-spine"></div>
+
+        <div class="lg-page lg-page-right">
+          <div class="lg-phead r">
+            <span class="lg-hrule"></span>
+            <span class="lg-ptitle lg-only-login">Iniciar sesión</span>
+            <span class="lg-ptitle lg-only-register">Registrar</span>
+            <span class="lg-pnum lg-pnum-desktop">Pág. 2</span>
+            <span class="lg-pnum lg-pnum-mobile lg-only-login">Pág. 1</span>
+            <span class="lg-pnum lg-pnum-mobile lg-only-register">Pág. 2</span>
+          </div>
+
+          <div class="lg-form lg-only-register">
+            <p class="lg-lede">Crea tu cuenta para empezar a crear tus cuentos</p>
+            <div class="lg-field">
+              <label for="lgName">Nombre</label>
+              <div class="lg-input"><i class="bg"></i>
+                <input id="lgName" type="text" placeholder="Tu nombre" autocomplete="name">
+              </div>
+            </div>
+            <div class="lg-field">
+              <label for="lgRegEmail">Correo electrónico</label>
+              <div class="lg-input"><i class="bg"></i>
+                <input id="lgRegEmail" type="email" placeholder="tucorreo@ejemplo.com" autocomplete="email">
+              </div>
+            </div>
+            <button class="lg-remember" type="button" id="lgAccept">
+              <span class="lg-check"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg></span>
+              <span>Acepto la política de privacidad de Senior Lobo</span>
+            </button>
+            <button class="btn primary lg-submit lg-submit-reg" type="button" id="lgSubmitRegister" disabled><i class="bg"></i>Solicitar registro
+              <svg class="lg-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </button>
+          </div>
+
+          <div class="lg-form lg-only-login">
+            <p class="lg-lede">Introduce tus datos para crear tus cuentos</p>
+            <div class="lg-field">
+              <label for="lgEmail">Correo electrónico</label>
+              <div class="lg-input"><i class="bg"></i>
+                <input id="lgEmail" type="email" placeholder="tucorreo@ejemplo.com" autocomplete="email">
+              </div>
+            </div>
+            <div class="lg-field lg-pwd-field">
+              <div class="lg-labelrow">
+                <label for="lgPwd">Contraseña</label>
+                <button class="lg-forgot" type="button">¿Olvidaste tu contraseña?</button>
+              </div>
+              <div class="lg-input"><i class="bg"></i>
+                <input id="lgPwd" type="password" placeholder="••••••••" autocomplete="current-password">
+              </div>
+            </div>
+            <button class="lg-remember" type="button" id="lgRemember">
+              <span class="lg-check"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg></span>
+              <span>Recuérdame en este dispositivo</span>
+            </button>
+            <button class="btn primary lg-submit" type="button" id="lgSubmitLogin" disabled><i class="bg"></i>Entrar
+              <svg class="lg-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </button>
+            <div class="lg-sep"><span class="lg-hrule"></span><span>o</span><span class="lg-hrule"></span></div>
+            <div class="lg-google-soon">Próximamente</div>
+            <button class="lg-google" type="button" disabled><i class="bg"></i>
+              <svg class="lg-google-g" viewBox="0 0 24 24" aria-hidden="true"><path d="M22.60229,10.00391a1.00005,1.00005,0,0,0-.98388-.82227H12.2a.99974.99974,0,0,0-1,1V14.0498a.99974.99974,0,0,0,1,1h3.9624a3.65162,3.65162,0,0,1-1.13183,1.1875A5.0604,5.0604,0,0,1,12.2,17.02246a4.93525,4.93525,0,0,1-4.64624-3.4378L7.55347,13.583a4.90382,4.90382,0,0,1,0-3.167l.00024-.00165A4.9356,4.9356,0,0,1,12.2,6.97754,4.37756,4.37756,0,0,1,15.3313,8.19531a1.00053,1.00053,0,0,0,1.39844-.01562L19.5979,5.31152a.99918.99918,0,0,0-.02539-1.43847A10.62342,10.62342,0,0,0,12.2,1,10.949,10.949,0,0,0,2.37134,7.05878l-.00147.00177A10.92175,10.92175,0,0,0,1.2,12a11.07862,11.07862,0,0,0,1.16992,4.93945l.00147.00177A10.949,10.949,0,0,0,12.2,23a10.5255,10.5255,0,0,0,7.29468-2.687l.00073-.00049.00079-.00085.00019-.00013.00006-.00012a10.78575,10.78575,0,0,0,3.30365-8.08386A12.51533,12.51533,0,0,0,22.60229,10.00391ZM12.2,3a8.68219,8.68219,0,0,1,5.2085,1.67285L15.95483,6.126A6.46322,6.46322,0,0,0,12.2,4.97754,6.88648,6.88648,0,0,0,6.21069,8.52832L5.14148,7.69958l-.585-.45367A8.95257,8.95257,0,0,1,12.2,3ZM3.67944,14.90332a9.02957,9.02957,0,0,1,0-5.80664l1.78223,1.38184a6.85381,6.85381,0,0,0,0,3.042ZM12.2,21A8.9528,8.9528,0,0,1,4.5564,16.75391l.37841-.29352,1.27588-.98969A6.88482,6.88482,0,0,0,12.2,19.02246a7.27662,7.27662,0,0,0,3.30573-.75079L17.19739,19.585A8.88989,8.88989,0,0,1,12.2,21Zm6.52588-2.76074-.183-.142L17.16553,17.028a5.60626,5.60626,0,0,0,1.39966-2.79553.9998.9998,0,0,0-.9834-1.18262H13.2V11.18164h7.54883c.03418.3457.05127.69531.05127,1.0459A9.05156,9.05156,0,0,1,18.72583,18.23926Z"></path></svg>
+              Inicia sesión con Google
+            </button>
+          </div>
+
+          <div class="lg-mobile-cta">
+            <div class="lg-phead">
+              <span class="lg-pnum lg-only-login">Pág. 2</span>
+              <span class="lg-pnum lg-only-register">Pág. 1</span>
+              <span class="lg-ptitle lg-only-login">Registrar</span>
+              <span class="lg-ptitle lg-only-register">Iniciar sesión</span>
+              <span class="lg-hrule"></span>
+            </div>
+            <div class="lg-register lg-only-login">
+              <p>¿Aún no tienes cuenta?</p>
+              <button class="lg-google lg-register-btn lg-go-register" type="button"><i class="bg"></i>Regístrate</button>
+            </div>
+            <div class="lg-register lg-only-register">
+              <p>¿Ya tienes cuenta?</p>
+              <button class="lg-google lg-register-btn lg-go-login" type="button"><i class="bg"></i>Inicia sesión</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Plantillas: evitan duplicar marcado repetido en el HTML ── -->
+  <template id="tpl-dn-switch"><span class="dn-switch" data-mode="dia" role="switch" aria-checked="false" tabindex="0" aria-label="Cambiar modo día o noche">
+    <i class="bg"></i>
+    <span class="glyph sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.2v2.6M12 19.2v2.6M2.2 12h2.6M19.2 12h2.6M5 5l1.9 1.9M17.1 17.1L19 19M19 5l-1.9 1.9M6.9 17.1L5 19"/></svg></span>
+    <span class="glyph moon"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.4 6.4 0 0 0 10.5 10.5z"/></svg></span>
+    <span class="stars"><i></i><i></i><i></i></span>
+    <span class="dn-knob">
+      <i class="bg"></i>
+      <span class="face sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.2v2.6M12 19.2v2.6M2.2 12h2.6M19.2 12h2.6M5 5l1.9 1.9M17.1 17.1L19 19M19 5l-1.9 1.9M6.9 17.1L5 19"/></svg></span>
+      <span class="face moon"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.4 6.4 0 0 0 10.5 10.5z"/></svg></span>
+    </span>
+  </span></template>
+
+  <template id="tpl-nb-divider"><div class="nb-divider"><span class="ln"></span><span class="cl"><b></b><b></b><b></b></span><span class="ln"></span></div></template>
+  <template id="tpl-banda-separadora"><div class="banda-separadora"><div class="banda-separadora-tear top" aria-hidden="true"><div class="hero-tear"></div></div><div class="banda-separadora-body"></div><div class="banda-separadora-tear bot" aria-hidden="true"><div class="hero-tear"></div></div></div></template>
+
+  <script src="../js/navbar.js"></script>
+
+  <!-- ===================== HERO (pendiente de contenido) ===================== -->
+  <!-- Mismo contenedor, alto, fondo día/noche y borde rasgado que el hero de Inicio.
+       Para rellenarlo: escena en .hero-scene y textos en .hero-content
+       (slots: .hero-eyebrow, .hero-h1, .hero-sub, .hero-acts, .hero-quote). -->
+  <section class="hero hero-obras">
+    <div class="hero-scene" aria-hidden="true">
+      <img class="l-bg" src="../imagenes/Fondo_obras/Fondo_dia_obras.jpg" alt="" fetchpriority="high" decoding="async">
+      <img class="l-bg-night" src="../imagenes/Fondo_obras/Fondo_noche_obras.jpg" alt="" decoding="async">
+      <img class="l-lobo" src="../imagenes/Fondo_obras/lobo_dia_obras.png" alt="" decoding="async">
+      <div class="owl-wrap">
+        <img class="l-owl" src="../imagenes/Fondo_obras/buho_obras_dia.png" alt="" decoding="async">
+      </div>
+    </div>
+
+    <div class="hero-inner">
+      <div class="hero-content"></div>
+    </div>
+  </section>
+
+  <!-- ── Hero-tear: borde de hoja rasgada al final del hero ── -->
+  <div class="hero-tear-wrap" aria-hidden="true"><div class="hero-tear"></div></div>
+
+  <!-- ── Main ── -->
+  <main>
+    <div class="home">
+
+      <!-- ===================== PRÓLOGO ===================== -->
+      <section class="quees" id="Interludio">
+        <div class="book-page">
+          <div class="chapter-plate">
+            <p class="chapter-no"><b class="dia"></b>Interludio<b class="dia"></b></p>
+            <h2 class="chapter-title">La premisa</h2>
+            <div class="nb-divider-mount"></div>
+          </div>
+
+          <div class="prl-layout">
+            <div class="prl-text">
+              <p class="book-epigraph">Antes de que empiece el cuento, déjame prometerte algo: esta vez la historia no hablará de cualquiera, sino de ti.</p>
+
+              <div class="nb-divider-mount"></div>
+
+              <p class="book-para lead-cap"><span class="sl">Senior Lobo</span> está preparando relatos únicos gracias a los últimos avances en el campo de la <span class="sl">IA</span>, abriendo las puertas  <strong>para generar historias 100% personalizadas</strong>.</p>
+
+              <p class="book-para">Ya no hará falta que te pongas en «la piel de personaje» porque  <strong>el protagonista, serás tú</strong>.</p>
+            </div>
+
+            <!-- capturas de la app clavadas con chincheta; al pulsarlas se abren a pantalla completa (js/site.js) -->
+            <ul class="pin-shots">
+              <li class="age-item" style="--ar: 1002 / 1782">
+                <div class="age-hang">
+                  <span class="age-pin" aria-hidden="true"></span>
+                  <div class="age-card">
+                    <i class="bg"></i>
+                    <button class="shot-open" type="button" aria-label="Ver en grande: Capítulo 1, diseña tus personajes">
+                      <span class="cmp-slot"><img src="../imagenes/Fondo_obras/cap1.png" alt="Pantalla de la app: Capítulo 1, diseña tus personajes" width="1002" height="1782" loading="lazy" decoding="async"></span>
+                    </button>
+                  </div>
+                </div>
+              </li>
+              <li class="age-item" style="--ar: 952 / 1780">
+                <div class="age-hang">
+                  <span class="age-pin" aria-hidden="true"></span>
+                  <div class="age-card">
+                    <i class="bg"></i>
+                    <button class="shot-open" type="button" aria-label="Ver en grande: Capítulo II, la historia">
+                      <span class="cmp-slot"><img src="../imagenes/Fondo_obras/capIIhistoria.png" alt="Pantalla de la app: Capítulo II, la historia" width="952" height="1780" loading="lazy" decoding="async"></span>
+                    </button>
+                  </div>
+                </div>
+              </li>
+              <li class="age-item" style="--ar: 912 / 1796">
+                <div class="age-hang">
+                  <span class="age-pin" aria-hidden="true"></span>
+                  <div class="age-card">
+                    <i class="bg"></i>
+                    <button class="shot-open" type="button" aria-label="Ver en grande: creando el cuento">
+                      <span class="cmp-slot"><img src="../imagenes/Fondo_obras/creando_cuento.png" alt="Pantalla de la app: creando el cuento" width="912" height="1796" loading="lazy" decoding="async"></span>
+                    </button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== ¿QUÉ ES? ===================== -->
+      <section class="quees" id="quees">
+        <div class="book-page">
+          <div class="chapter-plate">
+            <p class="chapter-no"><b class="dia"></b>Capítulo&nbsp;V<b class="dia"></b></p>
+            <h2 class="chapter-title">¿Qué es Senior Lobo?</h2>
+            <div class="nb-divider-mount"></div>
+          </div>
+
+          <p class="book-para lead-cap">Es una herramienta digital de creación literaria que se encarga de escribir un cuento hecho a la medida de los más pequeños de casa.</p>
+
+          <p class="book-para">Gracias a la ayuda de la IA y a un narrador nato que lleva siglos contando historias queremos ser precursores de una misión importante: componer un relato único e irrepetible. Creemos fielmente en  <strong> la necesidad de contar historias que entretengan, eduquen e incluso reduzcan sus miedos</strong> gracias a una lectura de historias espejo.</p>
+
+          <div class="nb-divider-mount"></div>
+
+          <!-- banda separadora: lobo brindando (día/noche, burbujas que suben de la copa) + lema -->
+          <div class="banda-separadora-mount">
+            <div class="brindis">
+              <div class="brindis-lobo" aria-hidden="true">
+                <img class="lobo-dia" src="../imagenes/Fondo_obras/copa_vino_dia_recorte.png" alt="" width="609" height="575" loading="lazy" decoding="async">
+                <img class="lobo-noche" src="../imagenes/Fondo_obras/copa_vino_noche_recorte.png" alt="" width="609" height="575" loading="lazy" decoding="async">
+                <span class="burbujas"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              </div>
+              <div class="brindis-texto">
+                <p class="brindis-eyebrow">La calidad necesita su tiempo </p>
+                <p class="brindis-lema">Lo estamamos construyendo como nos gustaría encontrarlo</p>
+              </div>
+              <div class="brindis-acts">
+                <button class="btn ghost brindis-cta" type="button" disabled><i class="bg"></i>Crear cuento</button>
+              </div>
+              <!-- banda diagonal «Próximamente» en la esquina superior derecha de la pantalla -->
+              <span class="brindis-soon">Próximamente</span>
+            </div>
+          </div>
+
+          <p class="book-para lead-cap">Queremos que tus hijos sean el centro real de la historia, el núcleo desde dónde todo gire. A través de un sencillo formulario los usuarios podrán personalizarlo todo: su nombre, sus gustos, seleccionar géneros, trama y añadir todas las personas que forman parte de su entorno. Una forma nueva que cambia totalmente el juego de leer las aventuras de otro a tener una historia hecha para ellos.</p>
+        </div>
+      </section>
+
+      <!-- ===================== CAPÍTULO VI ===================== -->
+      <section class="quees" id="capitulo6">
+        <div class="book-page">
+          <div class="chapter-plate">
+            <p class="chapter-no"><b class="dia"></b>Capítulo&nbsp;VI<b class="dia"></b></p>
+            <h2 class="chapter-title">-Continuará-</h2>
+            <div class="nb-divider-mount"></div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="home-foot">
+        <span>Senior Lobo · Cuentos personalizados con IA</span>
+        <span>Hecho a mano, impreso en tapa dura</span>
+      </footer>
+
+    </div>
+  </main>
+
+  <!-- ===================== VISOR: captura a pantalla completa ===================== -->
+  <dialog class="shot-lb" id="shotLb" aria-label="Imagen a pantalla completa">
+    <button class="lg-close" type="button" data-shot-close aria-label="Cerrar">
+      <i class="bg"></i>
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <img class="shot-lb-img" alt="">
+  </dialog>
+
+  <script src="../js/site.js"></script>
+
+</body>
+</html>

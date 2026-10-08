@@ -1,0 +1,1342 @@
+/* ── Fuentes self-hosted ── */
+@font-face{
+  font-family:'Wakerobin Compressed';
+  src:url('../fonts/wakerobin-compressed.otf') format('opentype');
+  font-weight:400 700; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'Mick Caster';
+  src:url('../fonts/Mick_Caster.otf') format('opentype'),
+      url('../fonts/Mick_Caster.ttf') format('truetype');
+  font-weight:400 700; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'Mick Caster';
+  src:url('../fonts/Mick_Caster_Italic.otf') format('opentype'),
+      url('../fonts/Mick_Caster_Italic.ttf') format('truetype');
+  font-weight:400 700; font-style:italic; font-display:swap;
+}
+
+/* ── Design Tokens ── */
+:root {
+  --bosque:      #4f7860;
+  --amber:       #c9a035;
+  --pergamino:   #f5edd8;
+  --castano:     #8c5f3a;
+  --niebla:      #9ba89c;
+  --tinta:       #38362c;
+  --ink-soft:    #6f7268;
+  --paper-piece: color-mix(in srgb, #ffffff 32%, var(--pergamino));
+  --on-dark:     var(--pergamino);
+  --line:        var(--tinta);
+  --ink:         var(--tinta);
+  --ink-faint:   var(--niebla);
+  --teal:        var(--tinta);
+  --teal-deep:   color-mix(in srgb, var(--tinta) 80%, #000);
+  --teal-pale:   color-mix(in srgb, var(--tinta) 14%, var(--pergamino));
+  --fill:        var(--pergamino);
+  --bw:          2px;
+
+  --font-disp: 'Wakerobin Compressed', Garamond, serif;
+  --font-body: 'Cormorant Upright', Garamond, serif;
+  --font-slab: 'Mick Caster', serif;
+  --font-mono: 'Cormorant Upright', Garamond, serif;
+
+  /* Ancho máximo de sección: fijo en 1200px; por debajo, el contenido
+     ocupa todo el ancho disponible (menos --gutter). */
+  --container-w: 1200px;
+  --gutter: clamp(18px, 3.333vw - 2px, 28px);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { overflow-x: hidden; }
+
+/* ── Base ── */
+body {
+  font-family: 'EB Garamond', Georgia, serif;
+  background-color: var(--pergamino);
+  color: var(--tinta);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* linen texture via SVG noise */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+  transition: background-color .45s ease, color .45s ease;
+}
+
+/* ── Subrayado animado: toda negrita (strong, b) fuera de los heros, y enlaces de navbar ── */
+strong:not(.hero *),
+b:not(:empty):not(.hero *),
+.wz-nlink,
+.cf-menu-label {
+  background-image: linear-gradient(var(--amber), var(--amber));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: .12em .22em .02em;
+  margin: 0 -.22em;
+  border-radius: 2px;
+  transition: background-size .7s ease;
+}
+
+strong.in-view:not(.hero *),
+b:not(:empty).in-view:not(.hero *),
+.wz-nlink:hover,
+.cf-menu-item:hover .cf-menu-label,
+.cf-menu-item:active .cf-menu-label {
+  background-size: 100% 2px;
+}
+
+/* ── Navbar ── */
+/* Componente universal: la misma barra (marca, enlaces, switch, botón de
+   sesión, hamburguesa móvil) se reutiliza verbatim en cualquier página del
+   sitio — no crear variantes locales de .wz-topbar. */
+.navbar-wrap {
+  padding: 0;
+  position: relative;
+  z-index: 5;
+}
+
+.wz-topbar {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  padding: 13px 16px;
+}
+
+/* ── Fondo compartido "papel rasgado" (topbar y menú móvil) ── */
+.wz-topbar > .bg,
+.wz-menu > .bg {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  border: 0;
+  background-color: var(--paper-piece);
+  background-image: radial-gradient(rgba(120,90,40,.05) 1px, transparent 1px);
+  background-size: 4px 4px;
+  filter: url(#torn-paper);
+  will-change: filter;
+  transition: background-color .4s ease;
+}
+
+.wz-topbar > .bg { top: -60px; right: -24px; bottom: 0; left: -24px; }
+
+.wz-nav-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 20px;
+  max-width: var(--container-w);
+  margin: 0 auto;
+}
+
+.wz-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+}
+
+.wz-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 68px;
+  height: 68px;
+}
+
+.wz-mark img {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  display: block;
+  transition: opacity .45s ease;
+}
+
+.wz-mark img.brand-logo-noche {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+:root[data-theme="noche"] .wz-mark img.brand-logo-noche { opacity: 1; }
+/* el SVG de noche tiene zonas transparentes: ocultar el de día para que no se vea debajo */
+:root[data-theme="noche"] .wz-mark img.brand-logo-dia { opacity: 0; }
+
+.wz-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  line-height: 1;
+}
+
+.wz-word {
+  font-family: var(--font-disp);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  font-weight: 700;
+  font-size: 21px;
+  color: var(--line);
+  white-space: nowrap;
+  display: block;
+}
+
+.wz-tagline {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+/* ── Navbar: enlaces ── */
+.wz-nav { display: flex; align-items: center; gap: 28px; margin-left: 28px; flex-wrap: nowrap; }
+.wz-nlink {
+  font-family: var(--font-disp);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-decoration: none;
+  white-space: nowrap;
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+  transition: color .25s ease, background-size .7s ease;
+}
+.wz-nlink:hover { color: var(--line); }
+
+/* ── Navbar: switch + botón de sesión + hamburguesa ── */
+.wz-tools { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.dn-switch-mount { display: inline-flex; align-items: center; }
+
+.wz-login { flex: none; white-space: nowrap; }
+/* misma sombra para «Ver ejemplos» de las tarjetas por edad */
+.wz-login .bg, .age-cta .bg, .cover-cta .bg { box-shadow: 3px 4px 0 rgba(59,47,23,.22); }
+.wz-login:active .bg, .age-cta:active:not(:disabled) .bg, .cover-cta:active:not(:disabled) .bg { transform: translate(2px,2px); box-shadow: 1px 2px 0 rgba(59,47,23,.20); }
+:root[data-theme="noche"] .wz-login .bg, :root[data-theme="noche"] .age-cta .bg, :root[data-theme="noche"] .cover-cta .bg { box-shadow: 3px 4px 0 rgba(240,230,200,.35); }
+:root[data-theme="noche"] .wz-login:active .bg, :root[data-theme="noche"] .age-cta:active:not(:disabled) .bg, :root[data-theme="noche"] .cover-cta:active:not(:disabled) .bg { box-shadow: 1px 2px 0 rgba(240,230,200,.35); }
+
+.wz-burger {
+  display: none;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  place-items: center;
+  border-radius: 9px;
+  position: relative;
+  z-index: 1;
+}
+.wz-burger svg { width: 24px; height: 24px; fill: none; stroke: var(--line); stroke-width: 2.2; stroke-linecap: round; overflow: visible; }
+.wz-burger svg .l { transition: transform .3s cubic-bezier(.5, 1.4, .5, 1), opacity .18s ease; transform-box: fill-box; transform-origin: center; }
+.wz-burger[aria-expanded="true"] .l-top { transform: translateY(5px) rotate(45deg); }
+.wz-burger[aria-expanded="true"] .l-mid { opacity: 0; transform: scaleX(.15); }
+.wz-burger[aria-expanded="true"] .l-bot { transform: translateY(-5px) rotate(-45deg); }
+.wz-burger:active { transform: translateY(1px); }
+
+/* ── Navbar: menú móvil (papel rasgado, bajo la barra) ── */
+.wz-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: -15px;
+  z-index: 20;
+  flex-direction: column;
+  padding: 28px 20px 14px;
+  border-radius: 0;
+}
+.wz-menu.open { display: flex; }
+.wz-menu > .bg { inset: 0; border-radius: 0; }
+
+/* ── Navbar: filas del menú móvil (icono + etiqueta, como cf-menu-item) ── */
+.cf-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  padding: 13px 6px;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--ink);
+}
+.cf-menu-item svg {
+  width: 20px; height: 20px; flex: none;
+  fill: none; stroke: var(--ink-soft); stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.cf-menu-item:hover, .cf-menu-item:active { background: var(--paper-piece); color: var(--line); }
+
+/* el día/noche del menú móvil muestra solo el círculo (sol o luna), sin pista */
+.wz-menu-dn {
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  margin-top: 10px; padding: 14px 6px 2px;
+  border-top: 2px dashed color-mix(in srgb, var(--line) 22%, transparent);
+}
+.wz-menu-dn .dn-lbl {
+  font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .07em;
+  font-size: 12.5px; font-weight: 600;
+  color: color-mix(in srgb, var(--ink-soft) 70%, transparent);
+  transition: color .2s;
+}
+:root[data-theme="dia"] .wz-menu-dn .dn-lbl-dia { color: var(--line); }
+:root[data-theme="noche"] .wz-menu-dn .dn-lbl-noche { color: var(--line); }
+.wz-menu-dn .dn-switch > .bg, .wz-menu-dn .dn-switch .glyph, .wz-menu-dn .dn-switch .stars { display: none; }
+.wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.sun { opacity: 0; }
+.wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.moon { opacity: 1; }
+.wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.moon { opacity: 0; }
+.wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.sun { opacity: 1; }
+.wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.moon svg { stroke: #3b2f17; }
+.wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob > .bg { background: #253560; border-color: #1b2744; }
+.wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.sun svg { stroke: #f0e6c8; }
+
+/* ── Navbar: modo compacto (hamburguesa) ──
+   No depende de un ancho de viewport fijo: `wz-nav-inner` es siempre
+   flex-wrap:nowrap, y JS mide si el contenido desbordaría (scrollWidth >
+   clientWidth) para decidir si activa este modo. Así nunca hay dos líneas,
+   pase lo que pase con el idioma, el zoom o el momento de carga de la
+   tipografía (ver script de detección más abajo). */
+html.is-compact .wz-nav { display: none; }
+html.is-compact .wz-tools > .dn-desktop { display: none; }
+html.is-compact .wz-burger { display: grid; }
+
+html.is-compact .topband { position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
+html.is-compact .navbar-wrap { position: fixed; top: 8px; left: 0; right: 0; z-index: 50; }
+html.is-compact .hero { margin-top: calc(8px + var(--navh, 94px)); }
+
+html.is-compact .wz-nav-inner { gap: 8px; }
+
+/* Por debajo de ~430px no entra "Senior Lobo / Cuentos personalizados"
+   junto al logo y al botón a tamaño de escritorio: se oculta el bloque
+   de texto de marca (el título es lo que ocupa el ancho, no el tagline)
+   y quedan solo ícono + botón + hamburguesa, todos a tamaño completo. */
+@media (max-width: 430px) {
+  html.is-compact .wz-brand-text { display: none; }
+}
+
+/* ── Main / Home ── */
+main { flex: 1; width: 100%; }
+.home { max-width: var(--container-w); margin: 0 auto; padding: 0 var(--gutter) 60px; }
+
+/* ── Topband ── */
+.topband { height: 8px; background: var(--bosque); filter: url(#torn-line); will-change: filter; transition: background-color .45s ease; }
+:root[data-theme="noche"] .topband { background: var(--amber); }
+
+/* ── Hero-tear: borde de hoja rasgada que separa el hero de la página ── */
+.hero-tear-wrap { height: 48px; margin-top: -48px; overflow: hidden; position: relative; }
+.hero-tear { position: absolute; top: 12px; left: 0; right: 0; height: 140px; background: var(--pergamino); filter: url(#torn-paper-up); will-change: filter; transition: background-color .45s ease; }
+
+/* ── «Banda separadora»: componente reutilizable. Mismo fondo que el hero, a todo el
+   ancho aunque viva dentro de .book-page, con el borde rasgado del hero abajo y el
+   mismo en espejo arriba. Uso: <div class="banda-separadora-mount"></div> (plantilla
+   tpl-banda-separadora, montada por js/navbar.js) ── */
+.banda-separadora { position: relative; width: 100vw; margin: 26px 0 26px calc(50% - 50vw);
+  min-height: clamp(220px, 36vh, 380px); background: #E7E3CC; overflow: hidden; }
+/* contenido (opcional): mismo ancho que .home y aire para no pisar los bordes rasgados */
+.banda-separadora-body { max-width: var(--container-w); margin: 0 auto; padding: 84px var(--gutter) 76px; }
+.banda-separadora-body:empty { padding: 0; }
+
+/* ── Banda «brindis» (¿Qué es Senior Lobo?): lobo con copa a la izquierda y lema a la derecha ── */
+.brindis { display: flex; align-items: center; gap: clamp(28px, 6vw, 110px); min-height: clamp(220px, 36vh, 380px);
+  margin: -84px 0 -76px; padding: 84px 0 76px; } /* ocupa el alto mínimo de la banda y centra en él */
+.brindis-lobo { position: relative; flex: none; width: clamp(150px, 19vw, 240px); aspect-ratio: 609 / 575; }
+.brindis-lobo img { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity .45s ease; }
+.brindis-lobo .lobo-noche { opacity: 0; }
+:root[data-theme="noche"] .brindis-lobo .lobo-dia { opacity: 0; }
+:root[data-theme="noche"] .brindis-lobo .lobo-noche { opacity: 1; }
+.brindis-texto { min-width: 0; }
+.brindis-eyebrow { margin: 0 0 14px; font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .24em;
+  font-size: clamp(12px, 1.1vw, 15px); font-weight: 600; line-height: 1.3; color: #855f42; }
+:root[data-theme="noche"] .brindis-eyebrow { color: var(--amber); }
+.brindis-lema { margin: 0; font-family: var(--font-slab); font-weight: 700; text-transform: lowercase;
+  font-size: clamp(28px, 3.4vw, 50px); line-height: 1.08; color: var(--line); text-wrap: balance; }
+.brindis-lema::first-letter { text-transform: uppercase; }
+/* «Crear cuento» desactivado hasta el lanzamiento, con la sombra de «Iniciar sesión» */
+.brindis-acts { flex: none; margin-left: auto; }
+.brindis-cta { font-size: 16.8px; padding: 13px 40px; white-space: nowrap; }
+.brindis-cta .bg { box-shadow: 3px 4px 0 rgba(59,47,23,.22); }
+:root[data-theme="noche"] .brindis-cta .bg { box-shadow: 3px 4px 0 rgba(240,230,200,.35); }
+/* banda diagonal «Próximamente»: se coloca respecto a .banda-separadora (primer ancestro
+   posicionado), así queda en la esquina derecha de la pantalla; va por debajo de los
+   bordes rasgados (z-index 2), que tapan su extremo como si la banda entrara en la página */
+.brindis-soon { position: absolute; z-index: 1; top: 84px; right: -64px; width: 280px; transform: rotate(40deg);
+  padding: 9px 0 8px; text-align: center; pointer-events: none;
+  background: var(--bosque); color: var(--pergamino); border-block: 2px solid var(--line);
+  box-shadow: 0 4px 0 rgba(59,47,23,.22);
+  font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .28em; font-size: 14px; font-weight: 600; line-height: 1; }
+:root[data-theme="noche"] .brindis-soon { background: var(--amber); color: var(--tinta); box-shadow: 0 4px 0 rgba(240,230,200,.25); }
+
+/* burbujas: salen del borde de la copa (15% / 45% del recorte) y suben oscilando hasta desvanecerse */
+.burbujas { position: absolute; left: 15%; top: 45%; width: 0; height: 0; pointer-events: none; }
+.burbujas i { position: absolute; left: 0; top: 0; width: var(--s, 7px); height: var(--s, 7px); border-radius: 50%;
+  border: 1.5px solid #6b3a2a; background: rgba(255,255,255,.35); opacity: 0;
+  animation: burbuja var(--d, 3.6s) ease-in infinite var(--w, 0s); }
+:root[data-theme="noche"] .burbujas i { border-color: var(--amber); background: rgba(255,208,120,.18); }
+.burbujas i:nth-child(1) { --s: 7px;  --x: -4px; --dx: -10px; --d: 3.4s; --w: 0s; }
+.burbujas i:nth-child(2) { --s: 5px;  --x: 6px;  --dx: 9px;   --d: 3.9s; --w: .7s; }
+.burbujas i:nth-child(3) { --s: 9px;  --x: 0px;  --dx: -4px;  --d: 4.4s; --w: 1.5s; }
+.burbujas i:nth-child(4) { --s: 4px;  --x: -8px; --dx: 6px;   --d: 3.2s; --w: 2.2s; }
+.burbujas i:nth-child(5) { --s: 6px;  --x: 10px; --dx: -8px;  --d: 4.1s; --w: 2.9s; }
+.burbujas i:nth-child(6) { --s: 5px;  --x: 2px;  --dx: 12px;  --d: 3.7s; --w: 3.5s; }
+@keyframes burbuja {
+  0%   { opacity: 0;  transform: translate(calc(var(--x) - 50%), -50%) scale(.4); }
+  15%  { opacity: .9; }
+  50%  { transform: translate(calc(var(--x) + var(--dx) - 50%), -60px) scale(1); }
+  80%  { opacity: .7; }
+  100% { opacity: 0;  transform: translate(calc(var(--x) - var(--dx) * .5 - 50%), -120px) scale(1.15); }
+}
+@media (prefers-reduced-motion: reduce) { .burbujas { display: none; } }
+/* tablet: el botón baja a su propia línea, centrado bajo lobo y lema */
+@media (max-width: 960px) {
+  .brindis { flex-wrap: wrap; row-gap: 22px; }
+  .brindis-texto { flex: 1 1 300px; }
+  .brindis-acts { flex-basis: 100%; display: flex; justify-content: center; margin-left: 0; }
+}
+/* móvil: lobo encima y lema centrado; banda «Próximamente» más pequeña */
+@media (max-width: 600px) {
+  .brindis { flex-direction: column; flex-wrap: nowrap; gap: 18px; text-align: center; }
+  .brindis-texto { flex: none; }
+  .brindis-lobo { width: 150px; }
+  .brindis-soon { top: 70px; right: -70px; width: 230px; font-size: 11px; padding: 7px 0 6px; }
+}
+:root[data-theme="noche"] .banda-separadora { background: #141d2b; }
+.banda-separadora-tear { position: absolute; z-index: 2; left: 0; right: 0; height: 48px; overflow: hidden; }
+.banda-separadora-tear.bot { bottom: 0; }
+.banda-separadora-tear.top { top: 0; }
+.banda-separadora-tear.top .hero-tear { top: auto; bottom: 12px; filter: url(#torn-paper); }
+
+/* ── Dissolve día/noche: evita "saltos" de color en toda la home/navbar ── */
+.home *, .wz-topbar * {
+  transition: background-color .45s ease, color .45s ease, border-color .45s ease, fill .45s ease, stroke .45s ease, background-size .7s ease;
+}
+
+/* ── Hero: escena animada "Bosque Búho" ── */
+/* Capas, orden de apilado y @keyframes según design_handoff_owl_forest_hero — no modificar. */
+.hero {
+  position: relative;
+  width: 100%;
+  height: clamp(440px, 72vh, 760px);
+  overflow: hidden;
+  background: #E7E3CC;
+  isolation: isolate;
+}
+.hero-scene { position: absolute; inset: 0; }
+.hero-scene img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  /* sesgado hacia la derecha y la zona alta del lienzo: evita que el recorte de
+     object-fit:cover corte el búho (a la derecha) en anchos estrechos o sus
+     orejas (arriba) en proporciones muy panorámicas/bajas */
+  object-fit: cover; object-position: 80% 35%;
+  user-select: none; -webkit-user-drag: none;
+  will-change: transform, opacity;
+  transition: opacity .45s ease;
+}
+.l-bg   { transform-origin: 54% 46%; animation: bgDrift 46s ease-in-out infinite alternate; }
+.l-tree { left: -15px; width: calc(100% + 15px); transform-origin: 13% 100%; animation: treeSway 8.5s ease-in-out infinite; }
+
+/* el búho es un recorte aparte (no cubre el lienzo entero como bg/tree), así que
+   no usa object-fit:cover de .hero-scene img: se ancla al árbol izquierdo por su
+   esquina inferior con tamaño propio para que se vea completo, sin recortes */
+.owl-wrap { position: absolute; inset: 0; }
+.owl-wrap .l-owl, .owl-wrap .l-owl-night {
+  top: 18%; right: auto; left: -8px; bottom: auto;
+  width: 22.4%; height: auto;
+  object-fit: contain; object-position: center;
+  transform-origin: 0% 100%;
+  animation: owlBranch 4.8s ease-in-out .3s infinite;
+}
+@media (max-width: 1024px) {
+  /* entre 1024 y 601px el búho crece (en vez de encoger) a medida que el viewport se angosta,
+     calibrado para llegar exactamente al tamaño/posición del bloque móvil (top:2%, width:50%) en 601px */
+  .owl-wrap .l-owl, .owl-wrap .l-owl-night { top: calc(-12.21% + 13.62vw); width: calc(401px - 16.67vw); }
+}
+
+/* ── Modo noche: capas duplicadas día/noche, apiladas y alternadas por opacity ── */
+/* Misma composición y animaciones que de día; solo cambian imagen, color de haz/motas y fondo. */
+.l-bg-night   { transform-origin: 54% 46%; animation: bgDrift 46s ease-in-out infinite alternate; opacity: 0; }
+.l-tree-night { left: -15px; width: calc(100% + 15px); transform-origin: 13% 100%; animation: treeSway 8.5s ease-in-out infinite; opacity: 0; }
+.l-owl-night  { opacity: 0; }
+
+:root[data-theme="noche"] .hero { background: #141d2b; }
+:root[data-theme="noche"] .l-bg,
+:root[data-theme="noche"] .l-tree,
+:root[data-theme="noche"] .l-owl { opacity: 0; }
+:root[data-theme="noche"] .l-bg-night,
+:root[data-theme="noche"] .l-tree-night,
+:root[data-theme="noche"] .l-owl-night { opacity: 1; }
+
+/* Hero "¿Qué es Senior Lobo?": bosque en obras. Reutiliza .l-bg/.l-bg-night (deriva + día/noche);
+   el encuadre se centra en la plataforma y la grúa (centro-derecha) en vez de en el búho de Inicio */
+.hero-obras { height: clamp(220px, 36vh, 380px); } /* mitad de alto que el hero de Inicio */
+.hero-obras .hero-scene img { object-position: 65% 75%; }
+/* búho con casco: misma animación owlBranch que en Inicio, pero a la derecha; la rama sale por
+   la esquina inferior derecha del PNG, así que pivota desde ahí. Se dimensiona por alto porque
+   este hero es bajo. Aún no hay versión de noche: se mantiene visible en ambos modos. */
+.hero-obras .owl-wrap .l-owl {
+  top: 8%; right: -8px; left: auto; bottom: auto;
+  width: auto; height: 78%;
+  object-fit: contain;
+  transform-origin: 100% 100%;
+}
+:root[data-theme="noche"] .hero-obras .owl-wrap .l-owl { opacity: 1; }
+/* lobo centrado, de cintura para arriba: lo visible mide un 80% del alto del búho (78% × .8 = 62.4%);
+   la cintura está al ~75% del PNG, así que la imagen entera mide 83.2% y se hunde un 20.8% bajo el borde */
+.hero-obras .hero-scene .l-lobo {
+  top: auto; bottom: -20.8%; left: 30%; right: auto;
+  width: auto; height: 83.2%;
+  object-fit: contain;
+  transform: translateX(-50%);
+}
+
+.beam {
+  position: absolute; left: 38%; top: 6%; width: 42%; height: 78%; border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 35%, rgba(255,250,224,.85), rgba(255,250,224,0) 68%);
+  mix-blend-mode: screen; pointer-events: none;
+  animation: beam 9s ease-in-out infinite;
+}
+:root[data-theme="noche"] .beam {
+  background: radial-gradient(ellipse at 50% 35%, rgba(150,180,232,.45), rgba(150,180,232,0) 68%);
+}
+
+.motes { position: absolute; inset: 0; pointer-events: none; }
+.motes i { position: absolute; border-radius: 50%; background: rgba(255,252,232,.9);
+  box-shadow: 0 0 6px rgba(255,252,232,.7); animation: mote linear infinite; }
+:root[data-theme="noche"] .motes i { background: rgba(255,208,120,.95); box-shadow: 0 0 6px rgba(255,180,80,.95); }
+.motes i:nth-child(1) { left: 50%; top: 62%; width: 6px; height: 6px; --mx: -26px; --my: -220px; --mo: .55; animation-duration: 13s; animation-delay: -2s; }
+.motes i:nth-child(2) { left: 58%; top: 70%; width: 4px; height: 4px; --mx: 24px;  --my: -300px; --mo: .5;  animation-duration: 17s; animation-delay: -7s; }
+.motes i:nth-child(3) { left: 46%; top: 66%; width: 5px; height: 5px; --mx: -40px; --my: -260px; --mo: .6;  animation-duration: 15s; animation-delay: -11s; }
+.motes i:nth-child(4) { left: 63%; top: 58%; width: 4px; height: 4px; --mx: 30px;  --my: -200px; --mo: .45; animation-duration: 19s; animation-delay: -4s; }
+.motes i:nth-child(5) { left: 53%; top: 74%; width: 5px; height: 5px; --mx: -18px; --my: -330px; --mo: .5;  animation-duration: 21s; animation-delay: -14s; }
+
+@keyframes bgDrift   { 0% { transform: scale(1.03); } 100% { transform: scale(1.065) translate(-.8%,-.5%); } }
+@keyframes treeSway  { 0%, 100% { transform: rotate(-3.9deg) scale(1.05); } 50% { transform: rotate(-1.9deg) scale(1.05); } }
+@keyframes owlBranch { 0%, 100% { transform: rotate(-.7deg) translateY(0); } 50% { transform: rotate(.7deg) translateY(-.5%); } }
+@keyframes beam      { 0%, 100% { opacity: .18; } 50% { opacity: .4; } }
+@keyframes mote {
+  0%   { transform: translate(0,0) scale(1); opacity: 0; }
+  12%  { opacity: var(--mo, .6); }
+  85%  { opacity: var(--mo, .6); }
+  100% { transform: translate(var(--mx, -30px), var(--my, -160px)) scale(.7); opacity: 0; }
+}
+
+/* ── Contenido del hero (slots: eyebrow, h1, sub, CTAs, cita) ── */
+/* .hero-inner alinea el texto con el mismo grid (--container-w/--gutter) que navbar y .home,
+   mientras .hero-scene sigue ocupando el 100% del viewport detrás. */
+.hero-inner {
+  position: relative; z-index: 2; height: 100%;
+  max-width: var(--container-w); margin: 0 auto; padding: 0 var(--gutter);
+}
+.hero-content {
+  height: 100%;
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-end;
+  text-align: right;
+  max-width: 560px; margin-left: auto; margin-right: clamp(12px, 6vw, 40px); padding: clamp(28px, 6vw, 80px) 0;
+}
+.hero-eyebrow, .chapter-no { display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin: 0 0 2px;
+  font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .42em; font-size: 14px;
+  font-weight: 600; color: var(--line); line-height: 1; }
+.hero-eyebrow .dia, .chapter-no .dia { width: 6px; height: 6px; background: var(--line); transform: rotate(45deg); flex: none; }
+.hero-h1 { font-family: var(--font-slab); font-weight: 700; text-transform: lowercase;
+  font-size: clamp(44px, 5.4vw, 76px); line-height: .92; margin: 14px 0 0; color: var(--line); white-space: nowrap; }
+.hero-h1::first-letter { text-transform: uppercase; }
+/* logo a la izquierda del título */
+.hero-title { display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin-top: 14px; }
+.hero-title .hero-h1 { margin-top: 0; }
+.hero-logo { position: relative; flex: none; width: 120px; height: 120px; }
+.hero-logo img { width: 120px; height: 120px; object-fit: contain; display: block; }
+.hero-logo img { transition: opacity .45s ease; }
+.hero-logo .hero-logo-noche { position: absolute; inset: 0; opacity: 0; }
+:root[data-theme="noche"] .hero-logo .hero-logo-noche { opacity: 1; }
+/* el SVG de noche tiene zonas transparentes: ocultar el de día para que no se vea debajo */
+:root[data-theme="noche"] .hero-logo .hero-logo-dia { opacity: 0; }
+.hero-h1 .lobo { display: inline; text-transform: none; color: var(--bosque); }
+:root[data-theme="noche"] .hero-h1 .lobo { color: var(--amber); }
+.hero-sub { font-family: var(--font-body); font-size: 21px; line-height: 1.5; color: var(--ink);
+  max-width: 430px; margin: 26px 0 0; }
+.hero-acts { display: flex; align-items: center; justify-content: flex-end; gap: clamp(10px, 4vw, 24px); margin-top: 32px; flex-wrap: nowrap; }
+/* tamaño de botón fluido: se mantiene igual que desktop/tablet en todo el rango de
+   móviles reales (>=370px) y solo se afina hacia abajo en anchos extremos, sin saltos */
+.hero-acts .btn { font-size: clamp(12px, 3.636vw + 0.36px, 14px); white-space: nowrap; }
+.hero-quote { font-family: var(--font-body); font-style: italic; font-weight: 700; font-size: 17px; line-height: 1.55;
+  color: var(--ink-soft); margin: 34px 0 0; max-width: 430px; padding-right: 18px; border-right: 3px solid var(--bosque);
+  display: grid; }
+:root[data-theme="noche"] .hero-quote { border-right-color: var(--amber); }
+.hero-quote-dia, .hero-quote-noche { grid-area: 1 / 1; transition: opacity .45s ease; }
+.hero-quote-noche { opacity: 0; }
+:root[data-theme="noche"] .hero-quote-dia { opacity: 0; }
+:root[data-theme="noche"] .hero-quote-noche { opacity: 1; }
+
+/* ── Botones (sistema Línea) ── */
+.btn { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .07em; font-size: 14px;
+  font-weight: 600; color: var(--line); padding: 11px 22px; border-radius: 9px; border: 0; background: none;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 9px; position: relative; z-index: 0;
+  text-decoration: none; }
+.btn .bg { position: absolute; inset: 0; z-index: -1; border-radius: 9px; }
+/* botones desactivados hasta el lanzamiento («Crear cuento», «Ver ejemplos») */
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.cover-cta:disabled { opacity: .8; } /* sobre la foto oscura, algo más visible */
+.btn.primary { color: var(--on-dark); }
+.btn.primary .bg { background: var(--teal); }
+.btn.ghost .bg { background: var(--pergamino); border: 2px solid var(--line); }
+.hero-acts .btn.primary .bg { box-shadow: 4px 5px 0 rgba(59, 47, 23, .22); }
+.hero-acts .btn.ghost .bg { box-shadow: 4px 5px 0 rgba(59, 47, 23, .22), inset 0 1px 0 rgba(255, 255, 255, .4); }
+.hero-acts .btn:active:not(:disabled) .bg { transform: translate(2px, 2px); box-shadow: 2px 3px 0 rgba(59, 47, 23, .20); }
+
+.hero-act-cta { position: relative; display: inline-flex; }
+.hero-act-tag { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 6px;
+  font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .14em; white-space: nowrap;
+  font-size: 11px; font-weight: 600; color: var(--ink-soft); }
+
+/* ── Book page (Prólogo / Capítulo I) ── */
+.quees { padding: 17px 0 0; }
+#comprender, #ella { margin-top: 96px; }
+.book-page { max-width: 900px; margin: 46px auto 0; text-align: left; }
+.book-page::after { content: ""; display: block; clear: both; }
+
+.chapter-plate { display: flex; flex-direction: column; align-items: center; gap: 9px; width: 100%; margin: 7px 0 22px; }
+.chapter-no { margin: 0; padding: 0 0 2px; justify-content: center; }
+.chapter-title { margin: 0; padding: 6px 0 0; text-align: center; white-space: nowrap;
+  font-family: var(--font-slab); font-weight: 700; text-transform: lowercase; letter-spacing: .5px;
+  font-size: clamp(26px, 3.4vw, 36px); line-height: 1.04; color: var(--line); }
+.chapter-title::first-letter { text-transform: uppercase; }
+/* Capítulo I: placa alineada a la izquierda, al mismo borde que el texto
+   («Érase una vez»): mismo ancho máximo y centrado que .book-page */
+#cuentos .chapter-plate { align-items: flex-start; max-width: 900px; margin-left: auto; margin-right: auto; }
+#cuentos .chapter-no { justify-content: flex-start; }
+#cuentos .chapter-title { text-align: left; }
+#cuentos .chapter-plate .nb-divider { justify-content: flex-start; }
+/* escritorio: el lobo sube hasta la altura de «Capítulo I» (hueco + placa,
+   más ~100px de transparencia arriba del PNG) y desde «Desde entonces…» el
+   texto pasa por debajo y ocupa todo el ancho */
+@media (min-width: 961px) {
+  #cuentos .book-fig { margin-top: -290px; }
+  /* el lobo (día y noche) baja 50px (cabe en el hueco transparente del marco 4/5: ~63px) */
+  #cuentos .book-fig .plate .lobo-dia { position: relative; top: 50px; }
+  #cuentos .book-fig .plate .lobo-noche { top: 50px; bottom: -50px; }
+  #cuentos .book-page > .book-para:nth-of-type(3) { clear: right; }
+}
+
+/* Escritura a máquina (js/site.js): letras ocultas que aparecen una a una + cursor */
+.chapter-title.tw-ready .tw-char { visibility: hidden; }
+.chapter-title.tw-ready .tw-char.on { visibility: visible; }
+.tw-caret { display: inline-block; width: 0; height: .9em; margin-right: -2px;
+  border-left: 2px solid currentColor; vertical-align: -.08em;
+  animation: tw-blink 1s steps(1) infinite; }
+.chapter-title.tw-done .tw-caret { opacity: 0; animation: none; transition: opacity .4s; }
+@keyframes tw-blink { 50% { opacity: 0; } }
+
+.book-fig { float: right; width: 310px; margin: -90px 0 14px 30px; display: flex; flex-direction: column; gap: 9px; shape-margin: 14px; }
+.book-fig .plate { position: relative; aspect-ratio: 4/5; border-radius: 6px;
+  display: grid; place-items: center; overflow: hidden; }
+.book-fig .slot { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-soft); text-align: center; line-height: 1.5; padding: 0 14px; }
+.book-fig .plate img { width: 100%; height: 100%; object-fit: contain; }
+.book-fig .plate .lobo-dia,
+.book-fig .plate .lobo-noche { transition: opacity .45s ease; }
+.book-fig .plate .lobo-noche { position: absolute; inset: 0; opacity: 0; }
+:root[data-theme="noche"] .book-fig .plate .lobo-dia { opacity: 0; }
+:root[data-theme="noche"] .book-fig .plate .lobo-noche { opacity: 1; }
+.book-fig figcaption { font-family: var(--font-body); font-style: italic; font-size: 13.5px; line-height: 1.4;
+  color: var(--ink-soft); text-align: center; }
+
+.book-para { font-family: var(--font-body); font-size: 20px; line-height: 1.56; color: var(--ink); margin: 0 0 17px;
+  text-align: justify; text-justify: inter-word; hyphens: auto; }
+.book-para:last-child { margin-bottom: 0; }
+.book-para .sl { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .05em; font-size: .82em; color: var(--line); }
+.book-epigraph { font-family: var(--font-body); font-style: italic; font-size: 20px; line-height: 1.56;
+  color: var(--ink-soft); text-align: center; margin: 0 0 17px; }
+.book-para.lead-cap::first-letter { float: left; font-family: var(--font-slab); font-weight: 700; font-size: 66px;
+  line-height: .66; padding: 7px 12px 0 1px; color: var(--bosque); }
+:root[data-theme="noche"] .book-para.lead-cap::first-letter { color: var(--amber); }
+/* lista dentro de una página de libro: rombos del divisor como viñetas */
+.book-list { list-style: none; margin: 0 0 17px; padding: 0; }
+.book-list li { position: relative; padding-left: 26px; margin-bottom: 10px;
+  font-family: var(--font-body); font-size: 20px; line-height: 1.56; color: var(--ink); }
+.book-list li::before { content: ""; position: absolute; left: 3px; top: .62em; width: 9px; height: 9px;
+  background: var(--bosque); transform: rotate(45deg); }
+:root[data-theme="noche"] .book-list li::before { background: var(--amber); }
+
+.nb-divider { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 26px 0; clear: both; }
+.nb-divider .ln { width: 78px; height: 0; border-top: var(--bw) solid color-mix(in srgb, var(--line) 55%, transparent); filter: url(#torn-line); }
+.nb-divider .cl { display: flex; align-items: center; gap: 9px; }
+.nb-divider .cl b { width: 9px; height: 9px; background: var(--bosque); transform: rotate(45deg); display: block; filter: url(#rough); }
+.nb-divider .cl b:nth-child(2) { width: 13px; height: 13px; }
+:root[data-theme="noche"] .nb-divider .cl b { background: var(--amber); }
+
+/* ── Capítulo I (Inicio): Cuentos personalizados — tarjetas por edad ── */
+/* Cada tarjeta fija su color de franja (--age); el
+   texto de la franja es fijo porque los tonos medios funcionan en día y noche. */
+/* Ocupa todo el ancho de .home (hasta 1200px).
+   El contenido se dimensiona con --u: 1px cuando la tarjeta mide al menos su
+   ancho de diseño (276px) y menos en proporción cuando la tarjeta es más
+   estrecha, así nada se desborda entre breakpoints. */
+.ages-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 2.8vw, 36px);
+  margin: 40px auto 0; list-style: none; }
+/* la chincheta vive fuera de .age-card para que la tarjeta pueda balancearse
+   colgada de ella sin que la chincheta se mueva (ver animación más abajo) */
+.age-item { display: flex; flex-direction: column;
+  container-type: inline-size; --u: min(1px, calc(100cqi / 276)); }
+/* .age-hang agrupa chincheta + tarjeta */
+.age-hang { position: relative; flex: 1; display: flex; flex-direction: column; }
+.age-hang > .age-card { flex: 1; }
+.age-card { --age: var(--amber); --age-on: #38362c; --tilt: -.6deg;
+  position: relative; z-index: 0; display: flex; flex-direction: column; align-items: center;
+  padding: calc(12 * var(--u)) calc(21 * var(--u)) calc(14 * var(--u)); text-align: center; }
+.age-card.age-8 { --age: var(--bosque); --age-on: #f5edd8; --tilt: .5deg; }
+.age-card.age-10 { --age: #855f42; --age-on: #f5edd8; --tilt: -.4deg; }
+
+.age-card > .bg { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-color: var(--paper-piece);
+  background-image: radial-gradient(rgba(120,90,40,.05) 1px, transparent 1px); background-size: 4px 4px;
+  filter: url(#torn-paper-2); will-change: filter; transition: background-color .45s ease; }
+
+.age-pin { position: absolute; top: calc(-11 * var(--u)); left: 50%; transform: translateX(-50%); z-index: 3;
+  width: calc(22 * var(--u)); height: calc(22 * var(--u)); border-radius: 50%;
+  background: radial-gradient(circle at 36% 34%, #e6cc7a, var(--amber) 55%, #8f6d1f);
+  border: 2px solid #5b4718; box-shadow: 2px 3px 0 rgba(59,47,23,.28); }
+
+.age-figure { position: relative; width: 100%; margin: 0; }
+.age-slot { aspect-ratio: 1376/768; display: grid; place-content: center; justify-items: center; gap: calc(9 * var(--u));
+  border: 2px dashed color-mix(in srgb, var(--line) 32%, transparent); border-bottom: 0;
+  background: color-mix(in srgb, var(--line) 4%, transparent); }
+.age-slot svg { width: calc(30 * var(--u)); height: calc(30 * var(--u)); fill: none; stroke: var(--ink-soft); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.age-slot span { font-family: var(--font-mono); font-size: calc(12.5 * var(--u)); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); }
+.age-slot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* con ilustración: deja de ser un hueco punteado y la imagen ocupa todo el marco */
+.age-slot:has(img) { display: block; border-style: solid; border-color: color-mix(in srgb, var(--line) 45%, transparent); background: none; }
+/* etiqueta de edad: píldora sobre la esquina superior izquierda de la ilustración */
+.age-band { position: absolute; left: calc(10 * var(--u)); top: calc(10 * var(--u)); transform: rotate(var(--tilt));
+  padding: calc(7 * var(--u)) calc(14 * var(--u)) calc(6 * var(--u)); border-radius: 999px; white-space: nowrap;
+  background: var(--age); color: var(--age-on); border: 2px solid var(--line); box-shadow: 2px 3px 0 rgba(59,47,23,.22);
+  font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .2em; font-size: calc(13 * var(--u));
+  font-weight: 600; line-height: 1; }
+
+/* frase bajo la ilustración; reserva dos líneas para que las tres tarjetas igualen alto */
+.age-desc { font-family: var(--font-body); font-size: calc(17.5 * var(--u)); line-height: 1.35; color: var(--ink-soft);
+  width: 100%; min-height: calc(2em * 1.35); margin: calc(14 * var(--u)) 0 0;
+  display: flex; align-items: center; justify-content: flex-start; text-align: left; }
+/* botón «Ver ejemplos» bajo la frase (estilo de «Iniciar sesión») */
+.age-cta { margin: calc(14 * var(--u)) 0 calc(6 * var(--u)); white-space: nowrap; }
+/* «Próximamente» bajo «Ver ejemplos» (desactivado, ver .btn:disabled) */
+.age-soon { margin: 0 0 calc(4 * var(--u)); font-family: var(--font-disp); text-transform: uppercase;
+  letter-spacing: .14em; font-size: calc(11 * var(--u)); font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
+
+/* ── Animación de entrada: aparece la chincheta, se clava y la tarjeta se posa ──
+   js/site.js añade .pin-ready a .ages-grid (estado oculto) y .pinned a cada
+   .age-item al entrar en pantalla, con --i = orden dentro del grupo que entra
+   a la vez (escalonado). Sin JS o con movimiento reducido no se oculta nada. */
+.ages-grid.pin-ready .age-pin,
+.ages-grid.pin-ready .age-card,
+.pin-collage.pin-ready .age-pin,
+.pin-collage.pin-ready .age-card,
+.pin-row.pin-ready .age-pin,
+.pin-row.pin-ready .age-card,
+.pin-shots.pin-ready .age-pin,
+.pin-shots.pin-ready .age-card { opacity: 0; }
+.ages-grid.pin-ready .age-card,
+.pin-collage.pin-ready .age-card,
+.pin-row.pin-ready .age-card,
+.pin-shots.pin-ready .age-card { transform-origin: 50% 0; }
+
+.age-item.pinned .age-pin {
+  animation: pinIn .62s cubic-bezier(.3, .7, .4, 1) calc(var(--i, 0) * .38s) both;
+}
+.age-item.pinned .age-card {
+  animation: cardSettle 1.15s cubic-bezier(.3, .6, .35, 1) calc(var(--i, 0) * .38s + .5s) both;
+}
+
+@keyframes pinIn {
+  0%   { opacity: 0; transform: translate(-50%, -34px) scale(1.9); box-shadow: 10px 16px 6px rgba(59,47,23,.12); }
+  55%  { opacity: 1; transform: translate(-50%, 0) scale(1.06); box-shadow: 4px 5px 1px rgba(59,47,23,.22); }
+  70%  { transform: translate(-50%, 0) scale(.8, .74); box-shadow: 1px 1px 0 rgba(59,47,23,.3); }
+  86%  { transform: translate(-50%, 0) scale(1.05); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); box-shadow: 2px 3px 0 rgba(59,47,23,.28); }
+}
+@keyframes cardSettle {
+  0%   { opacity: 0; transform: translateY(-22px) rotate(-8deg); }
+  30%  { opacity: 1; transform: translateY(0) rotate(5deg); }
+  52%  { transform: rotate(-2.6deg); }
+  70%  { transform: rotate(1.3deg); }
+  86%  { transform: rotate(-.5deg); }
+  100% { opacity: 1; transform: none; }
+}
+.age-item:nth-child(2).pinned .age-card { animation-name: cardSettleR; }
+@keyframes cardSettleR {
+  0%   { opacity: 0; transform: translateY(-22px) rotate(8deg); }
+  30%  { opacity: 1; transform: translateY(0) rotate(-5deg); }
+  52%  { transform: rotate(2.6deg); }
+  70%  { transform: rotate(-1.3deg); }
+  86%  { transform: rotate(.5deg); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* tarjetas en columna: 3 a lo ancho dejan de caber (iconos + etiquetas) por debajo de ~960px */
+@media (max-width: 960px) {
+  .ages-grid { grid-template-columns: minmax(0, 340px); justify-content: center; gap: 40px; }
+}
+
+/* ── Capítulo II (Inicio): Leer para comprender — collage de portadas + texto ── */
+/* Escritorio: collage a la izquierda, texto a la derecha. Las tarjetas reutilizan
+   chincheta, papel rasgado y animación de entrada de las tarjetas por edad. */
+.cmp-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 64px);
+  align-items: start; margin-top: 40px; }
+/* el texto arranca a la altura de la parte alta de la foto de Iván, no centrado en el collage */
+.cmp-layout > .book-page { margin: 0; max-width: none; padding-top: 48px; }
+
+/* rejilla de 12 columnas: la grande centrada arriba y las dos de abajo subidas
+   hasta tapar el 35% inferior de su foto. La altura de esa foto se calcula con
+   cqi (ancho del collage): 8/12 columnas, menos marco y relleno (32px), por la
+   proporción 1152/768 de la portada; +16px para saltar relleno y borde inferior. */
+.pin-collage { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: start; list-style: none;
+  container-type: inline-size; margin: 0; padding: 0; }
+.pin-collage .age-card { padding: calc(14 * var(--u)); }
+.cmp-big   { grid-column: 3 / 11; grid-row: 1; transform: rotate(.8deg); z-index: 1; }
+/* Marta (izquierda) tapa el 5% inferior de la foto de Iván y Lucas (derecha)
+   el 25%; Lucas además se mete un 10% sobre el lado derecho de la foto de la
+   izquierda (6/12 columnas menos 32px de marco; +16px para saltar su relleno
+   y borde derecho) */
+/* Lucas va al 56% de su ancho (anclado a la izquierda) y Marta queda una capa por encima */
+.cmp-left, .cmp-right { grid-row: 2; z-index: 2; }
+.cmp-left  { grid-column: 1 / 7;  transform: rotate(-2.2deg); z-index: 3;
+  margin-top: calc(-.05 * (66.667cqi - 32px) * 1152 / 768 - 16px); }
+.cmp-right { grid-column: 7 / 13; transform: rotate(2.4deg);
+  margin-top: calc(-.25 * (66.667cqi - 32px) * 1152 / 768 - 16px);
+  margin-left: calc(-.1 * (50cqi - 32px) - 16px);
+  justify-self: start; width: calc(.56 * (50cqi + .1 * (50cqi - 32px) + 16px)); }
+.cmp-slot { width: 100%; border: 2px solid color-mix(in srgb, var(--line) 45%, transparent); border-radius: 6px; overflow: hidden; }
+.cmp-slot img { display: block; width: 100%; height: auto; }
+
+/* escritorio: el collage sube hasta arriba de la sección y la placa del
+   capítulo pasa a la columna derecha, alineada a la derecha, sobre el texto */
+@media (min-width: 961px) {
+  #comprender { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto 1fr;
+    column-gap: clamp(28px, 4vw, 64px); align-items: start; }
+  #comprender .cmp-layout { display: contents; }
+  #comprender .pin-collage { grid-column: 1; grid-row: 1 / span 2; }
+  #comprender .chapter-plate { grid-column: 2; grid-row: 1; align-items: flex-end; }
+  #comprender .chapter-no { justify-content: flex-end; }
+  #comprender .chapter-title { text-align: right; }
+  #comprender .chapter-plate .nb-divider { justify-content: flex-end; }
+  #comprender .cmp-layout > .book-page { grid-column: 2; grid-row: 2; padding-top: 0; }
+}
+
+/* ── Capítulo III: lobo pensando (día/noche) a la derecha ── */
+#ella .ella-fig { width: 200px; margin-top: 0; align-items: center; }
+/* lobo un 35% más pequeño (186 → 121px); la figura se queda más ancha para el pie */
+.ella-plate { width: 121px; }
+#ella .ella-fig img { display: block; width: 100%; height: auto; }
+/* versión día / noche superpuestas, mismo recorte para que no salte al cambiar de tema */
+.ella-plate { position: relative; margin: 0 auto; }
+.ella-plate .lobo-dia, .ella-plate .lobo-noche { transition: opacity .45s ease; }
+.ella-plate .lobo-noche { position: absolute; inset: 0; opacity: 0; }
+:root[data-theme="noche"] .ella-plate .lobo-dia { opacity: 0; }
+:root[data-theme="noche"] .ella-plate .lobo-noche { opacity: 1; }
+/* «Crear cuento» sobre la portada de Valentina, con el estilo de «Iniciar sesión»
+   (sombra en .wz-login); 20% más grande que un .btn normal y más ancho */
+.cover-slot { position: relative; }
+.cover-cta { position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%);
+  font-size: 16.8px; padding: 13px 40px; white-space: nowrap; }
+/* escritorio: placa a la izquierda (al borde del texto, como el Capítulo I)
+   y el lobo sube hasta la altura de «Capítulo III» (hueco 46px + placa 143px)
+   y luego se baja: 67px + 50px más */
+@media (min-width: 961px) {
+  #ella .chapter-plate { align-items: flex-start; max-width: 900px; margin-left: auto; margin-right: auto; }
+  #ella .chapter-no { justify-content: flex-start; }
+  #ella .chapter-title { text-align: left; }
+  #ella .chapter-plate .nb-divider { justify-content: flex-start; }
+  #ella .ella-fig { margin-top: -72px; margin-bottom: 40px; }
+}
+/* móvil: el lobo y el botón van después del texto, centrados */
+@media (max-width: 600px) {
+  #ella .book-page { display: flex; flex-direction: column; }
+  #ella .ella-fig { order: 1; width: 240px; margin: 28px auto 24px; }
+  .ella-plate { width: 109px; }
+}
+
+/* ── Capítulo IV: Continuará — texto a la izquierda, foto clavada a la derecha
+   con una cita en cursiva debajo, alineada a la derecha ── */
+#continuara { margin-top: 96px; }
+.fin-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 64px); align-items: center; }
+.fin-text .book-page { margin-top: 0; max-width: none; }
+/* separador de cierre centrado en la página, bajo texto y foto */
+#continuara > .nb-divider { margin: 30px 0 50px; }
+/* flow-root: los 50px no se funden con el margen superior del footer (64px) */
+#continuara { display: flow-root; }
+.fin-media .pin-row { margin: 0; }
+.fin-media .pin-row .age-card { transform: rotate(1.2deg); }
+.fin-quote { font-family: var(--font-body); font-style: italic; font-size: 14px; line-height: 1.3; /* como .pin-cap */
+  color: #855f42; text-align: right; margin: 12px 0 0 auto; max-width: 420px; }
+:root[data-theme="noche"] .fin-quote { color: var(--amber); }
+@media (min-width: 961px) {
+  /* mismo borde izquierdo que los Capítulos I y III: columna de 900px centrada */
+  #continuara .fin-layout { max-width: 900px; margin: 0 auto; }
+  #continuara .chapter-plate { align-items: flex-start; }
+  #continuara .chapter-no { justify-content: flex-start; }
+  #continuara .chapter-title { text-align: left; }
+  #continuara .chapter-plate .nb-divider { justify-content: flex-start; }
+}
+/* tablet y móvil: en columna, cabecera centrada como el resto */
+@media (max-width: 960px) {
+  .fin-layout { grid-template-columns: minmax(0, 1fr); }
+  .fin-text .book-page { max-width: 900px; }
+  .fin-media { max-width: 520px; width: 100%; margin: 0 auto; }
+  .fin-quote { text-align: center; margin: 12px auto 0; }
+}
+
+/* ── Capítulo III: de la foto a la portada — fila de tarjetas clavadas + flechas ──
+   Cada tarjeta crece en proporción a su relación de aspecto (--ar, en el HTML),
+   así las cuatro imágenes quedan a la misma altura aunque la portada sea apaisada. */
+.pin-row { display: flex; align-items: center; gap: clamp(10px, 1.6vw, 20px);
+  list-style: none; margin: 56px 0 0; padding: 0; }
+.pin-row > .age-item { flex: calc(var(--ar)) 1 32px; min-width: 0; --u: 1px; } /* chincheta y marco a tamaño fijo */
+.pin-row .age-card { padding: calc(14 * var(--u)); }
+.pin-cap { font-family: var(--font-body); font-style: italic; font-size: 14px; line-height: 1.3;
+  color: var(--ink-soft); text-align: center; margin: 10px 0 0; min-height: 2.6em; } /* 2 líneas: todas las tarjetas igual de altas */
+.pin-arrow { flex: none; width: clamp(28px, 3.4vw, 44px); color: #855f42; }
+.pin-arrow svg { display: block; width: 100%; height: auto; fill: none; stroke: currentColor;
+  stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+:root[data-theme="noche"] .pin-arrow { color: var(--amber); }
+#ella > .nb-divider-mount { margin-top: 40px; }
+/* fila de fotos dentro de la banda separadora; la copia del lobo solo se ve en tablet/móvil */
+#ella .banda-separadora .pin-row { margin: 0; }
+.ella-fig-band { display: none; }
+
+/* móvil: en columna, flechas hacia abajo */
+@media (max-width: 760px) {
+  .pin-row { flex-direction: column; gap: 20px; margin-top: 40px; }
+  .pin-row > .age-item { flex: none; width: 100%; max-width: 300px; }
+  .pin-row > .age-item:last-child { max-width: 420px; }
+  .pin-arrow svg { transform: rotate(90deg); }
+  .pin-arrow { width: 34px; height: 34px; display: grid; place-items: center; }
+}
+
+/* ── Prólogo (¿Qué es Senior Lobo?): texto a la izquierda, tres capturas de la app
+   clavadas a la derecha. Reutilizan chincheta, papel rasgado y animación de entrada
+   de las tarjetas por edad; cada una crece según su proporción (--ar, en el HTML)
+   para que las tres queden a la misma altura. Al pulsarlas se abren en .shot-lb. ── */
+.prl-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 56px); align-items: center; }
+.pin-shots { display: flex; align-items: flex-start; gap: clamp(10px, 1.4vw, 16px);
+  list-style: none; margin: 0; padding: 0; }
+.pin-shots > .age-item { flex: calc(var(--ar)) 1 32px; min-width: 0; --u: .8px; }
+.pin-shots .age-card { padding: calc(10 * var(--u)); }
+/* inclinación de reposo distinta para cada captura; la del centro algo más baja */
+.pin-shots > .age-item:nth-child(1) { transform: rotate(-2deg); }
+.pin-shots > .age-item:nth-child(2) { transform: rotate(1.6deg); margin-top: 22px; position: relative; z-index: 1; }
+/* capturas un 20% más grandes que si cupieran en fila: se solapan. Con ancho de fila W y hueco g,
+   los anchos suman W − 2g + 2m; para que sea 1,2·(W − 2g) el solape es m = 0,1W − 0,2g */
+.pin-shots > .age-item + .age-item { margin-left: calc(-10% + .2 * clamp(10px, 1.4vw, 16px)); }
+.pin-shots > .age-item:nth-child(3) { transform: rotate(-1deg); }
+.shot-open { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in;
+  transition: transform .2s ease; }
+.shot-open:hover, .shot-open:focus-visible { transform: scale(1.03); }
+.shot-open:focus-visible { outline: 2px solid var(--line); outline-offset: 4px; border-radius: 6px; }
+.shot-open .cmp-slot { display: block; }
+@media (max-width: 960px) {
+  .prl-layout { grid-template-columns: minmax(0, 1fr); }
+  .pin-shots { max-width: 520px; width: 100%; margin: 24px auto 0; }
+}
+
+/* visor a pantalla completa (<dialog> nativo: Esc, foco y capa superior de serie) */
+.shot-lb { padding: 0; border: 0; background: none; overflow: visible;
+  max-width: calc(100vw - 32px); max-height: calc(100dvh - 48px); }
+.shot-lb::backdrop { background: rgba(31,24,10,.72); }
+.shot-lb-img { display: block; width: auto; height: auto;
+  max-width: calc(100vw - 32px); max-height: calc(100dvh - 48px);
+  border: var(--bw) solid var(--line); border-radius: 8px; box-shadow: 6px 9px 0 rgba(59,47,23,.28); }
+.shot-lb .lg-close { top: -15px; right: -15px; }
+html:has(.shot-lb[open]) { overflow: hidden; }
+@media (prefers-reduced-motion: no-preference) {
+  .shot-lb[open] { animation: lg-rise .28s cubic-bezier(.2,.9,.3,1.1) both; }
+  .shot-lb[open]::backdrop { animation: lg-fade .22s ease both; }
+}
+@media (max-width: 600px) {
+  .shot-lb .lg-close { top: 8px; right: 8px; }
+}
+
+/* Capítulo III en tablet y móvil: dentro de la banda separadora, rejilla a 2 columnas.
+   .pin-row se «disuelve» (display: contents) para que sus tarjetas compartan rejilla
+   con la copia del lobo: lobo pensando | foto real → recreación | hoja de personaje
+   → libro a todo el ancho. Sin flechas. */
+@media (max-width: 960px) {
+  /* el lobo deja el texto y entra en la banda separadora, junto a las fotos */
+  #ella .book-page > .ella-fig { display: none; }
+  #ella .banda-separadora-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 16px; }
+  #ella .pin-row { display: contents; }
+  #ella .pin-arrow { display: none; }
+  /* fila 1: lobo pensando a la izquierda, foto real (más pequeña) a la derecha */
+  #ella .ella-fig-band { display: flex; order: 0; float: none; width: auto; max-width: 240px; margin: 0; justify-self: center; align-self: center; }
+  #ella .pin-row > .age-item { flex: none; width: 100%; justify-self: center; margin-top: 24px; }
+  #ella .pin-row > .age-item:nth-child(1) { max-width: 170px; margin-top: 0; align-self: center; }
+  /* fila 2: recreación ilustrada y hoja de personaje */
+  #ella .pin-row > .age-item:nth-child(3),
+  #ella .pin-row > .age-item:nth-child(5) { max-width: 240px; }
+  /* fila 3: el libro personalizado a todo el ancho */
+  #ella .pin-row > .age-item:nth-child(7) { grid-column: 1 / -1; max-width: 520px; }
+}
+
+/* tablet y móvil: el texto primero y el collage debajo, centrado */
+@media (max-width: 960px) {
+  .cmp-layout { grid-template-columns: minmax(0, 1fr); }
+  .cmp-layout > .book-page { padding-top: 0; }
+  .pin-collage { order: 1; width: 100%; max-width: 520px; margin: 0 auto; }
+}
+
+/* ── Footer ── */
+.home-foot { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap;
+  margin: 64px 0 0; padding-top: 24px; border-top: 2px solid color-mix(in srgb, var(--line) 22%, transparent);
+  font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .06em; }
+
+/* ── Responsive: tablet (758px) y móvil (430px) ── */
+@media (max-width: 600px) {
+  .book-fig { float: none; width: 100%; margin: 8px 0 20px; }
+  .chapter-title { white-space: normal; }
+  .book-para { text-align: left; hyphens: none; }
+
+  .owl-wrap .l-owl, .owl-wrap .l-owl-night { width: 45.5%; top: 2%; }
+
+  .hero-eyebrow, .chapter-no { gap: 8px; font-size: 11px; letter-spacing: .14em; white-space: nowrap; }
+
+  /* móvil: el logo sube encima de "Una historia para cada niño", a la derecha */
+  .hero-title { display: contents; }
+  .hero-logo { order: -1; margin-bottom: 12px; }
+  .hero-title .hero-h1 { margin-top: 14px; }
+
+  #quees .chapter-plate { margin-bottom: 0; }
+  #quees .chapter-plate .nb-divider { margin: 0; }
+  #quees .book-fig { margin-top: 0; }
+
+  /* Capítulo I: el texto de bienvenida va antes que la ilustración,
+     pegado al divisor del título */
+  #cuentos .chapter-plate { margin-bottom: 0; align-items: center; }
+  #cuentos .chapter-no { justify-content: center; }
+  #cuentos .chapter-title { text-align: center; }
+  #cuentos .chapter-plate .nb-divider { margin-bottom: 40px; justify-content: center; }
+  #cuentos .book-page { display: flex; flex-direction: column; margin-top: 0; }
+  #cuentos .book-page > .lead-cap { order: -1; margin-bottom: 0; }
+  /* sin hueco entre texto y lobo: el PNG trae ~27% de transparencia arriba,
+     así que el marco se ajusta a la zona visible (filas 275-946 de 1024) */
+  #cuentos .book-fig { margin-top: 0; }
+  #cuentos .book-fig .plate { aspect-ratio: 1024/671; margin: 20px 0 5px; }
+  #cuentos .book-fig .plate img { position: absolute; inset: 0; object-fit: cover; object-position: 50% 78%; }
+}
+
+/* ── Tema Noche ── */
+:root[data-theme="noche"] {
+  --pergamino:   #1b2744;
+  --tinta:       #f0e6c8;
+  --niebla:      #6b7a9a;
+  --castano:     #c98a5a;
+  --ink-soft:    #8a96aa;
+  --paper-piece: #253560;
+  --on-dark:     #1b2744;
+  --teal:        var(--amber);
+  --teal-deep:   color-mix(in srgb, var(--amber) 70%, #1b2744);
+  --teal-pale:   color-mix(in srgb, var(--amber) 18%, #253560);
+  --fill:        #253560;
+}
+
+/* ── Switch Día / Noche ── */
+.dn-switch {
+  --dsw: 90px; --dsh: 42px; --dsp: 4px;
+  width: var(--dsw); height: var(--dsh); border-radius: 24px;
+  position: relative; z-index: 0; flex: none; cursor: pointer;
+  display: inline-block;
+}
+
+.dn-switch > .bg {
+  position: absolute; inset: 0; z-index: -1; border-radius: 24px;
+  background: color-mix(in srgb, #4f7860 12%, #f5edd8);
+  border: 2px solid var(--line);
+  filter: url(#rough); pointer-events: none;
+  transition: background .25s, border-color .25s;
+}
+
+.dn-switch[data-mode="noche"] > .bg {
+  background: #1c283e;
+  border-color: #f0e6c8;
+}
+
+.dn-switch .glyph {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 18px; height: 18px; display: grid; place-items: center;
+  z-index: 1; transition: opacity .25s;
+}
+
+.dn-switch .glyph.sun  { left: 8px; }
+.dn-switch .glyph.moon { right: 8px; }
+
+.dn-switch .glyph svg, .dn-switch .dn-knob .face svg {
+  width: 18px; height: 18px; fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  filter: url(#rough);
+}
+
+.dn-switch .glyph.sun  svg { stroke: #c9a035; }
+.dn-switch .glyph.moon svg { stroke: #f5edd8; }
+.dn-switch[data-mode="dia"] .glyph.moon svg { stroke: var(--bosque); }
+
+.dn-switch[data-mode="dia"]   .glyph.sun  { opacity: 0; }
+.dn-switch[data-mode="dia"]   .glyph.moon { opacity: .32; }
+.dn-switch[data-mode="noche"] .glyph.moon { opacity: 0; }
+.dn-switch[data-mode="noche"] .glyph.sun  { opacity: .28; }
+
+.dn-switch .stars {
+  position: absolute; inset: 0; z-index: 1;
+  opacity: 0; transition: opacity .3s; pointer-events: none;
+}
+
+.dn-switch[data-mode="noche"] .stars { opacity: .85; }
+
+.dn-switch .stars i {
+  position: absolute; width: 3px; height: 3px;
+  border-radius: 50%; background: #f0e6c8;
+}
+
+.dn-switch .stars i:nth-child(1) { left: 14px; top: 10px; }
+.dn-switch .stars i:nth-child(2) { left: 24px; top: 25px; width: 2px; height: 2px; }
+.dn-switch .stars i:nth-child(3) { left: 33px; top: 8px;  width: 2px; height: 2px; }
+
+.dn-switch .dn-knob {
+  position: absolute; top: var(--dsp); left: var(--dsp);
+  width: calc(var(--dsh) - var(--dsp) * 2);
+  height: calc(var(--dsh) - var(--dsp) * 2);
+  border-radius: 50%; z-index: 2;
+  transform: translateX(0);
+  transition: transform .26s cubic-bezier(.5, 1.4, .5, 1);
+  will-change: transform;
+}
+
+.dn-switch[data-mode="noche"] .dn-knob {
+  transform: translateX(calc(var(--dsw) - var(--dsh)));
+}
+
+.dn-switch .dn-knob > .bg {
+  position: absolute; inset: 0; z-index: -1; border-radius: 50%;
+  background: #c9a035;
+  border: 2px solid color-mix(in srgb, #c9a035 60%, #8c5f3a);
+  filter: url(#rough); pointer-events: none;
+  transition: background .25s, border-color .25s;
+}
+
+.dn-switch[data-mode="noche"] .dn-knob > .bg {
+  background: #f0e6c8;
+  border-color: #9ba89c;
+}
+
+.dn-switch .dn-knob .face {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  z-index: 1; transition: opacity .2s;
+}
+
+.dn-switch .dn-knob .face.sun  svg { stroke: #8c5f3a; }
+.dn-switch .dn-knob .face.moon svg { stroke: #253560; }
+
+.dn-switch[data-mode="dia"]   .dn-knob .face.moon { opacity: 0; }
+.dn-switch[data-mode="noche"] .dn-knob .face.sun  { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dn-switch *, body { transition: none !important; }
+  .l-bg, .l-tree, .l-bg-night, .l-tree-night, .beam, .motes i,
+  .owl-wrap .l-owl, .owl-wrap .l-owl-night { animation: none; }
+}
+
+/* ── Modal: Iniciar sesión / Registrar (spread "libro abierto") ── */
+.lg-overlay {
+  position: fixed; inset: 0; z-index: 1000; display: none;
+  align-items: center; justify-content: center;
+  padding: clamp(16px, 4vw, 52px);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.lg-overlay.lg-open { display: flex; }
+.lg-scrim { position: absolute; inset: 0; background: rgba(31,24,10,.52); border: 0; cursor: pointer; }
+.lg-modal { position: relative; z-index: 1; width: min(940px, 100%); }
+
+.lg-spread {
+  position: relative; z-index: 2; border-radius: 6px;
+  display: grid; grid-template-columns: 1fr 40px 1fr; height: 602px;
+}
+.lg-spread > .bg {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: var(--fill); border: var(--bw) solid var(--line); border-radius: 6px;
+  filter: url(#rough); box-shadow: 6px 9px 0 rgba(59,47,23,.28);
+}
+:root[data-theme="noche"] .lg-spread > .bg { box-shadow: 6px 9px 0 rgba(240,230,200,.35); }
+.lg-spread::before, .lg-spread::after {
+  content: ""; position: absolute; inset: 0; border-radius: 6px; pointer-events: none;
+  background-color: var(--pergamino);
+  background-image: radial-gradient(rgba(120,90,40,.05) 1px, transparent 1px);
+  background-size: 4px 4px;
+  filter: url(#torn-paper-2);
+}
+.lg-spread::before { transform: translate(8px,6px) rotate(1deg); z-index: -2; box-shadow: 5px 7px 0 rgba(59,47,23,.16); }
+.lg-spread::after  { transform: translate(16px,9px) rotate(1deg); z-index: -3; box-shadow: 5px 7px 0 rgba(59,47,23,.12); }
+:root[data-theme="noche"] .lg-spread::before { box-shadow: 5px 7px 0 rgba(240,230,200,.24); }
+:root[data-theme="noche"] .lg-spread::after  { box-shadow: 5px 7px 0 rgba(240,230,200,.18); }
+
+.lg-page { position: relative; padding: 40px 44px; min-width: 0; display: flex; flex-direction: column; }
+.lg-page-left { padding-right: 34px; height: 602px; box-sizing: border-box; align-self: start; }
+.lg-page-right { padding-left: 34px; }
+.lg-spine { position: relative; }
+.lg-spine::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; transform: translateX(-50%);
+  background: var(--line); opacity: .5; filter: url(#torn-line);
+}
+
+.lg-phead { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+.lg-phead.r { justify-content: flex-end; text-align: right; }
+.lg-pnum { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); letter-spacing: .04em; white-space: nowrap; }
+.lg-pnum-mobile { display: none; }
+.lg-ptitle { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .08em; font-size: 14px; color: var(--line); white-space: nowrap; }
+.lg-hrule { flex: 1; height: 2px; min-width: 24px; background: var(--line); opacity: .5; filter: url(#torn-line); }
+
+.lg-left-body { flex: 1; display: flex; flex-direction: column; gap: 18px; }
+.lg-titleblock { min-height: 118px; }
+.lg-eyebrow { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .14em; font-size: 11px; color: var(--ink-soft); }
+.lg-welcome { font-family: var(--font-slab); font-size: 38px; line-height: 1.02; color: var(--line); margin: 2px 0 0; text-wrap: balance; }
+.lg-illus { position: relative; flex: none; height: 230px; display: grid; place-items: center; }
+.lg-illus img { width: auto; height: 100%; max-width: 100%; max-height: 230px; object-fit: contain; filter: url(#rough); }
+.lg-illus img.lobo-noche { position: absolute; inset: 0; margin: auto; opacity: 0; }
+:root[data-theme="noche"] .lg-illus img.lobo-dia { opacity: 0; }
+:root[data-theme="noche"] .lg-illus img.lobo-noche { opacity: 1; }
+
+.lg-form { flex: 1; display: flex; flex-direction: column; }
+.lg-modal[data-mode="login"] .lg-form.lg-only-register,
+.lg-modal[data-mode="login"] .lg-only-register,
+.lg-modal[data-mode="register"] .lg-form.lg-only-login,
+.lg-modal[data-mode="register"] .lg-only-login { display: none; }
+
+.lg-lede { font-family: var(--font-body); font-size: 16px; line-height: 1.55; color: var(--ink-soft); margin: 0 0 22px; }
+.lg-field { display: flex; flex-direction: column; gap: 9px; margin-bottom: 20px; }
+.lg-field > label, .lg-labelrow > label {
+  font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .09em; font-size: 12px; color: var(--line);
+}
+.lg-input { position: relative; z-index: 0; border-radius: 8px; }
+.lg-input > .bg {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  border-radius: 8px; background: var(--fill); border: var(--bw) solid var(--line); filter: url(#rough);
+}
+.lg-input input {
+  position: relative; z-index: 1;
+  font-family: var(--font-body); font-size: 15.5px; color: var(--ink); background: none; border: 0; outline: 0;
+  padding: 12px 15px; width: 100%; border-radius: 8px;
+}
+.lg-input input::placeholder { color: var(--ink-faint); }
+.lg-input:focus-within > .bg { border-color: var(--teal); box-shadow: 0 0 0 4px var(--teal-pale); }
+.lg-pwd-field .lg-labelrow { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
+.lg-forgot { font-family: var(--font-body); font-size: 13px; color: var(--teal-deep); border: 0; background: none; cursor: pointer; padding: 0; }
+.lg-forgot:hover { color: var(--line); text-decoration: underline; }
+
+.lg-remember { display: flex; align-items: center; gap: 10px; cursor: pointer; border: 0; background: none; padding: 0; margin-bottom: 22px; text-align: left; }
+.lg-check { position: relative; z-index: 0; width: 22px; height: 22px; flex: none; border-radius: 6px; display: grid; place-items: center; }
+.lg-check > .bg {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  border-radius: 6px; background: var(--fill); border: var(--bw) solid var(--line); filter: url(#rough);
+}
+.lg-check svg { position: relative; z-index: 1; width: 14px; height: 14px; fill: none; stroke: var(--on-dark); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity .18s ease; }
+.lg-remember.on .lg-check > .bg { background: var(--teal); border-color: var(--teal-deep); }
+.lg-remember.on .lg-check svg { opacity: 1; }
+.lg-remember span { font-family: var(--font-body); font-size: 14.5px; color: var(--ink); }
+
+.lg-submit { width: 100%; justify-content: center; margin-top: 12px; }
+.lg-submit.btn.primary > .bg { box-shadow: 3px 4px 0 rgba(59,47,23,.28); }
+.lg-submit.btn.primary:active > .bg { transform: translate(2px,2px); box-shadow: 1px 2px 0 rgba(59,47,23,.22); }
+:root[data-theme="noche"] .lg-submit.btn.primary > .bg { box-shadow: 3px 4px 0 rgba(240,230,200,.4); }
+:root[data-theme="noche"] .lg-submit.btn.primary:active > .bg { box-shadow: 1px 2px 0 rgba(240,230,200,.35); }
+.lg-submit:disabled { opacity: .5; cursor: default; pointer-events: none; }
+.lg-arrow { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; filter: url(#rough); }
+
+.lg-sep { display: flex; align-items: center; gap: 14px; margin: auto 0 20px; }
+.lg-sep .lg-hrule { opacity: .4; }
+.lg-sep span { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-soft); text-transform: uppercase; }
+
+.lg-register { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; margin-top: auto; margin-bottom: 20px; }
+.lg-register p { margin: 0; font-family: var(--font-body); font-size: 14.5px; color: var(--ink-soft); }
+.lg-register .lg-register-btn { align-self: center; margin-bottom: 0; min-height: 46px; }
+.lg-mobile-cta { display: none; }
+
+.lg-google {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; border: 0; background: none; cursor: pointer;
+  position: relative; z-index: 0; border-radius: 10px; padding: 13px 18px; margin-bottom: 20px;
+  font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .05em; font-size: 13px; color: var(--line);
+}
+.lg-google > .bg {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  border-radius: 10px; background: var(--pergamino); border: var(--bw) solid var(--line); filter: url(#rough); box-shadow: 3px 4px 0 rgba(59,47,23,.18);
+}
+.lg-google:hover > .bg { background: var(--paper-piece); }
+.lg-google:active > .bg { transform: translate(2px,2px); box-shadow: 1px 2px 0 rgba(59,47,23,.16); }
+:root[data-theme="noche"] .lg-google > .bg { box-shadow: 3px 4px 0 rgba(240,230,200,.28); }
+.lg-google-g { position: relative; z-index: 1; width: 20px; height: 20px; flex: none; fill: var(--line); }
+.lg-google:disabled { cursor: default; opacity: .55; }
+.lg-google:disabled:hover > .bg { background: var(--pergamino); }
+.lg-google-soon { margin: 0 0 10px; text-align: center; font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); }
+
+.lg-close {
+  position: absolute; top: -15px; right: -15px; z-index: 6; width: 44px; height: 44px; border: 0; cursor: pointer;
+  border-radius: 50%; display: grid; place-items: center; background: none; padding: 0;
+}
+.lg-close > .bg {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  border-radius: 50%; background: var(--pergamino); border: var(--bw) solid var(--line); filter: url(#rough); box-shadow: 3px 4px 0 rgba(59,47,23,.24);
+}
+.lg-close svg { position: relative; z-index: 1; width: 20px; height: 20px; fill: none; stroke: var(--line); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.lg-close:hover > .bg { background: var(--amber); }
+:root[data-theme="noche"] .lg-close > .bg { box-shadow: 3px 4px 0 rgba(240,230,200,.35); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .lg-overlay.lg-open .lg-scrim { animation: lg-fade .22s ease both; }
+  .lg-overlay.lg-open .lg-modal { animation: lg-rise .28s cubic-bezier(.2,.9,.3,1.1) both; }
+}
+@keyframes lg-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lg-rise { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 760px) {
+  .lg-overlay { padding: 0; align-items: flex-start; overflow-y: auto; }
+  .lg-modal { width: 100%; }
+  .lg-spread {
+    grid-template-columns: 1fr; height: auto; align-content: start;
+    min-height: 100vh; min-height: 100dvh; border-radius: 0;
+  }
+  .lg-spread > .bg,
+  .lg-spread::before,
+  .lg-spread::after { border-radius: 0; box-shadow: none; transform: none; }
+  .lg-spine { display: none; }
+  .lg-page { padding: 28px 24px; }
+  .lg-page-left { height: auto; padding-bottom: 0; padding-top: 18px; }
+  .lg-page-left .lg-phead,
+  .lg-page-left .lg-illus,
+  .lg-page-left .lg-register { display: none; }
+  .lg-page-left .lg-titleblock { min-height: 0; }
+  .lg-left-body { gap: 8px; }
+  .lg-page-right { padding-top: 20px; padding-bottom: 32px; }
+  .lg-welcome { font-size: 30px; }
+  .lg-close { top: 10px; right: 10px; }
+  .lg-sep { margin-top: 24px; }
+  .lg-submit-reg { margin-bottom: 24px; }
+  .lg-mobile-cta { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+  .lg-mobile-cta .lg-register { margin: 0; }
+  .lg-pnum-desktop { display: none; }
+  .lg-pnum-mobile { display: inline; }
+}

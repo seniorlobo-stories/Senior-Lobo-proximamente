@@ -9,863 +9,11 @@
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Cormorant+Upright:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="preload" href="fonts/wakerobin-compressed.otf" as="font" type="font/otf" crossorigin />
   <link rel="preload" href="fonts/Mick_Caster.otf" as="font" type="font/otf" crossorigin />
-  <style>
-    /* ── Fuentes self-hosted ── */
-    @font-face{
-      font-family:'Wakerobin Compressed';
-      src:url('fonts/wakerobin-compressed.otf') format('opentype');
-      font-weight:400 700; font-style:normal; font-display:swap;
-    }
-    @font-face{
-      font-family:'Mick Caster';
-      src:url('fonts/Mick_Caster.otf') format('opentype'),
-          url('fonts/Mick_Caster.ttf') format('truetype');
-      font-weight:400 700; font-style:normal; font-display:swap;
-    }
-    @font-face{
-      font-family:'Mick Caster';
-      src:url('fonts/Mick_Caster_Italic.otf') format('opentype'),
-          url('fonts/Mick_Caster_Italic.ttf') format('truetype');
-      font-weight:400 700; font-style:italic; font-display:swap;
-    }
-
-    /* ── Design Tokens ── */
-    :root {
-      --bosque:      #4f7860;
-      --amber:       #c9a035;
-      --pergamino:   #f5edd8;
-      --castano:     #8c5f3a;
-      --niebla:      #9ba89c;
-      --tinta:       #38362c;
-      --ink-soft:    #6f7268;
-      --paper-piece: color-mix(in srgb, #ffffff 32%, var(--pergamino));
-      --on-dark:     var(--pergamino);
-      --line:        var(--tinta);
-      --ink:         var(--tinta);
-      --ink-faint:   var(--niebla);
-      --teal:        var(--tinta);
-      --teal-deep:   color-mix(in srgb, var(--tinta) 80%, #000);
-      --teal-pale:   color-mix(in srgb, var(--tinta) 14%, var(--pergamino));
-      --fill:        var(--pergamino);
-      --bw:          2px;
-
-      --font-disp: 'Wakerobin Compressed', Garamond, serif;
-      --font-body: 'Cormorant Upright', Garamond, serif;
-      --font-slab: 'Mick Caster', serif;
-      --font-mono: 'Cormorant Upright', Garamond, serif;
-
-      /* Ancho máximo de sección: escala de forma continua con el viewport en
-         vez de saltar en breakpoints fijos (antes había un salto brusco de
-         1200px a 758px justo al cruzar los 1024px). clamp() interpola en
-         línea recta entre los mismos valores de referencia (1200/758/430),
-         así que el resultado en esos puntos no cambia, solo deja de "saltar". */
-      --container-w: clamp(430px, 77.36vw - 34.15px, 1200px);
-      --gutter: clamp(18px, 3.333vw - 2px, 28px);
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { overflow-x: hidden; }
-
-    /* ── Base ── */
-    body {
-      font-family: 'EB Garamond', Georgia, serif;
-      background-color: var(--pergamino);
-      color: var(--tinta);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      /* linen texture via SVG noise */
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
-      transition: background-color .45s ease, color .45s ease;
-    }
-
-    /* ── Subrayado tipo "marcador" (compartido por texto resaltado y enlaces de navbar) ── */
-    strong,
-    .mark-crema,
-    .wz-nlink,
-    .cf-menu-label {
-      font-weight: inherit;
-      background-image: linear-gradient(color-mix(in srgb, var(--amber) 50%, transparent), color-mix(in srgb, var(--amber) 50%, transparent));
-      background-repeat: no-repeat;
-      background-position: 0 0;
-      background-size: 0% 100%;
-      box-decoration-break: clone;
-      -webkit-box-decoration-break: clone;
-      padding: .12em .22em;
-      margin: 0 -.22em;
-      border-radius: 2px;
-      transition: background-size .7s ease, font-weight .7s ease;
-    }
-
-    strong.in-view,
-    .mark-crema.in-view,
-    .wz-nlink:hover,
-    .cf-menu-item:hover .cf-menu-label,
-    .cf-menu-item:active .cf-menu-label {
-      background-size: 100% 100%;
-      font-weight: 700;
-    }
-
-    /* ── Navbar ── */
-    /* Componente universal: la misma barra (marca, enlaces, switch, botón de
-       sesión, hamburguesa móvil) se reutiliza verbatim en cualquier página del
-       sitio — no crear variantes locales de .wz-topbar. */
-    .navbar-wrap {
-      padding: 0;
-      position: relative;
-      z-index: 5;
-    }
-
-    .wz-topbar {
-      position: relative;
-      z-index: 0;
-      width: 100%;
-      padding: 13px 16px;
-    }
-
-    /* ── Fondo compartido "papel rasgado" (topbar y menú móvil) ── */
-    .wz-topbar > .bg,
-    .wz-menu > .bg {
-      position: absolute;
-      z-index: -1;
-      pointer-events: none;
-      border: 0;
-      background-color: var(--paper-piece);
-      background-image: radial-gradient(rgba(120,90,40,.05) 1px, transparent 1px);
-      background-size: 4px 4px;
-      filter: url(#torn-paper);
-      will-change: filter;
-      transition: background-color .4s ease;
-    }
-
-    .wz-topbar > .bg { top: -60px; right: -24px; bottom: 0; left: -24px; }
-
-    .wz-nav-inner {
-      position: relative;
-      display: flex;
-      align-items: center;
-      flex-wrap: nowrap;
-      gap: 20px;
-      max-width: var(--container-w);
-      margin: 0 auto;
-    }
-
-    .wz-brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      text-decoration: none;
-    }
-
-    .wz-mark {
-      position: relative;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      width: 68px;
-      height: 68px;
-    }
-
-    .wz-mark img {
-      width: 68px;
-      height: 68px;
-      object-fit: contain;
-      display: block;
-    }
-
-    .wz-mark img.brand-logo-noche {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      transition: opacity .45s ease;
-    }
-
-    :root[data-theme="noche"] .wz-mark img.brand-logo-noche { opacity: 1; }
-
-    .wz-brand-text {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      line-height: 1;
-    }
-
-    .wz-word {
-      font-family: var(--font-disp);
-      text-transform: uppercase;
-      letter-spacing: .14em;
-      font-weight: 700;
-      font-size: 21px;
-      color: var(--line);
-      white-space: nowrap;
-      display: block;
-    }
-
-    .wz-tagline {
-      font-family: var(--font-body);
-      font-style: italic;
-      font-size: 13.5px;
-      color: var(--ink-soft);
-      white-space: nowrap;
-    }
-
-    /* ── Navbar: enlaces ── */
-    .wz-nav { display: flex; align-items: center; gap: 28px; margin-left: 28px; flex-wrap: nowrap; }
-    .wz-nlink {
-      font-family: var(--font-disp);
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--ink-soft);
-      text-decoration: none;
-      white-space: nowrap;
-      border: 0;
-      background-color: transparent;
-      cursor: pointer;
-      transition: color .25s ease, background-size .7s ease, font-weight .7s ease;
-    }
-    .wz-nlink:hover { color: var(--line); }
-
-    /* ── Navbar: switch + botón de sesión + hamburguesa ── */
-    .wz-tools { margin-left: auto; display: flex; align-items: center; gap: 16px; }
-    .dn-switch-mount { display: inline-flex; align-items: center; }
-
-    .wz-login { flex: none; white-space: nowrap; }
-    .wz-login .bg { box-shadow: 3px 4px 0 rgba(59,47,23,.22); }
-    .wz-login:active .bg { transform: translate(2px,2px); box-shadow: 1px 2px 0 rgba(59,47,23,.20); }
-    :root[data-theme="noche"] .wz-login .bg { box-shadow: 3px 4px 0 rgba(240,230,200,.35); }
-    :root[data-theme="noche"] .wz-login:active .bg { box-shadow: 1px 2px 0 rgba(240,230,200,.35); }
-
-    .wz-burger {
-      display: none;
-      flex: none;
-      width: 40px;
-      height: 40px;
-      border: 0;
-      background: none;
-      cursor: pointer;
-      padding: 0;
-      place-items: center;
-      border-radius: 9px;
-      position: relative;
-      z-index: 1;
-    }
-    .wz-burger svg { width: 24px; height: 24px; fill: none; stroke: var(--line); stroke-width: 2.2; stroke-linecap: round; overflow: visible; }
-    .wz-burger svg .l { transition: transform .3s cubic-bezier(.5, 1.4, .5, 1), opacity .18s ease; transform-box: fill-box; transform-origin: center; }
-    .wz-burger[aria-expanded="true"] .l-top { transform: translateY(5px) rotate(45deg); }
-    .wz-burger[aria-expanded="true"] .l-mid { opacity: 0; transform: scaleX(.15); }
-    .wz-burger[aria-expanded="true"] .l-bot { transform: translateY(-5px) rotate(-45deg); }
-    .wz-burger:active { transform: translateY(1px); }
-
-    /* ── Navbar: menú móvil (papel rasgado, bajo la barra) ── */
-    .wz-menu {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      margin-top: -15px;
-      z-index: 20;
-      flex-direction: column;
-      padding: 28px 20px 14px;
-      border-radius: 0;
-    }
-    .wz-menu.open { display: flex; }
-    .wz-menu > .bg { inset: 0; border-radius: 0; }
-
-    /* ── Navbar: filas del menú móvil (icono + etiqueta, como cf-menu-item) ── */
-    .cf-menu-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      width: 100%;
-      border: 0;
-      background: none;
-      cursor: pointer;
-      text-align: center;
-      text-decoration: none;
-      padding: 13px 6px;
-      border-radius: 8px;
-      font-family: var(--font-body);
-      font-size: 16px;
-      color: var(--ink);
-    }
-    .cf-menu-item svg {
-      width: 20px; height: 20px; flex: none;
-      fill: none; stroke: var(--ink-soft); stroke-width: 1.8;
-      stroke-linecap: round; stroke-linejoin: round;
-    }
-    .cf-menu-item:hover, .cf-menu-item:active { background: var(--paper-piece); color: var(--line); }
-
-    /* el día/noche del menú móvil muestra solo el círculo (sol o luna), sin pista */
-    .wz-menu-dn {
-      display: flex; align-items: center; justify-content: center; gap: 14px;
-      margin-top: 10px; padding: 14px 6px 2px;
-      border-top: 2px dashed color-mix(in srgb, var(--line) 22%, transparent);
-    }
-    .wz-menu-dn .dn-lbl {
-      font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .07em;
-      font-size: 12.5px; font-weight: 600;
-      color: color-mix(in srgb, var(--ink-soft) 70%, transparent);
-      transition: color .2s;
-    }
-    :root[data-theme="dia"] .wz-menu-dn .dn-lbl-dia { color: var(--line); }
-    :root[data-theme="noche"] .wz-menu-dn .dn-lbl-noche { color: var(--line); }
-    .wz-menu-dn .dn-switch > .bg, .wz-menu-dn .dn-switch .glyph, .wz-menu-dn .dn-switch .stars { display: none; }
-    .wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.sun { opacity: 0; }
-    .wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.moon { opacity: 1; }
-    .wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.moon { opacity: 0; }
-    .wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.sun { opacity: 1; }
-    .wz-menu-dn .dn-switch[data-mode="dia"] .dn-knob .face.moon svg { stroke: #3b2f17; }
-    .wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob > .bg { background: #253560; border-color: #1b2744; }
-    .wz-menu-dn .dn-switch[data-mode="noche"] .dn-knob .face.sun svg { stroke: #f0e6c8; }
-
-    /* ── Navbar: modo compacto (hamburguesa) ──
-       No depende de un ancho de viewport fijo: `wz-nav-inner` es siempre
-       flex-wrap:nowrap, y JS mide si el contenido desbordaría (scrollWidth >
-       clientWidth) para decidir si activa este modo. Así nunca hay dos líneas,
-       pase lo que pase con el idioma, el zoom o el momento de carga de la
-       tipografía (ver script de detección más abajo). */
-    html.is-compact .wz-nav { display: none; }
-    html.is-compact .wz-tools > .dn-desktop { display: none; }
-    html.is-compact .wz-burger { display: grid; }
-
-    html.is-compact .topband { position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
-    html.is-compact .navbar-wrap { position: fixed; top: 8px; left: 0; right: 0; z-index: 50; }
-    html.is-compact .hero { margin-top: calc(8px + var(--navh, 94px)); }
-
-    html.is-compact .wz-nav-inner { gap: 8px; }
-
-    /* Por debajo de ~430px no entra "Senior Lobo / Cuentos personalizados"
-       junto al logo y al botón a tamaño de escritorio: se oculta el bloque
-       de texto de marca (el título es lo que ocupa el ancho, no el tagline)
-       y quedan solo ícono + botón + hamburguesa, todos a tamaño completo. */
-    @media (max-width: 430px) {
-      html.is-compact .wz-brand-text { display: none; }
-    }
-
-    /* ── Main / Home ── */
-    main { flex: 1; width: 100%; }
-    .home { max-width: var(--container-w); margin: 0 auto; padding: 0 var(--gutter) 60px; }
-
-    /* ── Topband ── */
-    .topband { height: 8px; background: var(--bosque); filter: url(#torn-line); will-change: filter; transition: background-color .45s ease; }
-    :root[data-theme="noche"] .topband { background: var(--amber); }
-
-    /* ── Hero-tear: borde de hoja rasgada que separa el hero de la página ── */
-    .hero-tear-wrap { height: 48px; margin-top: -48px; overflow: hidden; position: relative; }
-    .hero-tear { position: absolute; top: 12px; left: 0; right: 0; height: 140px; background: var(--pergamino); filter: url(#torn-paper-up); will-change: filter; transition: background-color .45s ease; }
-
-    /* ── Dissolve día/noche: evita "saltos" de color en toda la home/navbar ── */
-    .home *, .wz-topbar * {
-      transition: background-color .45s ease, color .45s ease, border-color .45s ease, fill .45s ease, stroke .45s ease, background-size .7s ease, font-weight .7s ease;
-    }
-
-    /* ── Hero: escena animada "Bosque Búho" ── */
-    /* Capas, orden de apilado y @keyframes según design_handoff_owl_forest_hero — no modificar. */
-    .hero {
-      position: relative;
-      width: 100%;
-      height: clamp(440px, 72vh, 760px);
-      overflow: hidden;
-      background: #E7E3CC;
-      isolation: isolate;
-    }
-    .hero-scene { position: absolute; inset: 0; }
-    .hero-scene img {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      /* sesgado hacia la derecha y la zona alta del lienzo: evita que el recorte de
-         object-fit:cover corte el búho (a la derecha) en anchos estrechos o sus
-         orejas (arriba) en proporciones muy panorámicas/bajas */
-      object-fit: cover; object-position: 80% 35%;
-      user-select: none; -webkit-user-drag: none;
-      will-change: transform, opacity;
-      transition: opacity .45s ease;
-    }
-    .l-bg   { transform-origin: 54% 46%; animation: bgDrift 46s ease-in-out infinite alternate; }
-    .l-tree { left: -15px; width: calc(100% + 15px); transform-origin: 13% 100%; animation: treeSway 8.5s ease-in-out infinite; }
-
-    /* el búho es un recorte aparte (no cubre el lienzo entero como bg/tree), así que
-       no usa object-fit:cover de .hero-scene img: se ancla al árbol izquierdo por su
-       esquina inferior con tamaño propio para que se vea completo, sin recortes */
-    .owl-wrap { position: absolute; inset: 0; }
-    .owl-wrap .l-owl, .owl-wrap .l-owl-night {
-      top: 18%; right: auto; left: -8px; bottom: auto;
-      width: 22.4%; height: auto;
-      object-fit: contain; object-position: center;
-      transform-origin: 0% 100%;
-      animation: owlBranch 4.8s ease-in-out .3s infinite;
-    }
-    @media (max-width: 1024px) {
-      /* entre 1024 y 601px el búho crece (en vez de encoger) a medida que el viewport se angosta,
-         calibrado para llegar exactamente al tamaño/posición del bloque móvil (top:2%, width:50%) en 601px */
-      .owl-wrap .l-owl, .owl-wrap .l-owl-night { top: calc(-12.21% + 13.62vw); width: calc(401px - 16.67vw); }
-    }
-
-    /* ── Modo noche: capas duplicadas día/noche, apiladas y alternadas por opacity ── */
-    /* Misma composición y animaciones que de día; solo cambian imagen, color de haz/motas y fondo. */
-    .l-bg-night   { transform-origin: 54% 46%; animation: bgDrift 46s ease-in-out infinite alternate; opacity: 0; }
-    .l-tree-night { left: -15px; width: calc(100% + 15px); transform-origin: 13% 100%; animation: treeSway 8.5s ease-in-out infinite; opacity: 0; }
-    .l-owl-night  { opacity: 0; }
-
-    :root[data-theme="noche"] .hero { background: #141d2b; }
-    :root[data-theme="noche"] .l-bg,
-    :root[data-theme="noche"] .l-tree,
-    :root[data-theme="noche"] .l-owl { opacity: 0; }
-    :root[data-theme="noche"] .l-bg-night,
-    :root[data-theme="noche"] .l-tree-night,
-    :root[data-theme="noche"] .l-owl-night { opacity: 1; }
-
-    .beam {
-      position: absolute; left: 38%; top: 6%; width: 42%; height: 78%; border-radius: 50%;
-      background: radial-gradient(ellipse at 50% 35%, rgba(255,250,224,.85), rgba(255,250,224,0) 68%);
-      mix-blend-mode: screen; pointer-events: none;
-      animation: beam 9s ease-in-out infinite;
-    }
-    :root[data-theme="noche"] .beam {
-      background: radial-gradient(ellipse at 50% 35%, rgba(150,180,232,.45), rgba(150,180,232,0) 68%);
-    }
-
-    .motes { position: absolute; inset: 0; pointer-events: none; }
-    .motes i { position: absolute; border-radius: 50%; background: rgba(255,252,232,.9);
-      box-shadow: 0 0 6px rgba(255,252,232,.7); animation: mote linear infinite; }
-    :root[data-theme="noche"] .motes i { background: rgba(255,208,120,.95); box-shadow: 0 0 6px rgba(255,180,80,.95); }
-    .motes i:nth-child(1) { left: 50%; top: 62%; width: 6px; height: 6px; --mx: -26px; --my: -220px; --mo: .55; animation-duration: 13s; animation-delay: -2s; }
-    .motes i:nth-child(2) { left: 58%; top: 70%; width: 4px; height: 4px; --mx: 24px;  --my: -300px; --mo: .5;  animation-duration: 17s; animation-delay: -7s; }
-    .motes i:nth-child(3) { left: 46%; top: 66%; width: 5px; height: 5px; --mx: -40px; --my: -260px; --mo: .6;  animation-duration: 15s; animation-delay: -11s; }
-    .motes i:nth-child(4) { left: 63%; top: 58%; width: 4px; height: 4px; --mx: 30px;  --my: -200px; --mo: .45; animation-duration: 19s; animation-delay: -4s; }
-    .motes i:nth-child(5) { left: 53%; top: 74%; width: 5px; height: 5px; --mx: -18px; --my: -330px; --mo: .5;  animation-duration: 21s; animation-delay: -14s; }
-
-    @keyframes bgDrift   { 0% { transform: scale(1.03); } 100% { transform: scale(1.065) translate(-.8%,-.5%); } }
-    @keyframes treeSway  { 0%, 100% { transform: rotate(-3.9deg) scale(1.05); } 50% { transform: rotate(-1.9deg) scale(1.05); } }
-    @keyframes owlBranch { 0%, 100% { transform: rotate(-.7deg) translateY(0); } 50% { transform: rotate(.7deg) translateY(-.5%); } }
-    @keyframes beam      { 0%, 100% { opacity: .18; } 50% { opacity: .4; } }
-    @keyframes mote {
-      0%   { transform: translate(0,0) scale(1); opacity: 0; }
-      12%  { opacity: var(--mo, .6); }
-      85%  { opacity: var(--mo, .6); }
-      100% { transform: translate(var(--mx, -30px), var(--my, -160px)) scale(.7); opacity: 0; }
-    }
-
-    /* ── Contenido del hero (slots: eyebrow, h1, sub, CTAs, cita) ── */
-    /* .hero-inner alinea el texto con el mismo grid (--container-w/--gutter) que navbar y .home,
-       mientras .hero-scene sigue ocupando el 100% del viewport detrás. */
-    .hero-inner {
-      position: relative; z-index: 2; height: 100%;
-      max-width: var(--container-w); margin: 0 auto; padding: 0 var(--gutter);
-    }
-    .hero-content {
-      height: 100%;
-      display: flex; flex-direction: column; justify-content: center; align-items: flex-end;
-      text-align: right;
-      max-width: 560px; margin-left: auto; margin-right: clamp(12px, 6vw, 40px); padding: clamp(28px, 6vw, 80px) 0;
-    }
-    .hero-eyebrow, .chapter-no { display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin: 0 0 2px;
-      font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .42em; font-size: 14px;
-      font-weight: 600; color: var(--line); line-height: 1; }
-    .hero-eyebrow .dia, .chapter-no .dia { width: 6px; height: 6px; background: var(--line); transform: rotate(45deg); flex: none; }
-    .hero-h1 { font-family: var(--font-slab); font-weight: 700; text-transform: lowercase;
-      font-size: clamp(44px, 5.4vw, 76px); line-height: .92; margin: 14px 0 0; color: var(--line); white-space: nowrap; }
-    .hero-h1::first-letter { text-transform: uppercase; }
-    .hero-h1 .lobo { display: inline; text-transform: none; color: var(--bosque); }
-    :root[data-theme="noche"] .hero-h1 .lobo { color: var(--amber); }
-    .hero-sub { font-family: var(--font-body); font-size: 21px; line-height: 1.5; color: var(--ink);
-      max-width: 430px; margin: 26px 0 0; }
-    .hero-acts { display: flex; align-items: center; justify-content: flex-end; gap: clamp(10px, 4vw, 24px); margin-top: 32px; flex-wrap: nowrap; }
-    /* tamaño de botón fluido: se mantiene igual que desktop/tablet en todo el rango de
-       móviles reales (>=370px) y solo se afina hacia abajo en anchos extremos, sin saltos */
-    .hero-acts .btn { font-size: clamp(12px, 3.636vw + 0.36px, 14px); white-space: nowrap; }
-    .hero-quote { font-family: var(--font-body); font-style: italic; font-weight: 700; font-size: 17px; line-height: 1.55;
-      color: var(--ink-soft); margin: 34px 0 0; max-width: 430px; padding-right: 18px; border-right: 3px solid var(--bosque);
-      display: grid; }
-    :root[data-theme="noche"] .hero-quote { border-right-color: var(--amber); }
-    .hero-quote-dia, .hero-quote-noche { grid-area: 1 / 1; transition: opacity .45s ease; }
-    .hero-quote-noche { opacity: 0; }
-    :root[data-theme="noche"] .hero-quote-dia { opacity: 0; }
-    :root[data-theme="noche"] .hero-quote-noche { opacity: 1; }
-
-    /* ── Botones (sistema Línea) ── */
-    .btn { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .07em; font-size: 14px;
-      font-weight: 600; color: var(--line); padding: 11px 22px; border-radius: 9px; border: 0; background: none;
-      cursor: pointer; display: inline-flex; align-items: center; gap: 9px; position: relative; z-index: 0;
-      text-decoration: none; }
-    .btn .bg { position: absolute; inset: 0; z-index: -1; border-radius: 9px; }
-    .btn.primary { color: var(--on-dark); }
-    .btn.primary .bg { background: var(--teal); }
-    .btn.ghost .bg { background: var(--pergamino); border: 2px solid var(--line); }
-    .hero-acts .btn.primary .bg { box-shadow: 4px 5px 0 rgba(59, 47, 23, .22); }
-    .hero-acts .btn.ghost .bg { box-shadow: 4px 5px 0 rgba(59, 47, 23, .22), inset 0 1px 0 rgba(255, 255, 255, .4); }
-    .hero-acts .btn:active .bg { transform: translate(2px, 2px); box-shadow: 2px 3px 0 rgba(59, 47, 23, .20); }
-
-    .hero-act-cta { position: relative; display: inline-flex; }
-    .hero-act-tag { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 6px;
-      font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .14em; white-space: nowrap;
-      font-size: 11px; font-weight: 600; color: var(--ink-soft); }
-
-    /* ── Book page (Prólogo / Capítulo I) ── */
-    .quees { padding: 17px 0 0; }
-    .book-page { max-width: 900px; margin: 46px auto 0; text-align: left; }
-    .book-page::after { content: ""; display: block; clear: both; }
-
-    .chapter-plate { display: flex; flex-direction: column; align-items: center; gap: 9px; width: 100%; margin: 7px 0 22px; }
-    .chapter-no { margin: 0; padding: 0 0 2px; justify-content: center; }
-    .chapter-title { margin: 0; padding: 6px 0 0; text-align: center; white-space: nowrap;
-      font-family: var(--font-slab); font-weight: 700; text-transform: lowercase; letter-spacing: .5px;
-      font-size: clamp(26px, 3.4vw, 36px); line-height: 1.04; color: var(--line); }
-    .chapter-title::first-letter { text-transform: uppercase; }
-
-    .book-fig { float: right; width: 310px; margin: -90px 0 14px 30px; display: flex; flex-direction: column; gap: 9px; shape-margin: 14px; }
-    .book-fig .plate { position: relative; aspect-ratio: 4/5; border-radius: 6px;
-      display: grid; place-items: center; overflow: hidden; }
-    .book-fig .slot { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
-      color: var(--ink-soft); text-align: center; line-height: 1.5; padding: 0 14px; }
-    .book-fig .plate img { width: 100%; height: 100%; object-fit: contain; }
-    .book-fig .plate .lobo-dia,
-    .book-fig .plate .lobo-noche { transition: opacity .45s ease; }
-    .book-fig .plate .lobo-noche { position: absolute; inset: 0; opacity: 0; }
-    :root[data-theme="noche"] .book-fig .plate .lobo-dia { opacity: 0; }
-    :root[data-theme="noche"] .book-fig .plate .lobo-noche { opacity: 1; }
-    .book-fig figcaption { font-family: var(--font-body); font-style: italic; font-size: 13.5px; line-height: 1.4;
-      color: var(--ink-soft); text-align: center; }
-
-    .book-para { font-family: var(--font-body); font-size: 20px; line-height: 1.56; color: var(--ink); margin: 0 0 17px;
-      text-align: justify; text-justify: inter-word; hyphens: auto; }
-    .book-para:last-child { margin-bottom: 0; }
-    .book-para .sl { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .05em; font-size: .82em; color: var(--line); }
-    .book-epigraph { font-family: var(--font-body); font-style: italic; font-size: 20px; line-height: 1.56;
-      color: var(--ink-soft); text-align: center; margin: 0 0 17px; }
-    .book-para.lead-cap::first-letter { float: left; font-family: var(--font-slab); font-weight: 700; font-size: 66px;
-      line-height: .66; padding: 7px 12px 0 1px; color: var(--bosque); }
-    :root[data-theme="noche"] .book-para.lead-cap::first-letter { color: var(--amber); }
-
-    .nb-divider { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 26px 0; clear: both; }
-    .nb-divider .ln { width: 78px; height: 0; border-top: var(--bw) solid color-mix(in srgb, var(--line) 55%, transparent); filter: url(#torn-line); }
-    .nb-divider .cl { display: flex; align-items: center; gap: 9px; }
-    .nb-divider .cl b { width: 9px; height: 9px; background: var(--bosque); transform: rotate(45deg); display: block; filter: url(#rough); }
-    .nb-divider .cl b:nth-child(2) { width: 13px; height: 13px; }
-    :root[data-theme="noche"] .nb-divider .cl b { background: var(--amber); }
-
-    /* ── Footer ── */
-    .home-foot { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap;
-      margin: 64px 0 0; padding-top: 24px; border-top: 2px solid color-mix(in srgb, var(--line) 22%, transparent);
-      font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .06em; }
-
-    /* ── Responsive: tablet (758px) y móvil (430px) ── */
-    @media (max-width: 600px) {
-      .book-fig { float: none; width: 100%; margin: 8px 0 20px; }
-      .chapter-title { white-space: normal; }
-      .book-para { text-align: left; hyphens: none; }
-
-      .owl-wrap .l-owl, .owl-wrap .l-owl-night { width: 45.5%; top: 2%; }
-
-      .hero-eyebrow, .chapter-no { gap: 8px; font-size: 11px; letter-spacing: .14em; white-space: nowrap; }
-
-      #quees .chapter-plate { margin-bottom: 0; }
-      #quees .chapter-plate .nb-divider { margin: 0; }
-      #quees .book-fig { margin-top: 0; }
-    }
-
-    /* ── Tema Noche ── */
-    :root[data-theme="noche"] {
-      --pergamino:   #1b2744;
-      --tinta:       #f0e6c8;
-      --niebla:      #6b7a9a;
-      --castano:     #c98a5a;
-      --ink-soft:    #8a96aa;
-      --paper-piece: #253560;
-      --on-dark:     #1b2744;
-      --teal:        var(--amber);
-      --teal-deep:   color-mix(in srgb, var(--amber) 70%, #1b2744);
-      --teal-pale:   color-mix(in srgb, var(--amber) 18%, #253560);
-      --fill:        #253560;
-    }
-
-    /* ── Switch Día / Noche ── */
-    .dn-switch {
-      --dsw: 90px; --dsh: 42px; --dsp: 4px;
-      width: var(--dsw); height: var(--dsh); border-radius: 24px;
-      position: relative; z-index: 0; flex: none; cursor: pointer;
-      display: inline-block;
-    }
-
-    .dn-switch > .bg {
-      position: absolute; inset: 0; z-index: -1; border-radius: 24px;
-      background: color-mix(in srgb, #4f7860 12%, #f5edd8);
-      border: 2px solid var(--line);
-      filter: url(#rough); pointer-events: none;
-      transition: background .25s, border-color .25s;
-    }
-
-    .dn-switch[data-mode="noche"] > .bg {
-      background: #1c283e;
-      border-color: #f0e6c8;
-    }
-
-    .dn-switch .glyph {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      width: 18px; height: 18px; display: grid; place-items: center;
-      z-index: 1; transition: opacity .25s;
-    }
-
-    .dn-switch .glyph.sun  { left: 8px; }
-    .dn-switch .glyph.moon { right: 8px; }
-
-    .dn-switch .glyph svg, .dn-switch .dn-knob .face svg {
-      width: 18px; height: 18px; fill: none;
-      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-      filter: url(#rough);
-    }
-
-    .dn-switch .glyph.sun  svg { stroke: #c9a035; }
-    .dn-switch .glyph.moon svg { stroke: #f5edd8; }
-    .dn-switch[data-mode="dia"] .glyph.moon svg { stroke: var(--bosque); }
-
-    .dn-switch[data-mode="dia"]   .glyph.sun  { opacity: 0; }
-    .dn-switch[data-mode="dia"]   .glyph.moon { opacity: .32; }
-    .dn-switch[data-mode="noche"] .glyph.moon { opacity: 0; }
-    .dn-switch[data-mode="noche"] .glyph.sun  { opacity: .28; }
-
-    .dn-switch .stars {
-      position: absolute; inset: 0; z-index: 1;
-      opacity: 0; transition: opacity .3s; pointer-events: none;
-    }
-
-    .dn-switch[data-mode="noche"] .stars { opacity: .85; }
-
-    .dn-switch .stars i {
-      position: absolute; width: 3px; height: 3px;
-      border-radius: 50%; background: #f0e6c8;
-    }
-
-    .dn-switch .stars i:nth-child(1) { left: 14px; top: 10px; }
-    .dn-switch .stars i:nth-child(2) { left: 24px; top: 25px; width: 2px; height: 2px; }
-    .dn-switch .stars i:nth-child(3) { left: 33px; top: 8px;  width: 2px; height: 2px; }
-
-    .dn-switch .dn-knob {
-      position: absolute; top: var(--dsp); left: var(--dsp);
-      width: calc(var(--dsh) - var(--dsp) * 2);
-      height: calc(var(--dsh) - var(--dsp) * 2);
-      border-radius: 50%; z-index: 2;
-      transform: translateX(0);
-      transition: transform .26s cubic-bezier(.5, 1.4, .5, 1);
-      will-change: transform;
-    }
-
-    .dn-switch[data-mode="noche"] .dn-knob {
-      transform: translateX(calc(var(--dsw) - var(--dsh)));
-    }
-
-    .dn-switch .dn-knob > .bg {
-      position: absolute; inset: 0; z-index: -1; border-radius: 50%;
-      background: #c9a035;
-      border: 2px solid color-mix(in srgb, #c9a035 60%, #8c5f3a);
-      filter: url(#rough); pointer-events: none;
-      transition: background .25s, border-color .25s;
-    }
-
-    .dn-switch[data-mode="noche"] .dn-knob > .bg {
-      background: #f0e6c8;
-      border-color: #9ba89c;
-    }
-
-    .dn-switch .dn-knob .face {
-      position: absolute; inset: 0; display: grid; place-items: center;
-      z-index: 1; transition: opacity .2s;
-    }
-
-    .dn-switch .dn-knob .face.sun  svg { stroke: #8c5f3a; }
-    .dn-switch .dn-knob .face.moon svg { stroke: #253560; }
-
-    .dn-switch[data-mode="dia"]   .dn-knob .face.moon { opacity: 0; }
-    .dn-switch[data-mode="noche"] .dn-knob .face.sun  { opacity: 0; }
-
-    @media (prefers-reduced-motion: reduce) {
-      .dn-switch *, body { transition: none !important; }
-      .l-bg, .l-tree, .l-bg-night, .l-tree-night, .beam, .motes i,
-      .owl-wrap .l-owl, .owl-wrap .l-owl-night { animation: none; }
-    }
-
-    /* ── Modal: Iniciar sesión / Registrar (spread "libro abierto") ── */
-    .lg-overlay {
-      position: fixed; inset: 0; z-index: 1000; display: none;
-      align-items: center; justify-content: center;
-      padding: clamp(16px, 4vw, 52px);
-    }
-    .lg-overlay.lg-open { display: flex; }
-    .lg-scrim { position: absolute; inset: 0; background: rgba(31,24,10,.52); border: 0; cursor: pointer; }
-    .lg-modal { position: relative; z-index: 1; width: min(940px, 100%); }
-
-    .lg-spread {
-      position: relative; z-index: 2; border-radius: 6px;
-      display: grid; grid-template-columns: 1fr 40px 1fr; height: 602px;
-    }
-    .lg-spread > .bg {
-      position: absolute; inset: 0; z-index: -1; pointer-events: none;
-      background: var(--fill); border: var(--bw) solid var(--line); border-radius: 6px;
-      filter: url(#rough); box-shadow: 6px 9px 0 rgba(59,47,23,.28);
-    }
-    :root[data-theme="noche"] .lg-spread > .bg { box-shadow: 6px 9px 0 rgba(240,230,200,.35); }
-    .lg-spread::before, .lg-spread::after {
-      content: ""; position: absolute; inset: 0; border-radius: 6px; pointer-events: none;
-      background-color: var(--pergamino);
-      background-image: radial-gradient(rgba(120,90,40,.05) 1px, transparent 1px);
-      background-size: 4px 4px;
-      filter: url(#torn-paper-2);
-    }
-    .lg-spread::before { transform: translate(8px,6px) rotate(1deg); z-index: -2; box-shadow: 5px 7px 0 rgba(59,47,23,.16); }
-    .lg-spread::after  { transform: translate(16px,9px) rotate(1deg); z-index: -3; box-shadow: 5px 7px 0 rgba(59,47,23,.12); }
-    :root[data-theme="noche"] .lg-spread::before { box-shadow: 5px 7px 0 rgba(240,230,200,.24); }
-    :root[data-theme="noche"] .lg-spread::after  { box-shadow: 5px 7px 0 rgba(240,230,200,.18); }
-
-    .lg-page { position: relative; padding: 40px 44px; min-width: 0; display: flex; flex-direction: column; }
-    .lg-page-left { padding-right: 34px; height: 602px; box-sizing: border-box; align-self: start; }
-    .lg-page-right { padding-left: 34px; }
-    .lg-spine { position: relative; }
-    .lg-spine::before {
-      content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; transform: translateX(-50%);
-      background: var(--line); opacity: .5; filter: url(#torn-line);
-    }
-
-    .lg-phead { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
-    .lg-phead.r { justify-content: flex-end; text-align: right; }
-    .lg-pnum { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); letter-spacing: .04em; white-space: nowrap; }
-    .lg-pnum-mobile { display: none; }
-    .lg-ptitle { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .08em; font-size: 14px; color: var(--line); white-space: nowrap; }
-    .lg-hrule { flex: 1; height: 2px; min-width: 24px; background: var(--line); opacity: .5; filter: url(#torn-line); }
-
-    .lg-left-body { flex: 1; display: flex; flex-direction: column; gap: 18px; }
-    .lg-titleblock { min-height: 118px; }
-    .lg-eyebrow { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .14em; font-size: 11px; color: var(--ink-soft); }
-    .lg-welcome { font-family: var(--font-slab); font-size: 38px; line-height: 1.02; color: var(--line); margin: 2px 0 0; text-wrap: balance; }
-    .lg-illus { position: relative; flex: none; height: 230px; display: grid; place-items: center; }
-    .lg-illus img { width: auto; height: 100%; max-width: 100%; max-height: 230px; object-fit: contain; filter: url(#rough); }
-    .lg-illus img.lobo-noche { position: absolute; inset: 0; margin: auto; opacity: 0; }
-    :root[data-theme="noche"] .lg-illus img.lobo-dia { opacity: 0; }
-    :root[data-theme="noche"] .lg-illus img.lobo-noche { opacity: 1; }
-
-    .lg-form { flex: 1; display: flex; flex-direction: column; }
-    .lg-modal[data-mode="login"] .lg-form.lg-only-register,
-    .lg-modal[data-mode="login"] .lg-only-register,
-    .lg-modal[data-mode="register"] .lg-form.lg-only-login,
-    .lg-modal[data-mode="register"] .lg-only-login { display: none; }
-
-    .lg-lede { font-family: var(--font-body); font-size: 16px; line-height: 1.55; color: var(--ink-soft); margin: 0 0 22px; }
-    .lg-field { display: flex; flex-direction: column; gap: 9px; margin-bottom: 20px; }
-    .lg-field > label, .lg-labelrow > label {
-      font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .09em; font-size: 12px; color: var(--line);
-    }
-    .lg-input { position: relative; z-index: 0; border-radius: 8px; }
-    .lg-input > .bg {
-      position: absolute; inset: 0; z-index: -1; pointer-events: none;
-      border-radius: 8px; background: var(--fill); border: var(--bw) solid var(--line); filter: url(#rough);
-    }
-    .lg-input input {
-      position: relative; z-index: 1;
-      font-family: var(--font-body); font-size: 15.5px; color: var(--ink); background: none; border: 0; outline: 0;
-      padding: 12px 15px; width: 100%; border-radius: 8px;
-    }
-    .lg-input input::placeholder { color: var(--ink-faint); }
-    .lg-input:focus-within > .bg { border-color: var(--teal); box-shadow: 0 0 0 4px var(--teal-pale); }
-    .lg-pwd-field .lg-labelrow { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
-    .lg-forgot { font-family: var(--font-body); font-size: 13px; color: var(--teal-deep); border: 0; background: none; cursor: pointer; padding: 0; }
-    .lg-forgot:hover { color: var(--line); text-decoration: underline; }
-
-    .lg-remember { display: flex; align-items: center; gap: 10px; cursor: pointer; border: 0; background: none; padding: 0; margin-bottom: 22px; text-align: left; }
-    .lg-check { position: relative; z-index: 0; width: 22px; height: 22px; flex: none; border-radius: 6px; display: grid; place-items: center; }
-    .lg-check > .bg {
-      position: absolute; inset: 0; z-index: -1; pointer-events: none;
-      border-radius: 6px; background: var(--fill); border: var(--bw) solid var(--line); filter: url(#rough);
-    }
-    .lg-check svg { position: relative; z-index: 1; width: 14px; height: 14px; fill: none; stroke: var(--on-dark); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity .18s ease; }
-    .lg-remember.on .lg-check > .bg { background: var(--teal); border-color: var(--teal-deep); }
-    .lg-remember.on .lg-check svg { opacity: 1; }
-    .lg-remember span { font-family: var(--font-body); font-size: 14.5px; color: var(--ink); }
-
-    .lg-submit { width: 100%; justify-content: center; margin-top: 12px; }
-    .lg-submit.btn.primary > .bg { box-shadow: 3px 4px 0 rgba(59,47,23,.28); }
-    .lg-submit.btn.primary:active > .bg { transform: translate(2px,2px); box-shadow: 1px 2px 0 rgba(59,47,23,.22); }
-    :root[data-theme="noche"] .lg-submit.btn.primary > .bg { box-shadow: 3px 4px 0 rgba(240,230,200,.4); }
-    :root[data-theme="noche"] .lg-submit.btn.primary:active > .bg { box-shadow: 1px 2px 0 rgba(240,230,200,.35); }
-    .lg-submit:disabled { opacity: .5; cursor: default; pointer-events: none; }
-    .lg-arrow { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; filter: url(#rough); }
-
-    .lg-sep { display: flex; align-items: center; gap: 14px; margin: auto 0 20px; }
-    .lg-sep .lg-hrule { opacity: .4; }
-    .lg-sep span { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-soft); text-transform: uppercase; }
-
-    .lg-register { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; margin-top: auto; margin-bottom: 20px; }
-    .lg-register p { margin: 0; font-family: var(--font-body); font-size: 14.5px; color: var(--ink-soft); }
-    .lg-register .lg-register-btn { align-self: center; margin-bottom: 0; min-height: 46px; }
-    .lg-mobile-cta { display: none; }
-
-    .lg-google {
-      width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; border: 0; background: none; cursor: pointer;
-      position: relative; z-index: 0; border-radius: 10px; padding: 13px 18px; margin-bottom: 20px;
-      font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .05em; font-size: 13px; color: var(--line);
-    }
-    .lg-google > .bg {
-      position: absolute; inset: 0; z-index: -1; pointer-events: none;
-      border-radius: 10px; background: var(--pergamino); border: var(--bw) solid var(--line); filter: url(#rough); box-shadow: 3px 4px 0 rgba(59,47,23,.18);
-    }
-    .lg-google:hover > .bg { background: var(--paper-piece); }
-    .lg-google:active > .bg { transform: translate(2px,2px); box-shadow: 1px 2px 0 rgba(59,47,23,.16); }
-    :root[data-theme="noche"] .lg-google > .bg { box-shadow: 3px 4px 0 rgba(240,230,200,.28); }
-    .lg-google-g { position: relative; z-index: 1; width: 20px; height: 20px; flex: none; fill: var(--line); }
-    .lg-google:disabled { cursor: default; opacity: .55; }
-    .lg-google:disabled:hover > .bg { background: var(--pergamino); }
-    .lg-google-soon { margin: 0 0 10px; text-align: center; font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); }
-
-    .lg-close {
-      position: absolute; top: -15px; right: -15px; z-index: 6; width: 44px; height: 44px; border: 0; cursor: pointer;
-      border-radius: 50%; display: grid; place-items: center; background: none; padding: 0;
-    }
-    .lg-close > .bg {
-      position: absolute; inset: 0; z-index: -1; pointer-events: none;
-      border-radius: 50%; background: var(--pergamino); border: var(--bw) solid var(--line); filter: url(#rough); box-shadow: 3px 4px 0 rgba(59,47,23,.24);
-    }
-    .lg-close svg { position: relative; z-index: 1; width: 20px; height: 20px; fill: none; stroke: var(--line); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-    .lg-close:hover > .bg { background: var(--amber); }
-    :root[data-theme="noche"] .lg-close > .bg { box-shadow: 3px 4px 0 rgba(240,230,200,.35); }
-
-    @media (prefers-reduced-motion: no-preference) {
-      .lg-overlay.lg-open .lg-scrim { animation: lg-fade .22s ease both; }
-      .lg-overlay.lg-open .lg-modal { animation: lg-rise .28s cubic-bezier(.2,.9,.3,1.1) both; }
-    }
-    @keyframes lg-fade { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes lg-rise { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
-
-    @media (max-width: 760px) {
-      .lg-overlay { padding: 0; align-items: flex-start; overflow-y: auto; }
-      .lg-modal { width: 100%; }
-      .lg-spread {
-        grid-template-columns: 1fr; height: auto; align-content: start;
-        min-height: 100vh; min-height: 100dvh; border-radius: 0;
-      }
-      .lg-spread > .bg,
-      .lg-spread::before,
-      .lg-spread::after { border-radius: 0; box-shadow: none; transform: none; }
-      .lg-spine { display: none; }
-      .lg-page { padding: 28px 24px; }
-      .lg-page-left { height: auto; padding-bottom: 0; padding-top: 18px; }
-      .lg-page-left .lg-phead,
-      .lg-page-left .lg-illus,
-      .lg-page-left .lg-register { display: none; }
-      .lg-page-left .lg-titleblock { min-height: 0; }
-      .lg-left-body { gap: 8px; }
-      .lg-page-right { padding-top: 20px; padding-bottom: 32px; }
-      .lg-welcome { font-size: 30px; }
-      .lg-close { top: 10px; right: 10px; }
-      .lg-sep { margin-top: 24px; }
-      .lg-submit-reg { margin-bottom: 24px; }
-      .lg-mobile-cta { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
-      .lg-mobile-cta .lg-register { margin: 0; }
-      .lg-pnum-desktop { display: none; }
-      .lg-pnum-mobile { display: inline; }
-    }
-  </style>
+  <link rel="stylesheet" href="css/site.css" />
+  <script>
+    // Aplica el modo día/noche guardado antes de pintar (ver js/site.js).
+    try { if (localStorage.getItem('sl-theme') === 'noche') document.documentElement.dataset.theme = 'noche'; } catch (e) {}
+  </script>
 </head>
 <body>
 
@@ -919,8 +67,8 @@
         </a>
 
         <nav class="wz-nav">
-          <a class="wz-nlink" href="/">Inicio</a>
-          <a class="wz-nlink" href="#quees">¿Qué es Senior Lobo?</a>
+          <a class="wz-nlink" href="/" aria-current="page">Inicio</a>
+          <a class="wz-nlink" href="/que-es-senior-lobo/">¿Qué es Senior Lobo?</a>
         </nav>
 
         <div class="wz-tools">
@@ -940,8 +88,8 @@
 
       <div class="wz-menu" id="wzMenu">
         <i class="bg"></i>
-        <a class="cf-menu-item" href="/"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h4v-5h4v5h4v-9"></path></svg><span class="cf-menu-label">Inicio</span></a>
-        <a class="cf-menu-item" href="#quees"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01M11 12h1v4h1"></path></svg><span class="cf-menu-label">¿Qué es Senior Lobo?</span></a>
+        <a class="cf-menu-item" href="/" aria-current="page"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v9h4v-5h4v5h4v-9"></path></svg><span class="cf-menu-label">Inicio</span></a>
+        <a class="cf-menu-item" href="/que-es-senior-lobo/"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01M11 12h1v4h1"></path></svg><span class="cf-menu-label">¿Qué es Senior Lobo?</span></a>
         <button class="cf-menu-item wz-login" type="button"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path></svg><span class="cf-menu-label">Iniciar sesión</span></button>
         <div class="wz-menu-dn">
           <span class="dn-lbl dn-lbl-dia">Día</span>
@@ -1095,88 +243,9 @@
   </span></template>
 
   <template id="tpl-nb-divider"><div class="nb-divider"><span class="ln"></span><span class="cl"><b></b><b></b><b></b></span><span class="ln"></span></div></template>
+  <template id="tpl-banda-separadora"><div class="banda-separadora"><div class="banda-separadora-tear top" aria-hidden="true"><div class="hero-tear"></div></div><div class="banda-separadora-body"></div><div class="banda-separadora-tear bot" aria-hidden="true"><div class="hero-tear"></div></div></div></template>
 
-  <script>
-    (function () {
-      // Monta las plantillas repetidas (switch día/noche, separadores) en sus huecos.
-      // El switch vive en el navbar (ya en el DOM), pero los separadores están
-      // dentro de <main>, que el navegador aún no ha parseado en este punto —
-      // por eso el montaje de separadores espera a DOMContentLoaded.
-      var dnTpl = document.getElementById('tpl-dn-switch');
-      document.querySelectorAll('.dn-switch-mount').forEach(function (mount) {
-        mount.appendChild(dnTpl.content.cloneNode(true));
-      });
-
-      document.addEventListener('DOMContentLoaded', function () {
-        var divTpl = document.getElementById('tpl-nb-divider');
-        document.querySelectorAll('.nb-divider-mount').forEach(function (mount) {
-          mount.replaceWith(divTpl.content.cloneNode(true));
-        });
-      });
-    })();
-  </script>
-
-  <script>
-    (function () {
-      var navWrap = document.querySelector('.navbar-wrap');
-      var navInner = document.querySelector('.wz-nav-inner');
-      var burger = document.getElementById('wzBurger');
-      var menu = document.getElementById('wzMenu');
-      var root = document.documentElement;
-
-      function setNavH() {
-        root.style.setProperty('--navh', navWrap.offsetHeight + 'px');
-      }
-
-      function close() {
-        if (!burger || !menu) return;
-        burger.setAttribute('aria-expanded', 'false');
-        menu.classList.remove('open');
-      }
-      function toggle() {
-        if (!burger || !menu) return;
-        var open = burger.getAttribute('aria-expanded') === 'true';
-        if (open) close();
-        else { burger.setAttribute('aria-expanded', 'true'); menu.classList.add('open'); }
-      }
-
-      // El modo compacto (hamburguesa) se decide midiendo si la barra desborda
-      // en una sola línea, no por un ancho de viewport fijo: el punto real
-      // donde deja de caber depende de la tipografía cargada (font-display:
-      // swap), el idioma y el zoom del usuario — un breakpoint fijo se queda
-      // corto en esos casos y la barra rompe a dos líneas.
-      function checkCompact() {
-        root.classList.remove('is-compact');
-        var overflows = navInner.scrollWidth > navInner.clientWidth + 1;
-        root.classList.toggle('is-compact', overflows);
-        setNavH();
-        if (!overflows) close();
-      }
-
-      checkCompact();
-
-      var raf = null;
-      function scheduleCheck() {
-        if (raf) cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(checkCompact);
-      }
-      window.addEventListener('resize', scheduleCheck);
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(scheduleCheck);
-        document.fonts.addEventListener('loadingdone', scheduleCheck);
-      }
-
-      if (burger && menu) {
-        burger.addEventListener('click', function (e) { e.stopPropagation(); toggle(); });
-        // cierra al elegir un enlace o botón del menú, pero no al tocar el switch
-        menu.querySelectorAll('a, button.cf-menu-item').forEach(function (el) { el.addEventListener('click', close); });
-        document.addEventListener('click', function (e) {
-          if (!e.target.closest('#wzMenu') && !e.target.closest('#wzBurger')) close();
-        });
-        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
-      }
-    })();
-  </script>
+  <script src="js/navbar.js"></script>
 
   <!-- ===================== HERO: Bosque Búho ===================== -->
   <!-- Full-bleed: fuera de .home para que la escena ocupe el 100% del viewport. -->
@@ -1197,14 +266,20 @@
     <div class="hero-inner">
       <div class="hero-content">
         <p class="hero-eyebrow"><b class="dia"></b>Una historia para cada niño<b class="dia"></b></p>
-        <h1 class="hero-h1">Senior <span class="lobo">Lobo</span></h1>
+        <div class="hero-title">
+          <span class="hero-logo" aria-hidden="true">
+            <img class="hero-logo-dia" src="Logos/Logo_banner_senior_lobo_dia.svg" alt="" />
+            <img class="hero-logo-noche" src="Logos/Senior_lobo_noche.svg" alt="" />
+          </span>
+          <h1 class="hero-h1">Senior <span class="lobo">Lobo</span></h1>
+        </div>
         <p class="hero-sub"><b>Cuentos personalizados para niños de 6 a 12 años, donde tu peque es el verdadero protagonista.</b></p>
         <div class="hero-acts">
           <span class="hero-act-cta">
-            <button class="btn primary" type="button"><i class="bg"></i>Crear cuento</button>
+            <button class="btn primary" type="button" disabled><i class="bg"></i>Crear cuento</button>
             <span class="hero-act-tag">Próximamente</span>
           </span>
-          <a class="btn ghost" href="#quees"><i class="bg"></i>¿Qué es Senior Lobo?</a>
+          <a class="btn ghost" href="/que-es-senior-lobo/"><i class="bg"></i>¿Qué es Senior Lobo?</a>
         </div>
         <p class="hero-quote">
           <span class="hero-quote-dia">Cuentos para despertar su imaginación</span>
@@ -1221,34 +296,16 @@
   <main>
     <div class="home">
 
-      <!-- ===================== PRÓLOGO ===================== -->
-      <section class="quees" id="prologo">
-        <div class="book-page">
-          <div class="chapter-plate">
-            <p class="chapter-no"><b class="dia"></b>Prólogo<b class="dia"></b></p>
-            <h2 class="chapter-title">La premisa</h2>
-            <div class="nb-divider-mount"></div>
-          </div>
-
-          <p class="book-epigraph">Antes de que empiece el cuento, déjame prometerte algo: esta vez la historia no hablará de cualquiera, sino de ti.</p>
-
+      <!-- ===================== CAPÍTULO I: CUENTOS PERSONALIZADOS ===================== -->
+      <section class="quees" id="cuentos">
+        <div class="chapter-plate">
+          <p class="chapter-no"><b class="dia"></b>Capítulo&nbsp;I<b class="dia"></b></p>
+          <h2 class="chapter-title">Cuentos personalizados</h2>
           <div class="nb-divider-mount"></div>
-
-          <p class="book-para lead-cap"><span class="sl">Senior Lobo</span> está preparando relatos únicos gracias a los últimos avances en el campo de la <span class="sl">IA</span>, abriendo las puertas  <strong>para generar historias 100% personalizadas</strong>.</p>
-
-          <p class="book-para">Ya no hará falta que te pongas en «la piel de personaje» porque  <strong>el protagonista, serás tú</strong>.</p>
         </div>
-      </section>
 
-      <!-- ===================== ¿QUÉ ES? ===================== -->
-      <section class="quees" id="quees">
+        <!-- mismo bloque que «¿Qué es Senior Lobo?» en que-es-senior-lobo/ -->
         <div class="book-page">
-          <div class="chapter-plate">
-            <p class="chapter-no"><b class="dia"></b>Capítulo&nbsp;I<b class="dia"></b></p>
-            <h2 class="chapter-title">¿Qué es Senior Lobo?</h2>
-            <div class="nb-divider-mount"></div>
-          </div>
-
           <figure class="book-fig">
             <div class="plate">
               <img class="lobo-dia" src="imagenes/Lobo_pose_03.png" alt="Senior Lobo, mascota de la marca" />
@@ -1257,25 +314,244 @@
             <figcaption>Una aventura diferente para cada libro</figcaption>
           </figure>
 
-          <p class="book-para lead-cap">Es una <span class="mark-crema">herramienta digital de creación literaria</span> que se encarga de escribir un cuento hecho a la medida de los más pequeños de casa.</p>
+          <p class="book-para lead-cap"><strong>Érase una vez</strong> un lobo poco feroz que jubilado de soplar casas, decidió cambiar los colmillos por la pluma.</p>
 
-          <p class="book-para">Gracias a la ayuda de la IA y a un narrador nato que lleva siglos contando historias queremos ser precursores de una misión importante: componer un relato único e irrepetible. Creemos fielmente en  <strong> la necesidad de contar historias que entretengan, eduquen e incluso reduzcan sus miedos</strong> gracias a una lectura de historias espejo.</p>
+          <p class="book-para">Buscando inspiración para sus historias, Senior Lobo y su amigo Búho Duermevela se dieron cuenta de algo muy importante: los niños que leían historias nunca salían en ellas.</p>
+
+          <p class="book-para">Desde entonces se pusieron manos a la obra y entre los dos escriben, ilustran y narran <strong>cuentos infantiles personalizados en los que tus hijos son los protagonistas</strong> indiscutibles de las historias con su nombre, su aspecto y un mundo hecho a su justa medida.</p>
+
+          <p class="book-para">Porque <strong>si no hay dos niños iguales… ¿por qué iban a serlo sus cuentos?</strong></p>
 
           <div class="nb-divider-mount"></div>
+        </div>
 
-          <p class="book-para lead-cap">Queremos que tus hijos sean el centro real de la historia, el núcleo desde dónde todo gire. A través de un sencillo formulario los usuarios podrán personalizarlo todo: su nombre, sus gustos, seleccionar géneros, trama y añadir todas las personas que forman parte de su entorno. <span class="mark-crema">Una forma nueva que cambia totalmente el juego de leer las aventuras</span> de otro a tener una historia hecha para ellos.</p>
+        <ul class="ages-grid">
+          <li class="age-item">
+            <div class="age-hang">
+              <span class="age-pin" aria-hidden="true"></span>
+              <div class="age-card age-6">
+              <i class="bg"></i>
+              <figure class="age-figure">
+                <div class="age-slot"><img src="imagenes/Portadas/brujilla-maria.jpg" alt="La brujilla María" width="800" height="446" loading="lazy" decoding="async"></div>
+                <h3 class="age-band">6-7 años</h3>
+              </figure>
+              <p class="age-desc">La ilusión de descubrir sus primeras historias</p>
+              <button class="btn ghost age-cta" type="button" disabled><i class="bg"></i>Ver ejemplos</button>
+              <span class="age-soon">Próximamente</span>
+              </div>
+            </div>
+          </li>
+
+          <li class="age-item">
+            <div class="age-hang">
+              <span class="age-pin" aria-hidden="true"></span>
+              <div class="age-card age-8">
+              <i class="bg"></i>
+              <figure class="age-figure">
+                <div class="age-slot"><img src="imagenes/Portadas/viaje-ivan.jpg" alt="El viaje épico de Iván" width="800" height="446" loading="lazy" decoding="async"></div>
+                <h3 class="age-band">8-9 años</h3>
+              </figure>
+              <p class="age-desc">Lecturas para mentes curiosas y nuevos personajes</p>
+              <button class="btn ghost age-cta" type="button" disabled><i class="bg"></i>Ver ejemplos</button>
+              <span class="age-soon">Próximamente</span>
+              </div>
+            </div>
+          </li>
+
+          <li class="age-item">
+            <div class="age-hang">
+              <span class="age-pin" aria-hidden="true"></span>
+              <div class="age-card age-10">
+              <i class="bg"></i>
+              <figure class="age-figure">
+                <div class="age-slot"><img src="imagenes/Portadas/marta-luz.jpg" alt="Marta y la caída de la luz" width="800" height="446" loading="lazy" decoding="async"></div>
+                <h3 class="age-band">+10 años</h3>
+              </figure>
+              <p class="age-desc">Historias que acompañan su crecimiento</p>
+              <button class="btn ghost age-cta" type="button" disabled><i class="bg"></i>Ver ejemplos</button>
+              <span class="age-soon">Próximamente</span>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ===================== CAPÍTULO II: LEER PARA COMPRENDER ===================== -->
+      <section class="quees" id="comprender">
+        <div class="chapter-plate">
+          <p class="chapter-no"><b class="dia"></b>Capítulo&nbsp;II<b class="dia"></b></p>
+          <h2 class="chapter-title">Leer para comprender</h2>
+          <div class="nb-divider-mount"></div>
+        </div>
+
+        <div class="cmp-layout">
+        <!-- collage de portadas clavadas: grande arriba, dos apaisadas debajo -->
+        <ul class="pin-collage">
+          <li class="age-item cmp-big">
+            <div class="age-hang">
+              <span class="age-pin" aria-hidden="true"></span>
+              <div class="age-card">
+                <i class="bg"></i>
+                <div class="cmp-slot"><img src="imagenes/Portadas/dragon-ivan-vertical.jpg" alt="El dragón que enseñó a Iván a leer" width="768" height="1152" loading="lazy" decoding="async"></div>
+              </div>
+            </div>
+          </li>
+          <li class="age-item cmp-left">
+            <div class="age-hang">
+              <span class="age-pin" aria-hidden="true"></span>
+              <div class="age-card">
+                <i class="bg"></i>
+                <div class="cmp-slot"><img src="imagenes/Portadas/marta-brigada.jpg" alt="Marta y la brigada antifantasmas" width="800" height="446" loading="lazy" decoding="async"></div>
+              </div>
+            </div>
+          </li>
+          <li class="age-item cmp-right">
+            <div class="age-hang">
+              <span class="age-pin" aria-hidden="true"></span>
+              <div class="age-card">
+                <i class="bg"></i>
+                <div class="cmp-slot"><img src="imagenes/Portadas/lucas-portada.jpg" alt="El viaje épico de Lucas" width="800" height="1199" loading="lazy" decoding="async"></div>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <div class="book-page">
+          <p class="book-para lead-cap"><strong>En su paseo</strong> por el reino de los cuentos Senior Lobo descubrió que cuando los niños se ven dentro de la historia prestan más atención al relato y desean descubrir qué ocurrirá en las páginas siguientes.</p>
+
+          <p class="book-para">Su nombre, sus rasgos físicos, sus amigos… todo su mundo se vuelve único y sin apenas esfuerzo, <strong>la lectura deja de ser una obligación para convertirse en una experiencia mágica</strong>.</p>
+
+          <ul class="book-list">
+            <li><strong>Misterios</strong> que les ayuden a superar miedos tan comunes como la oscuridad o los monstruos</li>
+            <li><strong>Aventuras</strong> en las que aprendan a relacionarse e interactuar con nuevos personajes de su edad</li>
+            <li><strong>Fantasías</strong> llenas de magia que activen su imaginación</li>
+          </ul>
+
+          <div class="nb-divider-mount"></div>
+        </div>
         </div>
       </section>
 
-      <!-- ===================== CAPÍTULO II ===================== -->
-      <section class="quees" id="capitulo2">
+      <!-- ===================== CAPÍTULO III: ¿Y SI FUERA ELLA? ===================== -->
+      <section class="quees" id="ella">
+        <div class="chapter-plate">
+          <p class="chapter-no"><b class="dia"></b>Capítulo&nbsp;III<b class="dia"></b></p>
+          <h2 class="chapter-title">¿Y si fuera ella?</h2>
+          <div class="nb-divider-mount"></div>
+        </div>
+
         <div class="book-page">
-          <div class="chapter-plate">
-            <p class="chapter-no"><b class="dia"></b>Capítulo&nbsp;II<b class="dia"></b></p>
-            <h2 class="chapter-title">-Continuará-</h2>
-            <div class="nb-divider-mount"></div>
+          <figure class="book-fig ella-fig">
+            <div class="ella-plate">
+              <img class="lobo-dia" src="imagenes/CapituloIII/lobo-pensando-dia.png" alt="Senior Lobo pensando" width="372" height="561" loading="lazy" decoding="async">
+              <img class="lobo-noche" src="imagenes/CapituloIII/lobo-pensando-noche.png" alt="" aria-hidden="true" width="372" height="561" loading="lazy" decoding="async">
+            </div>
+            <figcaption>No es un cuento sobre una niña cualquiera… es su propia historia</figcaption>
+          </figure>
+
+          <p class="book-para lead-cap">Una antológica melodía desvía al lobo de su camino pero rápidamente vuelve a centrar el tema: una pequeña niña del pueblo cercano quiere que le lean un cuento con el cual se pueda sentir identificada pero... <strong>¿y por qué no ser ella?</strong></p>
+
+          <p class="book-para">¿Y si realmente esa niña protagonizara una historia en la que supera miedos, resuelve acertijos y se enfrenta a problemas reales del día a día?</p>
+
+          <p class="book-para"><strong>¿Y si todo esto ya fuera posible y pudiéramos crearlo?</strong></p>
+        </div>
+
+        <!-- banda separadora con la fila de fotos; en tablet y móvil el lobo pensando
+             pasa también aquí dentro (copia .ella-fig-band, oculta en escritorio) -->
+        <div class="banda-separadora-mount">
+          <figure class="book-fig ella-fig ella-fig-band">
+            <div class="ella-plate">
+              <img class="lobo-dia" src="imagenes/CapituloIII/lobo-pensando-dia.png" alt="Senior Lobo pensando" width="372" height="561" loading="lazy" decoding="async">
+              <img class="lobo-noche" src="imagenes/CapituloIII/lobo-pensando-noche.png" alt="" aria-hidden="true" width="372" height="561" loading="lazy" decoding="async">
+            </div>
+            <figcaption>No es un cuento sobre una niña cualquiera… es su propia historia</figcaption>
+          </figure>
+
+          <!-- de la foto a la portada: cuatro tarjetas clavadas unidas por flechas -->
+          <ul class="pin-row">
+            <li class="age-item" style="--ar: 700/1235">
+              <div class="age-hang">
+                <span class="age-pin" aria-hidden="true"></span>
+                <div class="age-card">
+                  <i class="bg"></i>
+                  <div class="cmp-slot"><img src="imagenes/CapituloIII/foto01.jpg" alt="Foto de una niña sonriendo" width="700" height="1235" loading="lazy" decoding="async"></div>
+                  <p class="pin-cap">Foto real</p>
+                </div>
+              </div>
+            </li>
+            <li class="pin-arrow" aria-hidden="true"><svg viewBox="0 0 40 16"><path d="M2 8h34M28 2l8 6-8 6"/></svg></li>
+            <li class="age-item" style="--ar: 700/1235">
+              <div class="age-hang">
+                <span class="age-pin" aria-hidden="true"></span>
+                <div class="age-card">
+                  <i class="bg"></i>
+                  <div class="cmp-slot"><img src="imagenes/CapituloIII/foto02.jpg" alt="La misma niña convertida en personaje ilustrado" width="700" height="1235" loading="lazy" decoding="async"></div>
+                  <p class="pin-cap">Recreación ilustrada</p>
+                </div>
+              </div>
+            </li>
+            <li class="pin-arrow" aria-hidden="true"><svg viewBox="0 0 40 16"><path d="M2 8h34M28 2l8 6-8 6"/></svg></li>
+            <li class="age-item" style="--ar: 700/1235">
+              <div class="age-hang">
+                <span class="age-pin" aria-hidden="true"></span>
+                <div class="age-card">
+                  <i class="bg"></i>
+                  <div class="cmp-slot"><img src="imagenes/CapituloIII/foto03.jpg" alt="Hoja de personaje con poses, expresiones y paleta de color" width="700" height="1235" loading="lazy" decoding="async"></div>
+                  <p class="pin-cap">Hoja de consistencia del personaje</p>
+                </div>
+              </div>
+            </li>
+            <li class="pin-arrow" aria-hidden="true"><svg viewBox="0 0 40 16"><path d="M2 8h34M28 2l8 6-8 6"/></svg></li>
+            <li class="age-item" style="--ar: 1200/896">
+              <div class="age-hang">
+                <span class="age-pin" aria-hidden="true"></span>
+                <div class="age-card">
+                  <i class="bg"></i>
+                  <div class="cmp-slot cover-slot"><img src="imagenes/CapituloIII/portada-valentina.jpg" alt="Portada: Valentina y el misterio de la estación abandonada" width="1200" height="896" loading="lazy" decoding="async">
+                    <button class="btn ghost cover-cta" type="button" disabled><i class="bg"></i>Crear cuento</button></div>
+                  <p class="pin-cap">Libro personalizado</p>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nb-divider-mount"></div>
+      </section>
+
+      <!-- ===================== CAPÍTULO IV: CONTINUARÁ ===================== -->
+      <section class="quees" id="continuara">
+        <div class="fin-layout">
+          <div class="fin-text">
+            <div class="chapter-plate">
+              <p class="chapter-no"><b class="dia"></b>Capítulo&nbsp;IV<b class="dia"></b></p>
+              <h2 class="chapter-title">Continuará…</h2>
+              <div class="nb-divider-mount"></div>
+            </div>
+
+            <div class="book-page">
+              <p class="book-para lead-cap"><strong>Y colorín colorado…</strong> este cuento aún no ha acabado. Estamos trabajando contrarreloj para que Senior Lobo y Búho Duermevela terminen de grabar sus mejores narraciones.</p>
+
+              <p class="book-para">Muy pronto podrás crear el primer cuento en el que tu peque sea el protagonista. Recuerda: <strong>la siguiente página la escribiremos juntos</strong></p>
+            </div>
+          </div>
+
+          <div class="fin-media">
+            <ul class="pin-row">
+              <li class="age-item" style="--ar: 1024/688">
+                <div class="age-hang">
+                  <span class="age-pin" aria-hidden="true"></span>
+                  <div class="age-card">
+                    <i class="bg"></i>
+                    <div class="cmp-slot"><img src="imagenes/bastian-libro-la-historia-sin-fin-novela-la-historia-interminable.jpg" alt="Bastian leyendo absorto «La historia interminable»" width="1024" height="688" loading="lazy" decoding="async"></div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <p class="fin-quote">Porque las mejores historias nunca terminan</p>
           </div>
         </div>
+        <div class="nb-divider-mount"></div>
       </section>
 
       <footer class="home-foot">
@@ -1286,157 +562,7 @@
     </div>
   </main>
 
-  <script>
-    (function () {
-      // Dos instancias del switch conviven en el navbar universal: la píldora
-      // de escritorio (.dn-desktop) y el círculo suelto del menú móvil
-      // (.wz-menu-dn). Ambas deben quedar sincronizadas y ser clicables.
-      var switches = document.querySelectorAll('.dn-switch');
-      var root = document.documentElement;
-
-      var tornEls = document.querySelectorAll('.wz-topbar > .bg, .wz-menu > .bg, .topband, .hero-tear');
-
-      // El bug de repintado de filter:url(#torn-paper/-up/-line) al cambiar
-      // background-color por variable CSS solo se da en motores WebKit
-      // (Safari / cualquier navegador en iOS). En el resto (Chrome, Firefox,
-      // Android...) el forzado de reflow es puro coste extra durante el
-      // cambio de tema, así que se aplica solo donde hace falta.
-      var needsFilterRepaintFix = /iP(hone|od|ad)/.test(navigator.userAgent) ||
-        (/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
-
-      function apply(mode) {
-        switches.forEach(function (sw) {
-          sw.dataset.mode = mode;
-          sw.setAttribute('aria-checked', mode === 'noche');
-        });
-        root.dataset.theme = mode;
-
-        if (needsFilterRepaintFix) {
-          requestAnimationFrame(function () {
-            tornEls.forEach(function (el) { el.style.filter = 'none'; });
-            void document.body.offsetHeight; // un único reflow forzado, no uno por elemento
-            requestAnimationFrame(function () {
-              tornEls.forEach(function (el) { el.style.filter = ''; });
-            });
-          });
-        }
-      }
-
-      function toggle() {
-        apply(switches[0].dataset.mode === 'dia' ? 'noche' : 'dia');
-      }
-
-      apply('dia');
-
-      switches.forEach(function (sw) {
-        sw.addEventListener('click', toggle);
-        sw.addEventListener('keydown', function (e) {
-          if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); }
-        });
-      });
-    })();
-
-    (function () {
-      var marks = document.querySelectorAll('strong, .mark-crema');
-      if (!marks.length) return;
-
-      if (!('IntersectionObserver' in window)) {
-        marks.forEach(function (el) { el.classList.add('in-view'); });
-        return;
-      }
-
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          entry.target.classList.toggle('in-view', entry.isIntersecting);
-        });
-      }, { threshold: 0, rootMargin: '0px 0px -45% 0px' });
-
-      marks.forEach(function (el) { observer.observe(el); });
-    })();
-  </script>
-
-  <!-- ── Modal: Iniciar sesión / Registrar ── -->
-  <script>
-    (function () {
-      var overlay = document.getElementById('lgOverlay');
-      var modal = document.getElementById('lgModal');
-      if (!overlay || !modal) return;
-
-      var lastFocus = null;
-
-      function openModal(mode) {
-        modal.dataset.mode = mode === 'register' ? 'register' : 'login';
-        overlay.classList.add('lg-open');
-        document.body.style.overflow = 'hidden';
-        lastFocus = document.activeElement;
-        requestAnimationFrame(function () {
-          var closeBtn = modal.querySelector('.lg-close');
-          if (closeBtn) closeBtn.focus();
-        });
-      }
-
-      function closeModal() {
-        overlay.classList.remove('lg-open');
-        document.body.style.overflow = '';
-        if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
-      }
-
-      document.querySelectorAll('.wz-login').forEach(function (btn) {
-        btn.addEventListener('click', function () { openModal('login'); });
-      });
-
-      overlay.querySelectorAll('[data-lg-close]').forEach(function (el) {
-        el.addEventListener('click', closeModal);
-      });
-
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && overlay.classList.contains('lg-open')) closeModal();
-      });
-
-      document.querySelectorAll('.lg-go-register').forEach(function (btn) {
-        btn.addEventListener('click', function () { modal.dataset.mode = 'register'; });
-      });
-      document.querySelectorAll('.lg-go-login').forEach(function (btn) {
-        btn.addEventListener('click', function () { modal.dataset.mode = 'login'; });
-      });
-
-      function wireCheck(id) {
-        var btn = document.getElementById(id);
-        if (!btn) return;
-        btn.addEventListener('click', function () {
-          btn.classList.toggle('on');
-          validate();
-        });
-      }
-      wireCheck('lgRemember');
-      wireCheck('lgAccept');
-
-      function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-
-      var email = document.getElementById('lgEmail');
-      var pwd = document.getElementById('lgPwd');
-      var submitLogin = document.getElementById('lgSubmitLogin');
-      var name = document.getElementById('lgName');
-      var regEmail = document.getElementById('lgRegEmail');
-      var accept = document.getElementById('lgAccept');
-      var submitRegister = document.getElementById('lgSubmitRegister');
-
-      function validate() {
-        if (submitLogin) submitLogin.disabled = !(isEmail(email.value) && pwd.value.length > 0);
-        if (submitRegister) submitRegister.disabled = !(name.value.trim().length > 0 && isEmail(regEmail.value) && accept.classList.contains('on'));
-      }
-
-      [email, pwd, name, regEmail].forEach(function (input) {
-        if (input) input.addEventListener('input', validate);
-      });
-      validate();
-
-      // Sin backend todavía: los envíos no hacen nada real, solo evitan el
-      // submit por defecto. Conectar aquí a la lógica de autenticación real.
-      if (submitLogin) submitLogin.addEventListener('click', function () {});
-      if (submitRegister) submitRegister.addEventListener('click', function () {});
-    })();
-  </script>
+  <script src="js/site.js"></script>
 
 </body>
 </html>
