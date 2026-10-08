@@ -978,7 +978,7 @@ html:has(.shot-lb[open]) { overflow: hidden; }
 
 /* Capítulo III en tablet y móvil: dentro de la banda separadora, rejilla a 2 columnas.
    .pin-row se «disuelve» (display: contents) para que sus tarjetas compartan rejilla
-   con la copia del lobo: lobo pensando | foto real → recreación | hoja de personaje
+   con la copia del lobo: foto real | lobo pensando → recreación | hoja de personaje
    → libro a todo el ancho. Sin flechas. */
 @media (max-width: 960px) {
   /* el lobo deja el texto y entra en la banda separadora, junto a las fotos */
@@ -986,10 +986,10 @@ html:has(.shot-lb[open]) { overflow: hidden; }
   #ella .banda-separadora-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 16px; }
   #ella .pin-row { display: contents; }
   #ella .pin-arrow { display: none; }
-  /* fila 1: lobo pensando a la izquierda, foto real (más pequeña) a la derecha */
-  #ella .ella-fig-band { display: flex; order: 0; float: none; width: auto; max-width: 240px; margin: 0; justify-self: center; align-self: center; }
+  /* fila 1: foto real (más pequeña) a la izquierda, lobo pensando a la derecha */
+  #ella .ella-fig-band { grid-column: 2; grid-row: 1; display: flex; order: 0; float: none; width: auto; max-width: 240px; margin: 0; justify-self: center; align-self: center; }
   #ella .pin-row > .age-item { flex: none; width: 100%; justify-self: center; margin-top: 24px; }
-  #ella .pin-row > .age-item:nth-child(1) { max-width: 170px; margin-top: 0; align-self: center; }
+  #ella .pin-row > .age-item:nth-child(1) { grid-column: 1; grid-row: 1; max-width: 170px; margin-top: 0; align-self: center; }
   /* fila 2: recreación ilustrada y hoja de personaje */
   #ella .pin-row > .age-item:nth-child(3),
   #ella .pin-row > .age-item:nth-child(5) { max-width: 240px; }
@@ -1002,6 +1002,11 @@ html:has(.shot-lb[open]) { overflow: hidden; }
   .cmp-layout { grid-template-columns: minmax(0, 1fr); }
   .cmp-layout > .book-page { padding-top: 0; }
   .pin-collage { order: 1; width: 100%; max-width: 520px; margin: 0 auto; }
+}
+/* móvil: solo la portada de Iván, un 30% más grande (8/12 columnas = 66,67% → 86,67%) */
+@media (max-width: 600px) {
+  .cmp-left, .cmp-right { display: none; }
+  .cmp-big { grid-column: 1 / -1; justify-self: center; width: 86.667%; }
 }
 
 /* ── Footer ── */
