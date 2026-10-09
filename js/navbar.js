@@ -55,12 +55,15 @@
   // donde deja de caber depende de la tipografía cargada (font-display:
   // swap), el idioma y el zoom del usuario — un breakpoint fijo se queda
   // corto en esos casos y la barra rompe a dos líneas.
+  // En tablet y móvil (≤960px, el mismo corte que el resto de la web) la
+  // hamburguesa va siempre, quepa o no la barra.
+  var tabletMq = window.matchMedia('(max-width: 960px)');
   function checkCompact() {
     root.classList.remove('is-compact');
-    var overflows = navInner.scrollWidth > navInner.clientWidth + 1;
-    root.classList.toggle('is-compact', overflows);
+    var compact = tabletMq.matches || navInner.scrollWidth > navInner.clientWidth + 1;
+    root.classList.toggle('is-compact', compact);
     setNavH();
-    if (!overflows) close();
+    if (!compact) close();
   }
 
   checkCompact();
