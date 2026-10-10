@@ -260,6 +260,36 @@
   });
 })();
 
+// ── Ficha del libro: las barras (nivel de lectura, intensidad) se rellenan al verse ──
+(function () {
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.querySelectorAll('.lib-ficha').forEach(function (ficha) {
+    var meters = ficha.querySelectorAll('.lib-meter');
+    if (!meters.length) return;
+    ficha.classList.add('fill-ready');
+    meters.forEach(function (m, k) { m.style.setProperty('--i', k); });
+    var observer = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (e) { return e.isIntersecting; })) return;
+      observer.disconnect();
+      ficha.classList.add('filled');
+      // el porcentaje sube a la vez que la barra
+      meters.forEach(function (m, k) {
+        var val = m.querySelector('.lib-val'), fin = parseFloat(m.style.getPropertyValue('--v')) || 0;
+        if (!val) return;
+        var t0 = performance.now() + k * 250, dur = 1400;
+        val.textContent = '0%';
+        (function paso(t) {
+          var x = Math.max(0, Math.min(1, (t - t0) / dur));
+          val.textContent = Math.round(fin * (1 - Math.pow(1 - x, 3))) + '%';
+          if (x < 1) requestAnimationFrame(paso);
+        })(performance.now());
+      });
+    }, { threshold: 0.4 });
+    observer.observe(ficha);
+  });
+})();
+
 // ── Títulos de capítulo: escritura a máquina al entrar en pantalla ──
 // Norma del sitio: todo «Capítulo N: título» se escribe letra a letra.
 (function () {

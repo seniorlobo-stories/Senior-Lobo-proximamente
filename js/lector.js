@@ -52,7 +52,10 @@
           '<div class="lr-cover"><h1 class="lr-titulo"></h1><span class="lr-sub"></span>' +
             '<div class="lr-meta"><span class="lr-prota"></span><span class="lr-npags"></span></div></div>' +
           '<p class="lr-texto"></p>' +
-          '<div class="lr-fin"><h2>Fin</h2><button class="lr-reinicio" type="button">Volver al principio</button></div>' +
+          '<div class="lr-fin"><h2>Fin</h2><div class="lr-fin-acts">' +
+            '<button class="lr-reinicio" type="button">Volver al principio</button>' +
+            '<button class="lr-salir" type="button">Cerrar libro</button>' +
+          '</div></div>' +
         '</div></div>' +
       '</div>';
     document.body.appendChild(dlg);
@@ -62,11 +65,28 @@
     el.titulos = dlg.querySelectorAll('.lr-titulo');
 
     el.burger.addEventListener('click', function () { st.navOpen = !st.navOpen; pintar(); });
-    el.prev.addEventListener('click', function () { irA(st.pag - 1); });
-    el.next.addEventListener('click', function () { irA(st.pag + 1); });
+    el.prev.addEventListener('click', function () { destello(el.prev); irA(st.pag - 1); });
+    el.next.addEventListener('click', function () { destello(el.next); irA(st.pag + 1); });
     // la casa cierra el lector y devuelve a la pantalla de origen (mismo scroll; el foco vuelve al botón «Leer libro»)
     dlg.querySelector('.lr-home').addEventListener('click', function () { dlg.close(); });
     dlg.querySelector('.lr-reinicio').addEventListener('click', function () { irA(0); });
+    dlg.querySelector('.lr-salir').addEventListener('click', function () { dlg.close(); }); // como la casa: vuelve a la pantalla de origen
+
+    // deslizar el dedo sobre la ilustración pasa página: ← siguiente, → anterior
+    var x0 = null, y0 = 0;
+    el.ilus.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1) { x0 = null; return; }
+      x0 = e.touches[0].clientX;
+      y0 = e.touches[0].clientY;
+    }, { passive: true });
+    el.ilus.addEventListener('touchend', function (e) {
+      if (x0 === null) return;
+      var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      x0 = null;
+      if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return; // toque o gesto vertical
+      irA(st.pag + (dx < 0 ? 1 : -1));
+    });
+    el.ilus.addEventListener('touchcancel', function () { x0 = null; });
 
     // Esc (cancel) y cierre: salimos también del historial
     dlg.addEventListener('close', function () {
@@ -77,6 +97,13 @@
       if (e.key === 'ArrowLeft') irA(st.pag - 1);
       else if (e.key === 'ArrowRight') irA(st.pag + 1);
     });
+  }
+
+  // la flecha pulsada se queda en ámbar un instante (en móvil :active apenas se ve)
+  function destello(b) {
+    b.classList.add('pulsado');
+    clearTimeout(b._t);
+    b._t = setTimeout(function () { b.classList.remove('pulsado'); }, 220);
   }
 
   function cargar(url) {

@@ -38,6 +38,8 @@ html:has(.lector[open]) { overflow: hidden; overscroll-behavior: none; }
 .lr-ilus { position: absolute; z-index: 0; top: 0; left: 50%; transform: translateX(-50%);
   width: 100%; max-width: 800px; max-height: 100%; aspect-ratio: 800 / 1200; overflow: hidden;
   background: repeating-linear-gradient(45deg, var(--lr-kraft) 0 12px, var(--paper-piece) 12px 24px); }
+.lr-ilus { touch-action: pan-y pinch-zoom; -webkit-user-select: none; user-select: none; } /* el gesto horizontal es nuestro (pasar página) */
+.lr-ilus img { -webkit-user-drag: none; -webkit-touch-callout: none; }
 .lr-ilus img { position: absolute; inset: 0; width: 100%; height: 100%; display: none;
   object-fit: contain; object-position: center top; }
 .lr-ilus img.on { display: block; }
@@ -82,6 +84,12 @@ html:has(.lector[open]) { overflow: hidden; overscroll-behavior: none; }
 .lr-prev svg, .lr-next svg { width: 16px; height: 16px; stroke-width: 2.2; }
 .lr-prev:disabled, .lr-next:disabled { opacity: .35; cursor: default; }
 .lr-prev:disabled:active, .lr-next:disabled:active { transform: none; }
+/* al pulsarlas se iluminan en ámbar (.pulsado lo deja visible un instante tras un toque rápido) */
+.lr-prev, .lr-next { transition: background-color .18s ease; }
+.lr-prev:not(:disabled):active, .lr-next:not(:disabled):active,
+.lr-prev.pulsado, .lr-next.pulsado { background: var(--amber); transition-duration: 0s; }
+.lr-prev:not(:disabled):active svg, .lr-next:not(:disabled):active svg,
+.lr-prev.pulsado svg, .lr-next.pulsado svg { stroke: #38362c; }
 .lr-play { flex: none; width: 48px; height: 48px; border-radius: 50%;
   background: var(--amber); box-shadow: 3px 4px 0 var(--lr-sh-play); }
 .lr-play svg { fill: #38362c; stroke: none; }
@@ -119,10 +127,11 @@ html:has(.lector[open]) { overflow: hidden; overscroll-behavior: none; }
 
 .lr-fin { flex-direction: column; align-items: center; }
 .lr-fin h2 { margin-top: 6px; font-family: var(--font-slab); font-weight: 400; font-size: 34px; letter-spacing: .06em; color: var(--line); }
-.lr-reinicio { margin-top: 8px; padding: 9px 18px; border: 0; border-radius: 9px; cursor: pointer;
+.lr-fin-acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 8px; }
+.lr-reinicio, .lr-salir { padding: 9px 18px; border: 0; border-radius: 9px; cursor: pointer;
   background: var(--paper-piece); box-shadow: 3px 4px 0 var(--lr-sh);
   font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .08em; font-size: 14px; font-weight: 600; color: var(--line); }
-.lr-reinicio:active { transform: translate(2px,3px); }
+.lr-reinicio:active, .lr-salir:active { transform: translate(2px,3px); }
 
 /* pantallas anchas (el diseño es para móvil): controles y texto al ancho visible de la
    ilustración 2:3, en vez de a toda la pantalla. En móvil gana 100vw y no cambia nada. */

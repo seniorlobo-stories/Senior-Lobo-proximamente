@@ -999,6 +999,9 @@ main { flex: 1; width: 100%; }
 .lib-bar i { display: block; width: var(--v); height: 100%;
   background: repeating-linear-gradient(-45deg, var(--line) 0 3px, color-mix(in srgb, var(--line) 60%, transparent) 3px 6px); }
 .lib-val { justify-self: end; margin-top: 3px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); }
+/* animación de relleno al entrar en pantalla (js/site.js añade .fill-ready y luego .filled) */
+.lib-ficha.fill-ready .lib-bar i { width: 0; }
+.lib-ficha.fill-ready.filled .lib-bar i { width: var(--v); transition: width 1.4s cubic-bezier(.3,.7,.2,1) calc(var(--i, 0) * 250ms); }
 
 /* valor destacado + Senior Lobo valiente (recorte sin marco; día/noche superpuestos) */
 .lib-lobo { position: relative; margin: 0; }
@@ -1079,6 +1082,8 @@ main { flex: 1; width: 100%; }
   .lib-ficha { grid-template-columns: minmax(0, 1fr); row-gap: 4px; margin-top: 28px; }
   .lib-ficha dt { text-align: left; padding-top: 10px; }
   .lib-meter dd { padding-top: 3px; }
+  /* el lobo valiente, un 25% más pequeño y antes del «Valor destacado» */
+  .lib-lobo { width: min(255px, 75%); order: -1; }
 }
 
 /* ── Capítulo I (Inicio): Leer para comprender — collage de portadas + texto ── */
