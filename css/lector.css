@@ -98,10 +98,15 @@ html:has(.lector[open]) { overflow: hidden; overscroll-behavior: none; }
   background: var(--amber); box-shadow: 3px 4px 0 var(--lr-sh-play); }
 .lr-play svg { fill: #38362c; stroke: none; }
 .lr-play .ic-play { width: 19px; height: 19px; }
-/* narración aún no disponible: play apagado + etiqueta «No disponible» debajo */
+/* sonando: el play se convierte en pausa (y al revés) */
+.lr-play .ic-pause { display: none; width: 19px; height: 19px; }
+.lr-play.sonando .ic-play { display: none; }
+.lr-play.sonando .ic-pause { display: block; }
+/* cuento sin narración (sin «audio» en el JSON): play apagado + etiqueta «No disponible» debajo */
 .lr-play-wrap { position: relative; display: flex; }
 .lr-play:disabled { opacity: .45; cursor: default; }
 .lr-play:disabled:active { transform: none; }
+.lector:not(.sin-audio) .lr-play-tag { display: none; }
 .lr-play-tag { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 7px;
   padding: 3px 9px; border-radius: 26px; background: var(--paper-piece); box-shadow: 2px 3px 0 var(--lr-sh);
   font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .14em; white-space: nowrap;

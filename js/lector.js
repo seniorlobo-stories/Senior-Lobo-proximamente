@@ -2,18 +2,23 @@
    Genérico: cualquier botón con data-lector="ruta/al/cuento.json" abre el lector.
    El JSON trae titulo, protagonista, edad, subtitulo y paginas[]
    ({ tipo: portada|texto|fin, imagen, texto }); las imágenes van relativas al JSON.
-   La narración aún no está disponible: el play sale desactivado con «No disponible».
-   Cada palabra va ya en su <span> (clase .leida = ámbar) para cuando haya audio. */
+   Narración: si el JSON trae «audio» (ruta relativa al JSON) y cada página de texto
+   trae «tiempos» (segundo en que el narrador empieza cada palabra), el play lee el cuento,
+   pinta en ámbar (.leida) las palabras ya dichas y pasa de página solo. Pasar página a mano
+   lleva el audio a la primera palabra de esa página. Sin audio: play apagado + «No disponible». */
 (function () {
   var ICON_HOME = '<svg viewBox="0 0 24 24"><path d="M3.5 11L12 4l8.5 7"/><path d="M6 9.5V20h4.5v-5.5h3V20H18V9.5"/></svg>';
   var ICON_PREV = '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
   var ICON_NEXT = '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>';
   var ICON_PLAY = '<svg class="ic-play" viewBox="0 0 24 24"><path d="M8 5.2l11 6.8-11 6.8z"/></svg>';
+  var ICON_PAUSE = '<svg class="ic-pause" viewBox="0 0 24 24"><rect x="6.5" y="5.5" width="3.8" height="13" rx="1"/><rect x="13.7" y="5.5" width="3.8" height="13" rx="1"/></svg>';
 
   var cache = {};
   var dlg, el = {}, cuento, imgs;
   var st = { pag: 0, navOpen: false };
   var scrollOrigen = 0;
+  var audio = null, raf = 0, seekPendiente = null;
+  var ADELANTO = 0.12; // al saltar a una página, arrancamos un pelín antes de su primera palabra
 
   // filtro #rough del trazo «a mano», por si la página no lo trae
   function asegurarFiltro() {
@@ -45,7 +50,7 @@
         '<div class="lr-ctrls">' +
           '<button class="lr-btn lr-prev" type="button" aria-label="Página anterior">' + ICON_PREV + '</button>' +
           '<span class="lr-play-wrap">' +
-            '<button class="lr-btn lr-play" type="button" disabled aria-label="Escuchar el cuento (no disponible)">' + ICON_PLAY + '</button>' +
+            '<button class="lr-btn lr-play" type="button" disabled aria-label="Escuchar el cuento (no disponible)">' + ICON_PLAY + ICON_PAUSE + '</button>' +
             '<span class="lr-play-tag" aria-hidden="true">No disponible</span>' +
           '</span>' +
           '<button class="lr-btn lr-next" type="button" aria-label="Página siguiente">' + ICON_NEXT + '</button>' +
@@ -62,13 +67,14 @@
       '</div>';
     document.body.appendChild(dlg);
 
-    ['ilus', 'pill', 'etiqueta', 'burger', 'prev', 'next', 'scroll', 'sub', 'prota', 'npags', 'texto']
+    ['ilus', 'pill', 'etiqueta', 'burger', 'prev', 'next', 'play', 'scroll', 'sub', 'prota', 'npags', 'texto']
       .forEach(function (k) { el[k] = dlg.querySelector('.lr-' + k); });
     el.titulos = dlg.querySelectorAll('.lr-titulo');
 
     el.burger.addEventListener('click', function () { st.navOpen = !st.navOpen; pintar(); });
     el.prev.addEventListener('click', function () { destello(el.prev); irA(st.pag - 1); });
     el.next.addEventListener('click', function () { destello(el.next); irA(st.pag + 1); });
+    el.play.addEventListener('click', alternarAudio);
     // la casa cierra el lector y devuelve a la pantalla de origen (mismo scroll; el foco vuelve al botón «Leer libro»)
     dlg.querySelector('.lr-home').addEventListener('click', function () { dlg.close(); });
     dlg.querySelector('.lr-reinicio').addEventListener('click', function () { irA(0); });
@@ -92,6 +98,7 @@
 
     // Esc (cancel) y cierre: salimos también del historial
     dlg.addEventListener('close', function () {
+      if (audio) audio.pause();
       if (history.state && history.state.lector) history.back();
       window.scrollTo(0, scrollOrigen); // de vuelta al mismo punto de la página de origen
     });
@@ -117,6 +124,7 @@
       }).then(function (c) {
         var base = new URL(url, location.href);
         c.paginas.forEach(function (p) { if (p.imagen) p.src = new URL(p.imagen, base).href; });
+        if (c.audio) c.audioSrc = new URL(c.audio, base).href;
         return c;
       });
       cache[url].catch(function () { delete cache[url]; });
@@ -144,13 +152,111 @@
     el.prota.textContent = c.protagonista + (c.edad ? ' - ' + c.edad + ' años' : '');
     el.npags.textContent = total + (total === 1 ? ' página' : ' páginas');
     st = { pag: 0, navOpen: false };
+    prepararAudio(c);
     pintarPagina();
+  }
+
+  // ── Narración ──
+  function prepararAudio(c) {
+    if (audio && audio._src !== c.audioSrc) { audio.pause(); audio.removeAttribute('src'); audio.load(); audio = null; }
+    var hay = !!c.audioSrc;
+    el.play.disabled = !hay;
+    dlg.classList.toggle('sin-audio', !hay);
+    if (!hay) { pintarPlay(); return; }
+    if (!audio) {
+      audio = new Audio();
+      audio.preload = 'metadata';
+      audio._src = c.audioSrc;
+      audio.src = c.audioSrc;
+      audio.addEventListener('play', function () { pintarPlay(); bucle(); });
+      audio.addEventListener('pause', function () { cancelAnimationFrame(raf); pintarPlay(); });
+      audio.addEventListener('ended', function () { irA(cuento.paginas.length - 1); });
+      audio.addEventListener('loadedmetadata', function () {
+        if (seekPendiente !== null) { audio.currentTime = seekPendiente; seekPendiente = null; }
+      });
+    }
+    audio.pause();
+    situar(0);
+    pintarPlay();
+  }
+
+  // iOS no deja mover currentTime antes de tener los metadatos: lo guardamos para luego
+  function situar(t) {
+    if (audio.readyState >= 1) { audio.currentTime = t; seekPendiente = null; }
+    else seekPendiente = t;
+  }
+  function ahora() { return seekPendiente !== null ? seekPendiente : audio.currentTime; }
+
+  // segundo en que empieza la lectura de la página n (portada = principio: el narrador lee el título)
+  function inicioPagina(n) {
+    var p = cuento.paginas[n];
+    if (p.tipo === 'portada') return 0;
+    if (p.tiempos && p.tiempos.length) return Math.max(0, p.tiempos[0] - ADELANTO);
+    return null;
+  }
+
+  // página que se está leyendo en el segundo t: la última cuya primera palabra ya ha sonado
+  function paginaEn(t) {
+    var n = 0;
+    cuento.paginas.forEach(function (p, i) { if (p.tiempos && p.tiempos.length && p.tiempos[0] - ADELANTO <= t) n = i; });
+    return n;
+  }
+
+  function alternarAudio() {
+    if (!audio) return;
+    if (!audio.paused) { audio.pause(); return; }
+    // desde el «Fin» el play vuelve a empezar el cuento
+    if (cuento.paginas[st.pag].tipo === 'fin') { irA(0); situar(0); }
+    var pr = audio.play();
+    if (pr && pr.catch) pr.catch(function (err) { console.error(err); pintarPlay(); });
+  }
+
+  function bucle() {
+    cancelAnimationFrame(raf);
+    var paso = function () {
+      if (!audio || audio.paused) return;
+      var n = paginaEn(audio.currentTime);
+      if (n > st.pag) { st.pag = n; pintarPagina(); } // el narrador pasa de página solo
+      else marcarLeidas();
+      raf = requestAnimationFrame(paso);
+    };
+    raf = requestAnimationFrame(paso);
+  }
+
+  // ámbar para las palabras de esta página que el narrador ya ha empezado a decir
+  function marcarLeidas() {
+    var p = cuento.paginas[st.pag];
+    if (!audio || !p.tiempos) return;
+    var t = ahora(), spans = el.texto.children, ultima = null;
+    for (var i = 0; i < spans.length; i++) {
+      var on = p.tiempos[i] <= t;
+      if (spans[i].classList.contains('leida') !== on) spans[i].classList.toggle('leida', on);
+      if (on) ultima = spans[i];
+    }
+    // si el texto no cabe en el panel, que la palabra en curso no se quede escondida
+    if (ultima && !audio.paused) {
+      var sc = el.scroll, top = ultima.offsetTop, h = ultima.offsetHeight;
+      if (top + h > sc.scrollTop + sc.clientHeight || top < sc.scrollTop) sc.scrollTop = top - sc.clientHeight / 3;
+    }
+  }
+
+  function pintarPlay() {
+    var sonando = !!audio && !audio.paused;
+    el.play.classList.toggle('sonando', sonando);
+    el.play.setAttribute('aria-label', !cuento || !cuento.audioSrc ? 'Escuchar el cuento (no disponible)'
+      : sonando ? 'Pausar la lectura' : 'Escuchar el cuento');
   }
 
   function irA(n) {
     n = Math.max(0, Math.min(cuento.paginas.length - 1, n));
     if (n === st.pag) return;
     st.pag = n;
+    // paso de página a mano: el audio salta a la primera palabra de la nueva página
+    if (audio) {
+      var t = inicioPagina(n);
+      if (t !== null) situar(t);
+      else audio.pause(); // «Fin»: se acabó la lectura
+    }
     pintarPagina();
   }
 
@@ -168,6 +274,7 @@
       });
     }
     el.scroll.scrollTop = 0;
+    marcarLeidas();
     pintar();
   }
 

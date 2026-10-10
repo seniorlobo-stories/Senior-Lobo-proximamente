@@ -3,6 +3,7 @@
   "protagonista": "Lucas",
   "edad": 8,
   "subtitulo": "Aventuras · Lectura intermedia",
+  "audio": "../../imagenes/Audios_libros/Libro_Lucas.MP3",
   "paginas": [
     {
       "n": 0,
@@ -13,121 +14,141 @@
       "n": 1,
       "tipo": "texto",
       "imagen": "pag1-lucas-v2.webp",
-      "texto": "Otra noche más sin dormir. Cada vez que Lucas escuchaba un ruido, se cubría con la manta hasta la nariz. —Son solo ruidos ¿verdad? —le dijo a su manta gris—."
+      "texto": "Otra noche más sin dormir. Cada vez que Lucas escuchaba un ruido, se cubría con la manta hasta la nariz. —Son solo ruidos ¿verdad? —le dijo a su manta gris—.",
+      "tiempos": [5.4, 6.06, 6.42, 6.74, 6.98, 8.54, 8.74, 9.0, 9.14, 9.44, 10.06, 10.3, 10.98, 11.18, 11.52, 11.74, 11.92, 12.22, 12.52, 12.66, 13.74, 14.26, 14.62, 15.3, 16.1, 16.46, 16.64, 16.86, 16.94, 17.34]
     },
     {
       "n": 2,
       "tipo": "texto",
       "imagen": "pag1-lucas-v2.webp",
-      "texto": "La manta no contestó. Las mantas son malísimas dando ánimos. Llevaba siete noches durmiendo a pedacitos, con la lamparita encendida."
+      "texto": "La manta no contestó. Las mantas son malísimas dando ánimos. Llevaba siete noches durmiendo a pedacitos, con la lamparita encendida.",
+      "tiempos": [18.66, 18.9, 19.3, 19.64, 20.82, 21.08, 21.42, 21.74, 22.42, 22.72, 24.36, 24.78, 25.14, 25.58, 26.1, 26.3, 27.16, 27.32, 27.46, 27.98]
     },
     {
       "n": 3,
       "tipo": "texto",
       "imagen": "pag2-lucas-v2.webp",
-      "texto": "Pero no era la única luz... esa noche, su curiosidad pudo con el miedo y decidió que era el momento para descubrir qué había dentro del armario."
+      "texto": "Pero no era la única luz... esa noche, su curiosidad pudo con el miedo y decidió que era el momento para descubrir qué había dentro del armario.",
+      "tiempos": [28.66, 29.48, 29.9, 30.2, 30.36, 30.74, 32.12, 32.42, 33.08, 33.28, 33.96, 34.26, 34.5, 34.68, 34.9, 35.42, 35.84, 36.06, 36.22, 36.46, 36.8, 37.12, 37.76, 38.04, 38.42, 38.82, 39.06]
     },
     {
       "n": 4,
       "tipo": "texto",
       "imagen": "pag2-lucas-v2.webp",
-      "texto": "Con más miedo que coraje cogió su linterna, cruzó la habitación de puntillas sin hacer mucho ruido, respiró profundo... - uno, dos... dos y medio.... ¡tres! - y cruzó el armario."
+      "texto": "Con más miedo que coraje cogió su linterna, cruzó la habitación de puntillas sin hacer mucho ruido, respiró profundo... - uno, dos... dos y medio.... ¡tres! - y cruzó el armario.",
+      "tiempos": [40.6, 40.84, 41.16, 41.46, 41.64, 42.58, 42.74, 42.92, 44.12, 44.36, 44.5, 44.98, 45.22, 45.84, 46.18, 46.54, 46.86, 48.22, 48.5, 48.5, 50.1, 51.08, 52.36, 52.62, 52.84, 53.88, 53.88, 54.9, 55.24, 55.54, 55.72]
     },
     {
       "n": 5,
       "tipo": "texto",
       "imagen": "pag3-lucas-v2.webp",
-      "texto": "Dentro no había abrigos. ¡Había una jungla! Aunque tenía la linterna estaba muy oscuro y apenas veía. Dio un paso … ¡chof!, metió los pies en un charco."
+      "texto": "Dentro no había abrigos. ¡Había una jungla! Aunque tenía la linterna estaba muy oscuro y apenas veía. Dio un paso … ¡chof!, metió los pies en un charco.",
+      "tiempos": [57.16, 57.92, 58.18, 58.5, 59.7, 60.24, 60.64, 62.24, 62.58, 62.92, 63.12, 64.0, 64.28, 64.6, 65.08, 65.28, 65.66, 67.04, 67.3, 67.58, 67.58, 68.58, 69.6, 70.02, 70.36, 70.52, 70.74, 70.98]
     },
     {
       "n": 6,
       "tipo": "texto",
       "imagen": "pag3-lucas-v2.webp",
-      "texto": "Más calmado, miró a su alrededor: había luciérnagas, flores y un caminito de setas encendidas. —Vaya —susurró aliviado—. La oscuridad también tiene cosas dentro."
+      "texto": "Más calmado, miró a su alrededor: había luciérnagas, flores y un caminito de setas encendidas. —Vaya —susurró aliviado—. La oscuridad también tiene cosas dentro.",
+      "tiempos": [72.42, 72.72, 73.68, 73.86, 73.96, 74.12, 75.52, 75.9, 77.36, 77.74, 78.1, 78.4, 78.9, 79.14, 79.52, 81.24, 82.28, 82.78, 84.1, 84.28, 84.98, 85.42, 85.7, 86.06]
     },
     {
       "n": 7,
       "tipo": "texto",
       "imagen": "pag4-lucas-v2.webp",
-      "texto": "De pronto una voz —Hola—dijo— Soy Nuez. ¡Era una tortuga con el caparazón brillante! —¡Hola Busco a mi pesadilla —dijo Lucas— ¿Me ayudas a encontrarla?"
+      "texto": "De pronto una voz —Hola—dijo— Soy Nuez. ¡Era una tortuga con el caparazón brillante! —¡Hola Busco a mi pesadilla —dijo Lucas— ¿Me ayudas a encontrarla?",
+      "tiempos": [87.6, 87.86, 88.6, 88.72, 89.74, 91.58, 91.88, 93.3, 93.52, 93.82, 94.36, 94.56, 94.76, 95.34, 97.08, 98.08, 98.34, 98.48, 98.58, 99.66, 99.82, 100.86, 101.06, 101.44, 101.74]
     },
     {
       "n": 8,
       "tipo": "texto",
       "imagen": "pag4-lucas-v2.webp",
-      "texto": "-¿Pesadilla? Vive al otro lado del río, cruzando ese puente de madera- -Gracias-dijo Lucas- y sin pensarlo, se dirigió hacia el puente solo."
+      "texto": "-¿Pesadilla? Vive al otro lado del río, cruzando ese puente de madera- -Gracias-dijo Lucas- y sin pensarlo, se dirigió hacia el puente solo.",
+      "tiempos": [103.18, 104.38, 104.58, 104.8, 105.02, 105.22, 105.44, 105.98, 106.46, 106.74, 107.1, 107.34, 108.42, 109.7, 110.56, 110.64, 110.84, 111.62, 111.88, 112.3, 112.56, 112.8, 113.2]
     },
     {
       "n": 9,
       "tipo": "texto",
       "imagen": "pag5-lucas-v2.webp",
-      "texto": "El río era muy oscuro y el puente no paraba de balancearse. —Puedo solo —dijo Lucas, aunque nadie le había preguntado. A mitad del puente, una tabla se partío."
+      "texto": "El río era muy oscuro y el puente no paraba de balancearse. —Puedo solo —dijo Lucas, aunque nadie le había preguntado. A mitad del puente, una tabla se partío.",
+      "tiempos": [114.72, 114.86, 115.18, 115.48, 115.76, 116.34, 116.66, 116.9, 117.26, 117.6, 117.9, 118.1, 119.84, 120.26, 121.06, 121.16, 122.0, 122.22, 122.6, 122.86, 123.08, 124.8, 124.92, 125.14, 125.42, 126.22, 126.36, 126.72, 126.96]
     },
     {
       "n": 10,
       "tipo": "texto",
       "imagen": "pag5-lucas-v2.webp",
-      "texto": "Al agarrarse soltó la linterna y… ¡plop! cayó al fondo del río. Estaba a oscuras. Su corazón latía tan fuerte que le palpitaban las orejas, pero volver no era una opción."
+      "texto": "Al agarrarse soltó la linterna y… ¡plop! cayó al fondo del río. Estaba a oscuras. Su corazón latía tan fuerte que le palpitaban las orejas, pero volver no era una opción.",
+      "tiempos": [128.08, 128.26, 129.36, 129.5, 129.68, 130.28, 130.92, 131.92, 132.28, 132.54, 132.84, 133.06, 133.4, 135.06, 135.34, 136.44, 136.62, 137.06, 137.52, 137.92, 138.26, 138.58, 138.76, 139.36, 139.6, 140.48, 140.68, 141.14, 141.62, 141.88, 142.14]
     },
     {
       "n": 11,
       "tipo": "texto",
       "imagen": "pag6-lucas-v2.webp",
-      "texto": "Respiró hondo, buscó la tabla con el pie y avanzó. Despacito. Temblando. Un paso. Otro paso. Al tercer paso, notó una luz verde. Nuez lo había alcanzado."
+      "texto": "Respiró hondo, buscó la tabla con el pie y avanzó. Despacito. Temblando. Un paso. Otro paso. Al tercer paso, notó una luz verde. Nuez lo había alcanzado.",
+      "tiempos": [143.64, 144.08, 145.12, 145.32, 145.52, 145.76, 146.0, 146.2, 146.36, 146.9, 148.88, 150.06, 151.82, 152.1, 153.56, 153.84, 155.26, 155.48, 155.86, 156.42, 157.04, 157.22, 157.5, 158.8, 159.16, 159.6, 159.88]
     },
     {
       "n": 12,
       "tipo": "texto",
       "imagen": "pag6-lucas-v2.webp",
-      "texto": "—Pisa donde brille mi musgo —dijo. Esta vez Lucas no dijo «puedo solo». Puso la mano en el caparazón y cruzaron juntos. El corazón le latía más despacio."
+      "texto": "—Pisa donde brille mi musgo —dijo. Esta vez Lucas no dijo «puedo solo». Puso la mano en el caparazón y cruzaron juntos. El corazón le latía más despacio.",
+      "tiempos": [160.74, 161.84, 162.16, 162.54, 162.72, 163.6, 164.9, 165.22, 165.62, 166.06, 166.38, 166.74, 167.36, 168.54, 168.78, 168.98, 169.16, 169.34, 169.5, 170.1, 170.46, 170.96, 172.6, 172.82, 173.2, 173.44, 173.86, 174.2]
     },
     {
       "n": 13,
       "tipo": "texto",
       "imagen": "pag7-lucas-v2.webp",
-      "texto": "Llegaron a un bosque. Por los troncos trepaban sombras y rugían voces —¡GROAAARG!- Lucas se escondió. Le temblaban hasta las pestañas."
+      "texto": "Llegaron a un bosque. Por los troncos trepaban sombras y rugían voces —¡GROAAARG!- Lucas se escondió. Le temblaban hasta las pestañas.",
+      "tiempos": [175.86, 176.34, 176.46, 176.6, 177.66, 177.9, 178.14, 178.66, 179.3, 179.9, 180.2, 180.74, 182.43, 184.12, 184.68, 185.12, 186.2, 186.42, 186.98, 187.24, 187.48]
     },
     {
       "n": 14,
       "tipo": "texto",
       "imagen": "pag7-lucas-v2.webp",
-      "texto": "—Las sombras grandes salen de cosas pequeñas —susurró Nuez—. Mira bien. Lucas abrió un ojo y vio un pequeño bulto peludo con dos enormes orejas."
+      "texto": "—Las sombras grandes salen de cosas pequeñas —susurró Nuez—. Mira bien. Lucas abrió un ojo y vio un pequeño bulto peludo con dos enormes orejas.",
+      "tiempos": [188.16, 188.92, 189.42, 190.0, 190.52, 190.72, 191.06, 192.36, 192.78, 193.84, 194.04, 195.48, 195.94, 196.44, 196.7, 197.08, 197.38, 197.56, 197.8, 198.22, 198.7, 199.12, 199.52, 199.84, 200.36]
     },
     {
       "n": 15,
       "tipo": "texto",
       "imagen": "pag8-lucas-v2.webp",
-      "texto": "¡Era su pesadilla! Lucas agarró su manta. Si se la echaba encima, la pesadilla quedaría atrapada para siempre pero entonces la vio de cerca. Pesadilla estaba temblando."
+      "texto": "¡Era su pesadilla! Lucas agarró su manta. Si se la echaba encima, la pesadilla quedaría atrapada para siempre pero entonces la vio de cerca. Pesadilla estaba temblando.",
+      "tiempos": [201.6, 202.0, 202.2, 203.62, 204.34, 204.84, 205.0, 206.0, 206.18, 206.36, 206.52, 206.8, 207.64, 207.74, 208.28, 208.78, 209.32, 209.64, 210.6, 210.9, 211.56, 212.0, 212.16, 212.42, 213.54, 214.38, 214.84]
     },
     {
       "n": 16,
       "tipo": "texto",
       "imagen": "pag8-lucas-v2.webp",
-      "texto": "Igual que él. —No me atrapes —dijo con una vocecita—. Solo rujo para que alguien venga. Aquí el silencio es muy grande. Lucas bajó la manta."
+      "texto": "Igual que él. —No me atrapes —dijo con una vocecita—. Solo rujo para que alguien venga. Aquí el silencio es muy grande. Lucas bajó la manta.",
+      "tiempos": [216.32, 216.66, 216.94, 217.58, 217.9, 218.24, 219.42, 219.58, 219.86, 220.1, 221.3, 221.56, 221.98, 222.24, 222.42, 222.72, 223.78, 224.06, 224.32, 224.78, 225.06, 225.38, 226.92, 227.26, 227.8, 228.0]
     },
     {
       "n": 17,
       "tipo": "texto",
       "imagen": "pag9-lucas-v2.webp",
-      "texto": "—Yo también tengo miedo, pero es de ti. —dijo Lucas— —¿De mí? ¡Pero si soy pequeñito! Lucas le echó la manta por encima. —Para que no pases miedo."
+      "texto": "—Yo también tengo miedo, pero es de ti. —dijo Lucas— —¿De mí? ¡Pero si soy pequeñito! Lucas le echó la manta por encima. —Para que no pases miedo.",
+      "tiempos": [229.18, 229.34, 229.74, 230.04, 230.78, 230.98, 231.2, 231.36, 232.14, 232.3, 233.44, 233.62, 234.4, 234.72, 235.04, 235.22, 236.76, 237.26, 237.68, 237.84, 238.02, 238.28, 238.54, 239.56, 239.7, 239.9, 240.12, 240.44]
     },
     {
       "n": 18,
       "tipo": "texto",
       "imagen": "pag9-lucas-v2.webp",
-      "texto": "Pesadilla, agradecida, le dio un frasco con una luciérnaga. —Brilla poquito, pero quita el miedo a la oscuridad. —Gracias. La guardaré en mi mesilla —dijo Lucas."
+      "texto": "Pesadilla, agradecida, le dio un frasco con una luciérnaga. —Brilla poquito, pero quita el miedo a la oscuridad. —Gracias. La guardaré en mi mesilla —dijo Lucas.",
+      "tiempos": [242.2, 242.84, 243.88, 244.06, 244.16, 244.5, 244.84, 245.06, 245.3, 245.98, 247.04, 248.02, 248.14, 248.42, 248.7, 248.88, 249.02, 249.18, 250.52, 251.48, 251.66, 252.06, 252.18, 252.32, 253.4, 253.54]
     },
     {
       "n": 19,
       "tipo": "texto",
       "imagen": "pag10-lucas-v2.webp",
-      "texto": "Nuez y pesadilla acompañaron a Lucas hasta la puerta de su armario. Lucas cruzó el armario, dejó la luciérnaga en la mesilla, apagó la luz y se metió tranquilo en la cama."
+      "texto": "Nuez y pesadilla acompañaron a Lucas hasta la puerta de su armario. Lucas cruzó el armario, dejó la luciérnaga en la mesilla, apagó la luz y se metió tranquilo en la cama.",
+      "tiempos": [255.16, 255.42, 255.54, 256.2, 257.06, 257.24, 257.48, 257.8, 258.02, 258.26, 258.44, 258.58, 259.8, 260.18, 260.58, 260.8, 261.8, 262.02, 262.18, 262.74, 262.88, 263.04, 264.04, 264.32, 264.52, 264.78, 265.1, 265.38, 265.66, 266.3, 266.46, 266.66]
     },
     {
       "n": 20,
       "tipo": "texto",
       "imagen": "pag10-lucas-v2.webp",
-      "texto": "La oscuridad ya no daba miedo: era una jungla llena de amigos nuevos. —Buenas noches, Pesadilla —susurró. —Buenas noches, Lucas —contestó el armario."
+      "texto": "La oscuridad ya no daba miedo: era una jungla llena de amigos nuevos. —Buenas noches, Pesadilla —susurró. —Buenas noches, Lucas —contestó el armario.",
+      "tiempos": [267.62, 267.8, 268.5, 268.86, 269.06, 269.24, 270.18, 270.36, 270.66, 271.2, 271.58, 271.84, 272.16, 273.51, 274.06, 274.7, 275.88, 277.14, 277.54, 278.42, 279.56, 279.92, 280.1]
     },
     {
       "n": 21,
