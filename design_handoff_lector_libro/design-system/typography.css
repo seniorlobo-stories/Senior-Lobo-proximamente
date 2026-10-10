@@ -1,0 +1,17 @@
+/* =========================================================================
+   Typography — Línea Tactile Design System
+   Three roles. Display sets in caps with tracking for labels; body runs in
+   natural case for prose. Mick Caster is the heavy editorial voice for
+   section heads and tabs. Cormorant Upright also carries machine values.
+   ========================================================================= */
+:root{
+  --font-disp:'Wakerobin Compressed','Garamond',serif;   /* display / labels (UPPERCASE + tracking; self-host Wakerobin, serif fallback) */
+  --font-body:'Cormorant Upright','Garamond',serif;   /* body prose — upright storybook serif */
+  --font-slab:'Mick Caster',serif;  /* heavy slab — section heads, tabs (self-host Mick Caster; serif fallback) */
+  --font-mono:'Cormorant Upright','Garamond',serif;     /* values, tokens, captions, code — shares the body serif */
+
+  /* tracking presets used across labels */
+  --track-label:.13em;   /* panel labels */
+  --track-caps:.06em;    /* display caps in buttons / nav */
+  --track-mono:.05em;    /* mono captions */
+}

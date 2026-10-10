@@ -1,0 +1,130 @@
+/* ── Lector de libro / audiolibro ──
+   <dialog class="lector"> a pantalla completa que monta js/lector.js al pulsar un
+   botón [data-lector]. Móvil vertical de referencia (393×852), sin scroll.
+   Capas: ilustración 0 → controles + panel 5 → píldora 10 → nav-bar 20 → hamburguesa 30. */
+.lector {
+  --lr-kraft:    color-mix(in srgb, var(--castano) 22%, var(--pergamino));
+  --lr-ink-soft: color-mix(in srgb, var(--tinta) 65%, var(--niebla));
+  --lr-text:     #38362c;
+  --lr-sh:       rgba(59,47,23,.18);
+  --lr-sh-play:  rgba(59,47,23,.22);
+  --lr-dots:     radial-gradient(rgba(59,47,23,.05) 1px, transparent 1px);
+  position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none;
+  margin: 0; padding: 0; border: 0; overflow: hidden; overscroll-behavior: none;
+  background: var(--paper-piece); color: var(--ink); font-family: var(--font-body);
+}
+:root[data-theme="noche"] .lector {
+  --lr-kraft:    #1b2744;
+  --lr-ink-soft: color-mix(in srgb, var(--tinta) 60%, var(--niebla));
+  --lr-text:     var(--ink);
+  --lr-sh:       rgba(240,230,200,.35);
+  --lr-sh-play:  rgba(240,230,200,.35);
+  --lr-dots:     radial-gradient(rgba(240,230,200,.05) 1px, transparent 1px);
+}
+.lector::backdrop { background: var(--paper-piece); }
+html:has(.lector[open]) { overflow: hidden; overscroll-behavior: none; }
+.lector, .lector * { scrollbar-width: none; }
+.lector ::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+/* botones-pieza de papel: fondo crema + sombra dura, bajan 1px al pulsar */
+.lr-btn { position: absolute; display: grid; place-items: center; padding: 0; border: 0; cursor: pointer;
+  background: var(--paper-piece); box-shadow: 3px 4px 0 var(--lr-sh); color: var(--line);
+  -webkit-tap-highlight-color: transparent; }
+.lr-btn:active { transform: translateY(1px); }
+.lr-btn svg { width: 22px; height: 22px; fill: none; stroke: var(--line); stroke-width: 1.9;
+  stroke-linecap: round; stroke-linejoin: round; filter: url(#rough); }
+
+/* 1 · Ilustración */
+.lr-ilus { position: absolute; z-index: 0; top: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 800px; max-height: 100%; aspect-ratio: 800 / 1200; overflow: hidden;
+  background: repeating-linear-gradient(45deg, var(--lr-kraft) 0 12px, var(--paper-piece) 12px 24px); }
+.lr-ilus img { position: absolute; inset: 0; width: 100%; height: 100%; display: none;
+  object-fit: contain; object-position: center top; }
+.lr-ilus img.on { display: block; }
+
+/* 2 · Píldora de página */
+.lr-pill { position: absolute; z-index: 10; left: 14px; top: 21px; padding: 6px 11px; border-radius: 26px;
+  background: var(--paper-piece); box-shadow: 3px 4px 0 var(--lr-sh);
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; line-height: 1.2; color: var(--line); }
+.lector[data-tipo="portada"] .lr-pill { visibility: hidden; }
+
+/* 3 · Hamburguesa */
+.lr-burger { z-index: 30; right: 14px; top: 16px; width: 37px; height: 37px; border-radius: 9px; }
+.lr-burger span { position: relative; display: block; width: 18px; height: 13px; }
+.lr-burger i { position: absolute; left: 0; width: 18px; height: 2px; border-radius: 2px; background: var(--line);
+  transition: transform .2s ease, opacity .15s ease; }
+.lr-burger i:nth-child(1) { top: 0; }
+.lr-burger i:nth-child(2) { top: 5.5px; }
+.lr-burger i:nth-child(3) { top: 11px; }
+.lector.nav-open .lr-burger i:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+.lector.nav-open .lr-burger i:nth-child(2) { opacity: 0; }
+.lector.nav-open .lr-burger i:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+
+/* 4 · Nav-bar desplegable */
+.lr-nav { position: absolute; z-index: 20; top: 0; left: 0; right: 0; min-height: 44px;
+  padding: 14px 132px 14px 22px; display: flex; flex-direction: column; justify-content: center; gap: 2px;
+  background-color: var(--lr-kraft); background-image: var(--lr-dots); background-size: 5px 5px;
+  box-shadow: 0 4px 0 var(--lr-sh);
+  transform: translateY(-110%); transition: transform .28s cubic-bezier(.5,1.2,.5,1); }
+.lector.nav-open .lr-nav { transform: translateY(0); }
+.lr-nav h2 { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .07em; font-weight: 600;
+  font-size: 15.5px; line-height: 1.35; color: var(--line); text-wrap: balance; }
+.lr-etiqueta { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .04em; color: var(--lr-ink-soft); }
+.lr-home { right: 62px; top: 16px; width: 37px; height: 37px; border-radius: 9px; }
+
+/* 5 · Zona inferior: controles + panel de texto */
+.lr-bottom { position: absolute; z-index: 5; left: 0; right: 0; bottom: 0;
+  top: min(150vw, 1200px, calc(100dvh - 190px)); display: flex; flex-direction: column; gap: 14px; }
+.lr-ctrls { display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 0 18px; margin-top: -62px; }
+.lr-ctrls .lr-btn { position: relative; }
+.lr-prev, .lr-next { width: 42px; height: 37px; border-radius: 11px; }
+.lr-prev svg, .lr-next svg { width: 16px; height: 16px; stroke-width: 2.2; }
+.lr-prev:disabled, .lr-next:disabled { opacity: .35; cursor: default; }
+.lr-prev:disabled:active, .lr-next:disabled:active { transform: none; }
+.lr-play { flex: none; width: 48px; height: 48px; border-radius: 50%;
+  background: var(--amber); box-shadow: 3px 4px 0 var(--lr-sh-play); }
+.lr-play svg { fill: #38362c; stroke: none; }
+.lr-play .ic-play { width: 19px; height: 19px; }
+/* narración aún no disponible: play apagado + etiqueta «No disponible» debajo */
+.lr-play-wrap { position: relative; display: flex; }
+.lr-play:disabled { opacity: .45; cursor: default; }
+.lr-play:disabled:active { transform: none; }
+.lr-play-tag { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 7px;
+  padding: 3px 9px; border-radius: 26px; background: var(--paper-piece); box-shadow: 2px 3px 0 var(--lr-sh);
+  font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .14em; white-space: nowrap;
+  font-size: 10.5px; font-weight: 600; line-height: 1.2; color: var(--lr-ink-soft); }
+
+.lr-panel { flex: 1; min-height: 0; display: flex; padding: 20px 22px max(34px, calc(env(safe-area-inset-bottom) + 14px));
+  background-color: var(--lr-kraft); background-image: var(--lr-dots); background-size: 5px 5px;
+  box-shadow: 0 -4px 0 var(--lr-sh); }
+.lr-scroll { position: relative; flex: 1; min-width: 0; min-height: 0; overflow: auto; }
+.lr-scroll > * { display: none; }
+.lector[data-tipo="portada"] .lr-cover,
+.lector[data-tipo="fin"] .lr-fin { display: flex; }
+.lector[data-tipo="texto"] .lr-texto { display: block; }
+
+/* 6 · Contenido según tipo de página */
+.lr-cover { flex-direction: column; gap: 4px; }
+.lr-cover h1 { font-family: var(--font-slab); font-weight: 400; font-size: 29px; line-height: 1.1; color: var(--line); text-wrap: balance; }
+.lr-sub { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .16em; font-size: 13px; color: var(--lr-ink-soft); }
+.lr-meta { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.lr-prota { font-family: var(--font-body); font-size: 19px; color: var(--ink); }
+.lr-npags { font-family: var(--font-mono); font-size: 13px; letter-spacing: .04em; color: var(--lr-ink-soft); }
+
+.lr-texto { font-family: var(--font-body); font-size: 19px; font-weight: 700; line-height: 1.55;
+  color: var(--lr-text); text-align: left; text-wrap: pretty; }
+.lr-texto span { transition: color .18s ease; }
+.lr-texto span.leida { color: var(--amber); }
+
+.lr-fin { flex-direction: column; align-items: center; }
+.lr-fin h2 { margin-top: 6px; font-family: var(--font-slab); font-weight: 400; font-size: 34px; letter-spacing: .06em; color: var(--line); }
+.lr-reinicio { margin-top: 8px; padding: 9px 18px; border: 0; border-radius: 9px; cursor: pointer;
+  background: var(--paper-piece); box-shadow: 3px 4px 0 var(--lr-sh);
+  font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .08em; font-size: 14px; font-weight: 600; color: var(--line); }
+.lr-reinicio:active { transform: translate(2px,3px); }
+
+/* pantallas anchas (el diseño es para móvil): controles y texto al ancho visible de la
+   ilustración 2:3, en vez de a toda la pantalla. En móvil gana 100vw y no cambia nada. */
+.lr-ctrls, .lr-scroll { width: 100%; max-width: min(100vw, 800px, 66.667dvh); margin-inline: auto; }
+.lr-scroll { max-width: calc(min(100vw, 800px, 66.667dvh) - 44px); }

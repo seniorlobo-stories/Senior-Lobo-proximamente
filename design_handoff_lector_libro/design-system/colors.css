@@ -1,0 +1,95 @@
+/* =========================================================================
+   Colors — Línea Tactile Design System
+   A deliberately tiny palette: 5 pigments + ink, mixed via color-mix() into
+   every semantic token. Nothing is invented downstream — surfaces, lines and
+   states are all derived from these six so the "hand-set on parchment" mood
+   holds together. A full NOCHE (night) theme re-points the same tokens.
+   ========================================================================= */
+:root{
+  /* === Pigments — the only six raw colors === */
+  --bosque:#4f7860;       /* Bosque · principal (forest green) */
+  --amber:#c9a035;        /* Ámbar · warm accent */
+  --pergamino:#f5edd8;    /* Pergamino · paper ground */
+  --castano:#8c5f3a;      /* Castaño · dark warm accent */
+  --niebla:#9ba89c;       /* Niebla · neutral */
+  --tinta:#38362c;        /* Tinta · primary text */
+  --crema:#f0e6c8;        /* Crema · highlight (subrayado de <strong>) */
+
+  /* === Surfaces (all derived) === */
+  --paper:var(--pergamino);
+  --paper-2:color-mix(in srgb, var(--niebla) 14%, var(--pergamino));
+  --kraft:color-mix(in srgb, var(--castano) 22%, var(--pergamino));   /* page ground, kraft tone */
+  --paper-piece:color-mix(in srgb, #ffffff 32%, var(--pergamino));    /* torn paper chip, light cream */
+  --fill:var(--pergamino);
+  --fill-2:color-mix(in srgb, var(--niebla) 22%, var(--pergamino));
+
+  /* === Lines & interactive accent === */
+  --line:var(--tinta);                                                /* default hand-drawn stroke — inked */
+  --teal:var(--tinta);                                               /* interactive / active accent — inked */
+  --teal-deep:color-mix(in srgb, var(--tinta) 80%, #000);
+  --teal-mid:var(--tinta);
+  --teal-tint:color-mix(in srgb, var(--tinta) 30%, var(--pergamino));
+  --teal-pale:color-mix(in srgb, var(--tinta) 14%, var(--pergamino));
+
+  /* === Ink (text) === */
+  --ink:var(--tinta);
+  --ink-soft:color-mix(in srgb, var(--tinta) 65%, var(--niebla));
+  --ink-faint:var(--niebla);
+
+  /* === Semantic states === */
+  --error:var(--castano);
+  --error-tint:color-mix(in srgb, var(--castano) 20%, var(--pergamino));
+  --warn:var(--amber);
+  --brown:var(--castano);
+  --gray:var(--niebla);
+  --on-dark:var(--pergamino);   /* text/icons on filled (dark) chips */
+}
+
+/* =========================================================================
+   NOCHE (night) theme — toggled by the Día/Noche switch which sets
+   html[data-theme="noche"]. Re-points every semantic token; borders go cream.
+   Palette: Medianoche #1B2744 · Noche #253560 · Crema #F0E6C8 ·
+            Bruma #6B7A9A · Ámbar #C9A035
+   ========================================================================= */
+:root[data-theme="noche"]{
+  --bosque:#253560;        /* → blue surface */
+  --amber:#c9a035;
+  --pergamino:#1b2744;     /* → midnight ground */
+  --castano:#c98a5a;       /* warm accent / errors */
+  --niebla:#6b7a9a;        /* bruma */
+  --tinta:#f0e6c8;         /* crema → text */
+  --crema:#f0e6c8;         /* crema · highlight */
+
+  --paper:#253560;
+  --paper-2:color-mix(in srgb, var(--niebla) 16%, #253560);
+  --kraft:#1b2744;
+  --paper-piece:#253560;
+  --fill:#253560;
+  --fill-2:color-mix(in srgb, var(--niebla) 22%, #253560);
+
+  --line:#f0e6c8;          /* cream strokes on dark paper */
+
+  --teal:#c9a035;          /* interactive → amber */
+  --teal-deep:color-mix(in srgb, var(--amber) 70%, #1b2744);
+  --teal-mid:#c9a035;
+  --teal-tint:color-mix(in srgb, var(--amber) 32%, #253560);
+  --teal-pale:color-mix(in srgb, var(--amber) 18%, #253560);
+
+  --ink:#f0e6c8;
+  --ink-soft:color-mix(in srgb, var(--tinta) 60%, var(--niebla));
+  --ink-faint:#6b7a9a;
+
+  --error:#c98a5a;
+  --error-tint:color-mix(in srgb, var(--castano) 24%, #253560);
+  --warn:#c9a035;
+  --brown:#c98a5a;
+  --gray:#6b7a9a;
+  --on-dark:#1b2744;       /* text/icons on amber fills */
+
+  /* sombras en modo noche: duras (sin blur) y en color pergamino al 50% */
+  --sh-drop:rgba(245,237,216,.5);
+}
+
+/* smooth cross-fade between day & night */
+body{transition:background-color .45s ease, color .45s ease}
+.bg{transition:background-color .4s ease, border-color .4s ease}

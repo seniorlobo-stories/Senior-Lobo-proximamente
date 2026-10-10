@@ -5,7 +5,7 @@
   var switches = document.querySelectorAll('.dn-switch');
   var root = document.documentElement;
 
-  var tornEls = document.querySelectorAll('.wz-topbar > .bg, .wz-menu > .bg, .topband, .hero-tear, .age-card > .bg');
+  var tornEls = document.querySelectorAll('.wz-topbar > .bg, .wz-menu > .bg, .topband, .hero-tear, .age-card > .bg, .lib-frame > .bg, .lib-photo-card > .bg');
 
   // El bug de repintado de filter:url(#torn-paper/-up/-line) al cambiar
   // background-color por variable CSS solo se da en motores WebKit
@@ -199,6 +199,65 @@
   }, { threshold: 0.3 });
 
   items.forEach(function (el) { observer.observe(el); });
+})();
+
+// ── Biblioteca: carrusel de historias destacadas ──
+// Flechas en bucle (al llegar al final vuelven al principio), puntos
+// clicables con la posición y fundido de entrada.
+(function () {
+  document.querySelectorAll('.bib-carousel').forEach(function (carousel) {
+    var track = carousel.querySelector('.bib-track');
+    var prev = carousel.querySelector('.bib-prev');
+    var next = carousel.querySelector('.bib-next');
+    var dotsBox = carousel.querySelector('.bib-dots');
+    var items = Array.prototype.slice.call(track.children);
+
+    function step() {
+      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      return items[0].getBoundingClientRect().width + gap;
+    }
+    function maxScroll() { return track.scrollWidth - track.clientWidth; }
+    function pages() { return Math.round(maxScroll() / step()) + 1; }
+    function current() { return Math.round(track.scrollLeft / step()); }
+    function go(k) {
+      var n = pages();
+      k = (k + n) % n;
+      track.scrollTo({ left: Math.min(k * step(), maxScroll()) });
+    }
+
+    function update() {
+      var scrollable = maxScroll() > 2;
+      prev.hidden = next.hidden = !scrollable;
+      var n = scrollable ? pages() : 0;
+      if (dotsBox.children.length !== n) {
+        dotsBox.innerHTML = '';
+        for (var k = 0; k < n; k++) {
+          var dot = document.createElement('b');
+          dot.addEventListener('click', go.bind(null, k));
+          dotsBox.appendChild(dot);
+        }
+      }
+      var cur = current();
+      Array.prototype.forEach.call(dotsBox.children, function (d, k) { d.classList.toggle('on', k === cur); });
+    }
+
+    prev.addEventListener('click', function () { go(current() - 1); });
+    next.addEventListener('click', function () { go(current() + 1); });
+    track.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+
+    if (!('IntersectionObserver' in window)) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    track.classList.add('fade-ready');
+    items.forEach(function (el, k) { el.style.setProperty('--i', k); });
+    var observer = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (e) { return e.isIntersecting; })) return;
+      items.forEach(function (el) { el.classList.add('shown'); });
+      observer.disconnect();
+    }, { threshold: 0.25 });
+    observer.observe(track);
+  });
 })();
 
 // ── Títulos de capítulo: escritura a máquina al entrar en pantalla ──

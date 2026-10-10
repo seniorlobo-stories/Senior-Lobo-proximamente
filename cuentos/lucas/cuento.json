@@ -1,0 +1,138 @@
+{
+  "titulo": "Buenas noches Lucas, buenas noches Pesadilla",
+  "protagonista": "Lucas",
+  "edad": 8,
+  "subtitulo": "Aventuras · Lectura intermedia",
+  "paginas": [
+    {
+      "n": 0,
+      "tipo": "portada",
+      "imagen": "portada-lucas.webp"
+    },
+    {
+      "n": 1,
+      "tipo": "texto",
+      "imagen": "pag1-lucas-v2.webp",
+      "texto": "Otra noche más sin dormir. Cada vez que Lucas escuchaba un ruido, se cubría con la manta hasta la nariz. —Son solo ruidos ¿verdad? —le dijo a su manta gris—."
+    },
+    {
+      "n": 2,
+      "tipo": "texto",
+      "imagen": "pag1-lucas-v2.webp",
+      "texto": "La manta no contestó. Las mantas son malísimas dando ánimos. Llevaba siete noches durmiendo a pedacitos, con la lamparita encendida."
+    },
+    {
+      "n": 3,
+      "tipo": "texto",
+      "imagen": "pag2-lucas-v2.webp",
+      "texto": "Pero no era la única luz... esa noche, su curiosidad pudo con el miedo y decidió que era el momento para descubrir qué había dentro del armario."
+    },
+    {
+      "n": 4,
+      "tipo": "texto",
+      "imagen": "pag2-lucas-v2.webp",
+      "texto": "Con más miedo que coraje cogió su linterna, cruzó la habitación de puntillas sin hacer mucho ruido, respiró profundo... - uno, dos... dos y medio.... ¡tres! - y cruzó el armario."
+    },
+    {
+      "n": 5,
+      "tipo": "texto",
+      "imagen": "pag3-lucas-v2.webp",
+      "texto": "Dentro no había abrigos. ¡Había una jungla! Aunque tenía la linterna estaba muy oscuro y apenas veía. Dio un paso … ¡chof!, metió los pies en un charco."
+    },
+    {
+      "n": 6,
+      "tipo": "texto",
+      "imagen": "pag3-lucas-v2.webp",
+      "texto": "Más calmado, miró a su alrededor: había luciérnagas, flores y un caminito de setas encendidas. —Vaya —susurró aliviado—. La oscuridad también tiene cosas dentro."
+    },
+    {
+      "n": 7,
+      "tipo": "texto",
+      "imagen": "pag4-lucas-v2.webp",
+      "texto": "De pronto una voz —Hola—dijo— Soy Nuez. ¡Era una tortuga con el caparazón brillante! —¡Hola Busco a mi pesadilla —dijo Lucas— ¿Me ayudas a encontrarla?"
+    },
+    {
+      "n": 8,
+      "tipo": "texto",
+      "imagen": "pag4-lucas-v2.webp",
+      "texto": "-¿Pesadilla? Vive al otro lado del río, cruzando ese puente de madera- -Gracias-dijo Lucas- y sin pensarlo, se dirigió hacia el puente solo."
+    },
+    {
+      "n": 9,
+      "tipo": "texto",
+      "imagen": "pag5-lucas-v2.webp",
+      "texto": "El río era muy oscuro y el puente no paraba de balancearse. —Puedo solo —dijo Lucas, aunque nadie le había preguntado. A mitad del puente, una tabla se partío."
+    },
+    {
+      "n": 10,
+      "tipo": "texto",
+      "imagen": "pag5-lucas-v2.webp",
+      "texto": "Al agarrarse soltó la linterna y… ¡plop! cayó al fondo del río. Estaba a oscuras. Su corazón latía tan fuerte que le palpitaban las orejas, pero volver no era una opción."
+    },
+    {
+      "n": 11,
+      "tipo": "texto",
+      "imagen": "pag6-lucas-v2.webp",
+      "texto": "Respiró hondo, buscó la tabla con el pie y avanzó. Despacito. Temblando. Un paso. Otro paso. Al tercer paso, notó una luz verde. Nuez lo había alcanzado."
+    },
+    {
+      "n": 12,
+      "tipo": "texto",
+      "imagen": "pag6-lucas-v2.webp",
+      "texto": "—Pisa donde brille mi musgo —dijo. Esta vez Lucas no dijo «puedo solo». Puso la mano en el caparazón y cruzaron juntos. El corazón le latía más despacio."
+    },
+    {
+      "n": 13,
+      "tipo": "texto",
+      "imagen": "pag7-lucas-v2.webp",
+      "texto": "Llegaron a un bosque. Por los troncos trepaban sombras y rugían voces —¡GROAAARG!- Lucas se escondió. Le temblaban hasta las pestañas."
+    },
+    {
+      "n": 14,
+      "tipo": "texto",
+      "imagen": "pag7-lucas-v2.webp",
+      "texto": "—Las sombras grandes salen de cosas pequeñas —susurró Nuez—. Mira bien. Lucas abrió un ojo y vio un pequeño bulto peludo con dos enormes orejas."
+    },
+    {
+      "n": 15,
+      "tipo": "texto",
+      "imagen": "pag8-lucas-v2.webp",
+      "texto": "¡Era su pesadilla! Lucas agarró su manta. Si se la echaba encima, la pesadilla quedaría atrapada para siempre pero entonces la vio de cerca. Pesadilla estaba temblando."
+    },
+    {
+      "n": 16,
+      "tipo": "texto",
+      "imagen": "pag8-lucas-v2.webp",
+      "texto": "Igual que él. —No me atrapes —dijo con una vocecita—. Solo rujo para que alguien venga. Aquí el silencio es muy grande. Lucas bajó la manta."
+    },
+    {
+      "n": 17,
+      "tipo": "texto",
+      "imagen": "pag9-lucas-v2.webp",
+      "texto": "—Yo también tengo miedo, pero es de ti. —dijo Lucas— —¿De mí? ¡Pero si soy pequeñito! Lucas le echó la manta por encima. —Para que no pases miedo."
+    },
+    {
+      "n": 18,
+      "tipo": "texto",
+      "imagen": "pag9-lucas-v2.webp",
+      "texto": "Pesadilla, agradecida, le dio un frasco con una luciérnaga. —Brilla poquito, pero quita el miedo a la oscuridad. —Gracias. La guardaré en mi mesilla —dijo Lucas."
+    },
+    {
+      "n": 19,
+      "tipo": "texto",
+      "imagen": "pag10-lucas-v2.webp",
+      "texto": "Nuez y pesadilla acompañaron a Lucas hasta la puerta de su armario. Lucas cruzó el armario, dejó la luciérnaga en la mesilla, apagó la luz y se metió tranquilo en la cama."
+    },
+    {
+      "n": 20,
+      "tipo": "texto",
+      "imagen": "pag10-lucas-v2.webp",
+      "texto": "La oscuridad ya no daba miedo: era una jungla llena de amigos nuevos. —Buenas noches, Pesadilla —susurró. —Buenas noches, Lucas —contestó el armario."
+    },
+    {
+      "n": 21,
+      "tipo": "fin",
+      "imagen": "pag10-lucas-v2.webp"
+    }
+  ]
+}

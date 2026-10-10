@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/senior-lobo-design-system-9819669a-71b1-41c2-b24e-485c1a3c5cb9/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/senior-lobo-design-system-9819669a-71b1-41c2-b24e-485c1a3c5cb9/tokens/colors.css">
+<link rel="stylesheet" href="_ds/senior-lobo-design-system-9819669a-71b1-41c2-b24e-485c1a3c5cb9/tokens/typography.css">
+<link rel="stylesheet" href="_ds/senior-lobo-design-system-9819669a-71b1-41c2-b24e-485c1a3c5cb9/tokens/surfaces.css">
+<link rel="stylesheet" href="_ds/senior-lobo-design-system-9819669a-71b1-41c2-b24e-485c1a3c5cb9/base/base.css">
+<link rel="stylesheet" href="_ds/senior-lobo-design-system-9819669a-71b1-41c2-b24e-485c1a3c5cb9/components/components.css">
+<link rel="stylesheet" href="_ds/senior-lobo-design-system-9819669a-71b1-41c2-b24e-485c1a3c5cb9/styles.css">
+<script src="_ds/senior-lobo-design-system-9819669a-71b1-41c2-b24e-485c1a3c5cb9/_ds_bundle.js"></script>
+<script src="_ds/senior-lobo-design-system-9819669a-71b1-41c2-b24e-485c1a3c5cb9/assets/linea-runtime.js"></script>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none}
+*{scrollbar-width:none}
+*::-webkit-scrollbar{display:none;width:0;height:0}
+a{color:var(--bosque);text-decoration-thickness:1.5px;text-underline-offset:3px}
+a:hover{color:var(--line)}
+</style>
+</helmet>
+
+<div data-screen-label="Lector y audiolibro" style="position:relative;width:100%;height:100dvh;box-sizing:border-box;overflow:hidden;background:var(--paper-piece);font-family:var(--font-body);color:var(--ink)">
+
+  <div style="position:absolute;z-index:20;top:0;left:0;right:0;padding:14px 132px 14px 22px;min-height:44px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:var(--kraft);background-image:radial-gradient(rgba(59,47,23,.05) 1px,transparent 1px);background-size:5px 5px;box-shadow:0 4px 0 rgba(59,47,23,.18);transform:translateY({{ navY }});transition:transform .28s cubic-bezier(.5,1.2,.5,1)">
+    <h1 style="margin:0;text-align:left;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.07em;font-weight:600;font-size:15.5px;line-height:1.35;color:var(--line);text-wrap:balance">{{ titulo }}</h1>
+    <span style="font-family:var(--font-mono);font-size:12.5px;letter-spacing:.04em;color:var(--ink-soft)">{{ rEtiquetaPag }}</span>
+    <button aria-label="Inicio" style="position:absolute;z-index:0;right:62px;top:16px;width:37px;height:37px;border:0;background:none;cursor:pointer;display:grid;place-items:center;padding:0;border-radius:9px" style-active="transform:translateY(1px)">
+      <i class="bg" style="border-radius:9px;background:var(--paper-piece);box-shadow:3px 4px 0 rgba(59,47,23,.18)"></i>
+      <svg viewBox="0 0 24 24" style="position:relative;z-index:1;width:22px;height:22px;fill:none;stroke:var(--line);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)"><path d="M3.5 11L12 4l8.5 7"></path><path d="M6 9.5V20h4.5v-5.5h3V20H18V9.5"></path></svg>
+    </button>
+  </div>
+
+  <div style="position:absolute;z-index:10;left:14px;top:21px;display:flex;align-items:center;padding:6px 11px;border-radius:26px;visibility:{{ rPagVis }}">
+    <i class="bg" style="border-radius:26px;background:var(--paper-piece);box-shadow:3px 4px 0 rgba(59,47,23,.18)"></i>
+    <span style="position:relative;z-index:1;font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;color:var(--line)">{{ rPagCorta }}</span>
+  </div>
+
+  <button onClick="{{ toggleNav }}" aria-label="Menú" aria-expanded="{{ navOpen }}" style="position:absolute;z-index:30;right:14px;top:16px;width:37px;height:37px;border:0;background:none;cursor:pointer;display:grid;place-items:center;padding:0;border-radius:9px" style-active="transform:translateY(1px)">
+    <i class="bg" style="border-radius:9px;background:var(--paper-piece);box-shadow:3px 4px 0 rgba(59,47,23,.18)"></i>
+    <span style="position:relative;z-index:1;width:18px;height:13px;display:block">
+      <span style="position:absolute;left:0;top:0;width:18px;height:2px;border-radius:2px;background:var(--line);transition:transform .2s ease;transform:{{ burgTop }}"></span>
+      <span style="position:absolute;left:0;top:5.5px;width:18px;height:2px;border-radius:2px;background:var(--line);transition:opacity .15s ease;opacity:{{ burgMidOp }}"></span>
+      <span style="position:absolute;left:0;top:11px;width:18px;height:2px;border-radius:2px;background:var(--line);transition:transform .2s ease;transform:{{ burgBot }}"></span>
+    </span>
+  </button>
+
+  <div style="position:absolute;z-index:0;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:800px;max-height:100%;aspect-ratio:800 / 1200;overflow:hidden">
+    <div aria-hidden="true" style="position:absolute;z-index:0;inset:0;background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--castano) 22%,var(--paper-piece)) 0 12px,var(--paper-piece) 12px 24px)"></div>
+    <img src="assets/portada-lucas-v2.webp" alt="Portada: Buenas noches Lucas, buenas noches Pesadilla" style="position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:{{ rPortadaImg }}">
+    <img src="assets/pag1-lucas-v2.webp" alt="Ilustración de la página" style="position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:{{ rImg1 }}">
+    <img src="assets/pag2-lucas-v2.webp" alt="Ilustración de la página" style="position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:{{ rImg2 }}">
+    <img src="assets/pag3-lucas-v2.webp" alt="Ilustración de la página" style="position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:{{ rImg3 }}">
+    <img src="assets/pag4-lucas-v2.webp" alt="Ilustración de la página" style="position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:{{ rImg4 }}">
+    <img src="assets/pag5-lucas-v2.webp" alt="Ilustración de la página" style="position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:{{ rImg5 }}">
+    <img src="assets/pag6-lucas-v2.webp" alt="Ilustración de la página" style="position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:{{ rImg6 }}">
+    <img src="assets/pag7-lucas-v2.webp" alt="Ilustración de la página" style="position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:{{ rImg7 }}">
+    <img src="assets/pag8-lucas-v2.webp" alt="Ilustración de la página" style="position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:{{ rImg8 }}">
+    <img src="assets/pag9-lucas-v2.webp" alt="Ilustración de la página" style="position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:{{ rImg9 }}">
+    <img src="assets/pag10-lucas-v2.webp" alt="Ilustración de la página" style="position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:{{ rImg10 }}">
+  </div>
+
+  <div style="position:absolute;z-index:5;left:0;right:0;bottom:0;top:min(150vw, 1200px, calc(100dvh - 190px));display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 18px;margin-top:-62px">
+      <button onClick="{{ rPrev }}" aria-label="Página anterior" style="position:relative;z-index:0;width:42px;height:37px;border:0;background:none;cursor:pointer;display:grid;place-items:center;padding:0;border-radius:11px;opacity:{{ rPrevOp }}" style-active="transform:translateY(1px)">
+        <i class="bg" style="border-radius:11px;background:var(--paper-piece);box-shadow:3px 4px 0 rgba(59,47,23,.18)"></i>
+        <svg viewBox="0 0 24 24" style="position:relative;z-index:1;width:16px;height:16px;fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)"><path d="M15 5l-7 7 7 7"></path></svg>
+      </button>
+      <button onClick="{{ rTogglePlay }}" aria-label="{{ rPlayLabel }}" style="position:relative;z-index:0;flex:none;width:48px;height:48px;border:0;background:none;cursor:pointer;display:grid;place-items:center;padding:0;border-radius:50%" style-active="transform:translateY(1px)">
+        <i class="bg" style="border-radius:50%;background:var(--amber);box-shadow:3px 4px 0 rgba(59,47,23,.22)"></i>
+        <svg viewBox="0 0 24 24" style="position:relative;z-index:1;width:19px;height:19px;fill:var(--tinta);stroke:none;filter:url(#rough);display:{{ rPlayDisp }}"><path d="M8 5.2l11 6.8-11 6.8z"></path></svg>
+        <svg viewBox="0 0 24 24" style="position:relative;z-index:1;width:18px;height:18px;fill:var(--tinta);stroke:none;filter:url(#rough);display:{{ rPauseDisp }}"><rect x="6" y="5" width="4.6" height="14" rx="1.4"></rect><rect x="13.4" y="5" width="4.6" height="14" rx="1.4"></rect></svg>
+      </button>
+      <button onClick="{{ rNext }}" aria-label="Página siguiente" style="position:relative;z-index:0;width:42px;height:37px;border:0;background:none;cursor:pointer;display:grid;place-items:center;padding:0;border-radius:11px;opacity:{{ rNextOp }}" style-active="transform:translateY(1px)">
+        <i class="bg" style="border-radius:11px;background:var(--paper-piece);box-shadow:3px 4px 0 rgba(59,47,23,.18)"></i>
+        <svg viewBox="0 0 24 24" style="position:relative;z-index:1;width:16px;height:16px;fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+
+    <div style="position:relative;z-index:0;flex:1;min-height:0;box-sizing:border-box;padding:20px 22px 34px;display:flex;align-items:stretch;gap:14px;background:var(--kraft);background-image:radial-gradient(rgba(59,47,23,.05) 1px,transparent 1px);background-size:5px 5px;box-shadow:0 -4px 0 rgba(59,47,23,.18)">
+
+
+      <div style="position:relative;z-index:1;flex:1;min-width:0;min-height:0;overflow:auto;scrollbar-width:none">
+        <div style="flex-direction:column;gap:4px;display:{{ rCoverDisp }}">
+          <h2 style="margin:0;font-family:var(--font-slab);font-size:29px;line-height:1.1;color:var(--line);text-wrap:balance">{{ titulo }}</h2>
+          <span style="font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.16em;font-size:13px;color:var(--ink-soft)">Aventuras · Lectura fácil</span>
+          <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+            <span style="font-family:var(--font-body);font-size:19px;color:var(--ink)">{{ protagonista }}</span>
+            <span style="font-family:var(--font-mono);font-size:13px;letter-spacing:.04em;color:var(--ink-soft)">{{ rNumPags }}</span>
+          </div>
+        </div>
+        <p style="margin:0;font-family:var(--font-body);font-style:italic;font-size:20.5px;line-height:1.45;color:var(--ink);text-wrap:pretty;display:{{ rDedicBlock }}">{{ rDedic }}</p>
+        <p style="margin:0;font-family:var(--font-body);font-size:19px;font-weight:700;line-height:1.55;color:var(--ink);text-align:left;text-wrap:pretty;display:{{ rTextoBlock }}">
+          <span style="float:left;font-family:var(--font-slab);font-size:53px;line-height:.82;padding:5px 9px 0 0;color:{{ rCapColor }};transition:color .2s ease;display:{{ rCapDisp }}">{{ rInicial }}</span><sc-for list="{{ rPalabras }}" as="w" hint-placeholder-count="24"><span style="color:{{ w.color }};text-decoration-line:{{ w.deco }};text-decoration-color:var(--amber);text-decoration-thickness:2.5px;text-underline-offset:5px;transition:color .18s ease">{{ w.label }}</span></sc-for>
+        </p>
+        <h2 style="margin:6px 0 0;text-align:center;font-family:var(--font-slab);font-size:34px;letter-spacing:.06em;color:var(--line);display:{{ rFinTxtDisp }}">Fin</h2>
+        <div style="justify-content:center;margin-top:8px;display:{{ rFinBtnDisp }}">
+          <button onClick="{{ rInicio }}" style="position:relative;z-index:0;border:0;background:none;cursor:pointer;padding:9px 18px;font-family:var(--font-disp);text-transform:uppercase;letter-spacing:.08em;font-size:14px;font-weight:600;color:var(--line)" style-active="transform:translate(2px,3px)">
+            <i class="bg" style="border-radius:9px;background:var(--paper-piece);box-shadow:3px 4px 0 rgba(59,47,23,.18)"></i>
+            <span style="position:relative;z-index:1">Volver al principio</span>
+          </button>
+        </div>
+        <div style="flex-direction:column;gap:4px;display:{{ rFinDisp }}">
+          <h2 style="margin:0;font-family:var(--font-slab);font-size:34px;letter-spacing:.06em;color:var(--line)">FIN</h2>
+          <p style="margin:0;font-family:var(--font-body);font-size:19px;line-height:1.4;color:var(--ink-soft);text-wrap:pretty">{{ rFinNota }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:393,&quot;height&quot;:852},&quot;voz&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;femenina&quot;,&quot;masculina&quot;],&quot;default&quot;:&quot;femenina&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;edad&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:8,&quot;min&quot;:4,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  state = { rPag: 0, rSeg: 0, rPlay: false, rVel: 1 };
+
+  pags() {
+    return [
+      { t: "cover" },
+      { t: "texto", img: "assets/pag1-lucas-v2.webp", text: "Otra noche más sin dormir. Cada vez que Lucas escuchaba un ruido, se cubría con la manta hasta la nariz. —Son solo ruidos ¿verdad? —le dijo a su manta gris—." },
+      { t: "texto", img: "assets/pag1-lucas-v2.webp", text: "La manta no contestó. Las mantas son malísimas dando ánimos. Llevaba siete noches durmiendo a pedacitos, con la lamparita encendida." },
+      { t: "texto", img: "assets/pag2-lucas-v2.webp", text: "Pero no era la única luz... esa noche, su curiosidad pudo con el miedo y decidió que era el momento para descubrir qué había dentro del armario." },
+      { t: "texto", img: "assets/pag2-lucas-v2.webp", text: "Con más miedo que coraje cogió su linterna, cruzó la habitación de puntillas sin hacer mucho ruido, respiró profundo... - uno, dos... dos y medio.... ¡tres! - y cruzó el armario." },
+      { t: "texto", img: "assets/pag3-lucas-v2.webp", text: "Dentro no había abrigos. ¡Había una jungla! Aunque tenía la linterna estaba muy oscuro y apenas veía. Dio un paso … ¡chof!, metió los pies en un charco." },
+      { t: "texto", img: "assets/pag3-lucas-v2.webp", text: "Más calmado, miró a su alrededor: había luciérnagas, flores y un caminito de setas encendidas. —Vaya —susurró aliviado—. La oscuridad también tiene cosas dentro." },
+      { t: "texto", img: "assets/pag4-lucas-v2.webp", text: "De pronto una voz —Hola—dijo— Soy Nuez. ¡Era una tortuga con el caparazón brillante! —¡Hola Busco a mi pesadilla —dijo Lucas— ¿Me ayudas a encontrarla?" },
+      { t: "texto", img: "assets/pag4-lucas-v2.webp", text: "-¿Pesadilla? Vive al otro lado del río, cruzando ese puente de madera- -Gracias-dijo Lucas- y sin pensarlo, se dirigió hacia el puente solo." },
+      { t: "texto", img: "assets/pag5-lucas-v2.webp", text: "El río era muy oscuro y el puente no paraba de balancearse. —Puedo solo —dijo Lucas, aunque nadie le había preguntado. A mitad del puente, una tabla se partío." },
+      { t: "texto", img: "assets/pag5-lucas-v2.webp", text: "Al agarrarse soltó la linterna y… ¡plop! cayó al fondo del río. Estaba a oscuras. Su corazón latía tan fuerte que le palpitaban las orejas, pero volver no era una opción." },
+      { t: "texto", img: "assets/pag6-lucas-v2.webp", text: "Respiró hondo, buscó la tabla con el pie y avanzó. Despacito. Temblando. Un paso. Otro paso. Al tercer paso, notó una luz verde. Nuez lo había alcanzado." },
+      { t: "texto", img: "assets/pag6-lucas-v2.webp", text: "—Pisa donde brille mi musgo —dijo. Esta vez Lucas no dijo «puedo solo». Puso la mano en el caparazón y cruzaron juntos. El corazón le latía más despacio." },
+      { t: "texto", img: "assets/pag7-lucas-v2.webp", text: "Llegaron a un bosque. Por los troncos trepaban sombras y rugían voces —¡GROAAARG!- Lucas se escondió. Le temblaban hasta las pestañas." },
+      { t: "texto", img: "assets/pag7-lucas-v2.webp", text: "—Las sombras grandes salen de cosas pequeñas —susurró Nuez—. Mira bien. Lucas abrió un ojo y vio un pequeño bulto peludo con dos enormes orejas." },
+      { t: "texto", img: "assets/pag8-lucas-v2.webp", text: "¡Era su pesadilla! Lucas agarró su manta. Si se la echaba encima, la pesadilla quedaría atrapada para siempre pero entonces la vio de cerca. Pesadilla estaba temblando." },
+      { t: "texto", img: "assets/pag8-lucas-v2.webp", text: "Igual que él. —No me atrapes —dijo con una vocecita—. Solo rujo para que alguien venga. Aquí el silencio es muy grande. Lucas bajó la manta." },
+      { t: "texto", img: "assets/pag9-lucas-v2.webp", text: "—Yo también tengo miedo, pero es de ti. —dijo Lucas— —¿De mí? ¡Pero si soy pequeñito! Lucas le echó la manta por encima. —Para que no pases miedo." },
+      { t: "texto", img: "assets/pag9-lucas-v2.webp", text: "Pesadilla, agradecida, le dio un frasco con una luciérnaga. —Brilla poquito, pero quita el miedo a la oscuridad. —Gracias. La guardaré en mi mesilla —dijo Lucas." },
+      { t: "texto", img: "assets/pag10-lucas-v2.webp", text: "Nuez y pesadilla acompañaron a Lucas hasta la puerta de su armario. Lucas cruzó el armario, dejó la luciérnaga en la mesilla, apagó la luz y se metió tranquilo en la cama." },
+      { t: "texto", img: "assets/pag10-lucas-v2.webp", text: "La oscuridad ya no daba miedo: era una jungla llena de amigos nuevos. —Buenas noches, Pesadilla —susurró. —Buenas noches, Lucas —contestó el armario." },
+      { t: "texto", img: "assets/pag10-lucas-v2.webp", text: "", finTxt: true }
+    ];
+  }
+
+  rToggle() {
+    if (this._t) { clearInterval(this._t); this._t = null; this.setState({ rPlay: false }); return; }
+    this.setState(st => {
+      const ini = st.rPag * 14;
+      return { rPlay: true, rSeg: (st.rSeg >= ini && st.rSeg < ini + 14) ? st.rSeg : ini };
+    });
+    this._t = setInterval(() => this.setState(st => {
+      const total = this.pags().length, dur = total * 14;
+      const n = st.rSeg + 0.5 * st.rVel;
+      if (n >= dur) { clearInterval(this._t); this._t = null; return { rSeg: dur, rPlay: false }; }
+      const pag = Math.min(total - 1, Math.floor(n / 14));
+      return pag > st.rPag ? { rSeg: n, rPag: pag } : { rSeg: n };
+    }), 250);
+  }
+
+  rSalta(d) {
+    const total = this.pags().length;
+    this.setState(st => {
+      const n = Math.max(0, Math.min(total * 14, st.rSeg + d));
+      return { rSeg: n, rPag: Math.min(total - 1, Math.floor(n / 14)) };
+    });
+  }
+
+  componentWillUnmount() { clearInterval(this._t); }
+
+  mmss(t) { const m = Math.floor(t / 60), s = Math.floor(t % 60); return m + ":" + (s < 10 ? "0" : "") + s; }
+
+  renderVals() {
+    const s = this.state, pr = this.props;
+    const pags = this.pags();
+    const i = Math.min(pags.length - 1, Math.max(0, s.rPag));
+    const p = pags[i];
+    const dur = pags.length * 14;
+    const seg = Math.min(dur, s.rSeg);
+    const txt = p.t === "texto" ? p.text : "";
+    const cap = false;
+    const nombre = pr.nombre ?? "Lucas";
+    const ws = (cap ? txt.slice(1) : txt).split(/\s+/).filter(Boolean);
+    const prog = (seg - i * 14) / 14;
+    const leidas = prog <= 0 ? -1 : Math.floor(prog * ws.length);
+    const nav = !!s.navOpen;
+    return {
+      navOpen: nav,
+      toggleNav: () => this.setState(st => ({ navOpen: !st.navOpen })),
+      navY: nav ? "0%" : "-110%",
+      burgTop: nav ? "translateY(5.5px) rotate(45deg)" : "none",
+      burgBot: nav ? "translateY(-5.5px) rotate(-45deg)" : "none",
+      burgMidOp: nav ? "0" : "1",
+      rEtiquetaPag: (p.t === "cover" ? "Portada" : p.t === "ded" ? "Dedicatoria" : p.t === "fin" ? "Contraportada" : "Capítulo 1") + (i > 0 ? " · pág " + i + " de " + (pags.length - 1) : ""),
+      titulo: pr.titulo ?? "Buenas noches Lucas, buenas noches Pesadilla",
+      rPortadaImg: p.t === "cover" ? "block" : "none",
+      rPagImg: p.img ?? "assets/pag1-lucas-v2.webp",
+      rPagImgDisp: p.img ? "block" : "none",
+      rImg1: p.img === "assets/pag1-lucas-v2.webp" ? "block" : "none",
+      rImg2: p.img === "assets/pag2-lucas-v2.webp" ? "block" : "none",
+      rImg3: p.img === "assets/pag3-lucas-v2.webp" ? "block" : "none",
+      rImg4: p.img === "assets/pag4-lucas-v2.webp" ? "block" : "none",
+      rImg5: p.img === "assets/pag5-lucas-v2.webp" ? "block" : "none",
+      rImg6: p.img === "assets/pag6-lucas-v2.webp" ? "block" : "none",
+      rImg7: p.img === "assets/pag7-lucas-v2.webp" ? "block" : "none",
+      rImg8: p.img === "assets/pag8-lucas-v2.webp" ? "block" : "none",
+      rImg9: p.img === "assets/pag9-lucas-v2.webp" ? "block" : "none",
+      rImg10: p.img === "assets/pag10-lucas-v2.webp" ? "block" : "none",
+      protagonista: nombre + " - " + (pr.edad ?? 8) + " años",
+      rEtiqueta: p.t === "cover" ? "Portada" : p.t === "ded" ? "Dedicatoria" : p.t === "fin" ? "Contraportada" : "Capítulo 1",
+      rNumPags: (pags.length - 1) + (pags.length - 1 === 1 ? " página" : " páginas"),
+      rPagCorta: "Pág " + i + "/" + (pags.length - 1),
+      rPagVis: p.t === "cover" ? "hidden" : "visible",
+      rPagLabel: "pág " + (i + 1) + " de " + pags.length,
+      rCoverDisp: p.t === "cover" ? "flex" : "none",
+      rDedicDisp: p.t === "ded" ? "flex" : "none",
+      rTextoDisp: p.t === "texto" ? "flex" : "none",
+      rTextoBlock: p.t === "texto" ? "block" : "none",
+      rDedicBlock: p.t === "ded" ? "block" : "none",
+      rFinTxtDisp: p.finTxt ? "block" : "none",
+      rFinBtnDisp: p.finTxt ? "flex" : "none",
+      rInicio: () => this.setState({ rPag: 0, rSeg: 0, rPlay: false }),
+      rFinDisp: p.t === "fin" ? "flex" : "none",
+      rIlusDisp: p.t === "texto" && p.ilus ? "block" : "none",
+      rDedic: "Para " + nombre + ": que nunca dejes de ser valiente. Con cariño, de toda tu familia.",
+      rInicial: cap ? txt.slice(0, 1) : "",
+      rCapDisp: cap ? "inline" : "none",
+      rCapColor: "var(--bosque)",
+      rPalabras: ws.map((w, k) => ({
+        label: w + " ",
+        deco: "none",
+        color: k <= leidas ? "var(--amber)" : "var(--ink)"
+      })),
+      rFinNota: "Un cuento escrito para " + nombre + " por Señor Lobo",
+      rPuntos: pags.map((_, k) => ({ size: k === i ? "9px" : "6px", bg: k === i ? "var(--bosque)" : "var(--niebla)" })),
+      rPrev: () => this.setState(st => { const n = Math.max(0, st.rPag - 1); return { rPag: n, rSeg: n * 14 }; }),
+      rNext: () => this.setState(st => { const n = Math.min(pags.length - 1, st.rPag + 1); return { rPag: n, rSeg: n * 14 }; }),
+      rPrevOp: i === 0 ? ".35" : "1",
+      rNextOp: i === pags.length - 1 ? ".35" : "1",
+      rTogglePlay: () => this.rToggle(),
+      rPlayLabel: s.rPlay ? "Pausar la narración" : "Escuchar el cuento",
+      rPlayDisp: s.rPlay ? "none" : "block",
+      rPauseDisp: s.rPlay ? "block" : "none",
+      rRetro: () => this.rSalta(-15),
+      rAvance: () => this.rSalta(15),
+      rAudioProg: "calc(" + (seg / dur * 100).toFixed(1) + "% - 4px)",
+      rTiempo: this.mmss(seg),
+      rDuracion: this.mmss(dur),
+      rVozLabel: "Voz " + (pr.voz ?? "femenina"),
+      rVel: () => this.setState(st => ({ rVel: st.rVel === 2 ? 1 : st.rVel === 1 ? 1.5 : 2 })),
+      rVelLabel: String(s.rVel).replace(".", ",") + "×"
+    };
+  }
+}
+</script>
+</body>
+</html>
