@@ -13,6 +13,7 @@
   var cache = {};
   var dlg, el = {}, cuento, imgs;
   var st = { pag: 0, navOpen: false };
+  var scrollOrigen = 0;
 
   // filtro #rough del trazo «a mano», por si la página no lo trae
   function asegurarFiltro() {
@@ -36,8 +37,9 @@
       '<div class="lr-nav" id="lrNav">' +
         '<h2 class="lr-titulo"></h2>' +
         '<span class="lr-etiqueta"></span>' +
-        '<button class="lr-btn lr-home" type="button" aria-label="Volver">' + ICON_HOME + '</button>' +
       '</div>' +
+      // la casa va fuera de la nav-bar: siempre visible, al lado de la hamburguesa
+      '<button class="lr-btn lr-home" type="button" aria-label="Volver">' + ICON_HOME + '</button>' +
       '<button class="lr-btn lr-burger" type="button" aria-label="Menú" aria-expanded="false" aria-controls="lrNav"><span><i></i><i></i><i></i></span></button>' +
       '<div class="lr-bottom">' +
         '<div class="lr-ctrls">' +
@@ -91,6 +93,7 @@
     // Esc (cancel) y cierre: salimos también del historial
     dlg.addEventListener('close', function () {
       if (history.state && history.state.lector) history.back();
+      window.scrollTo(0, scrollOrigen); // de vuelta al mismo punto de la página de origen
     });
     window.addEventListener('popstate', function () { if (dlg.open) dlg.close(); });
     dlg.addEventListener('keydown', function (e) {
@@ -183,6 +186,7 @@
     return cargar(url).then(function (c) {
       prepararCuento(c);
       if (!dlg.open) {
+        scrollOrigen = window.scrollY;
         dlg.showModal();
         history.pushState({ lector: true }, '');
       }

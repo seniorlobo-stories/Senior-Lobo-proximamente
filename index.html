@@ -10,6 +10,7 @@
   <link rel="preload" href="fonts/wakerobin-compressed.otf" as="font" type="font/otf" crossorigin />
   <link rel="preload" href="fonts/Mick_Caster.otf" as="font" type="font/otf" crossorigin />
   <link rel="stylesheet" href="css/site.css" />
+  <link rel="stylesheet" href="css/lector.css" />
   <script>
     // Aplica el modo día/noche guardado antes de pintar (ver js/site.js).
     try { if (localStorage.getItem('sl-theme') === 'noche') document.documentElement.dataset.theme = 'noche'; } catch (e) {}
@@ -331,55 +332,95 @@
           <div class="nb-divider-mount"></div>
         </div>
 
-        <ul class="ages-grid">
-          <li class="age-item">
-            <div class="age-hang">
-              <span class="age-pin" aria-hidden="true"></span>
-              <div class="age-card age-6">
-              <i class="bg"></i>
-              <figure class="age-figure">
-                <div class="age-slot"><img src="imagenes/Portadas/brujilla-maria.jpg" alt="La brujilla María" width="800" height="446" loading="lazy" decoding="async"></div>
-                <h3 class="age-band">6-7 años</h3>
-              </figure>
-              <p class="age-desc">La ilusión de descubrir sus primeras historias</p>
-              <button class="btn ghost age-cta" type="button" disabled><i class="bg"></i>Ver ejemplos</button>
-              <span class="age-soon">Próximamente</span>
-              </div>
+        <!-- banda separadora con el carrusel de historias (mismo que el de la biblioteca;
+             flechas, puntos y fundido en js/site.js, «Leer cuento» abre js/lector.js) -->
+        <div class="banda-separadora-mount">
+          <div class="bib-carousel" aria-roledescription="carrusel" aria-label="Historias destacadas">
+            <div class="bib-stage">
+              <button class="lg-close bib-nav bib-prev" type="button" aria-label="Historias anteriores"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg></button>
+              <ul class="bib-track">
+                <li class="age-item">
+                  <div class="age-card age-8">
+                    <i class="bg"></i>
+                    <figure class="age-figure">
+                      <div class="age-slot"><img class="pos-arriba" src="imagenes/Portadas/lucas-buenas-noches.jpg" alt="Buenas noches Lucas, buenas noches Pesadilla" width="800" height="536" loading="lazy" decoding="async"></div>
+                      <span class="age-band">Aventuras</span>
+                    </figure>
+                    <p class="age-desc">La historia en la que Lucas superó el miedo a la oscuridad</p>
+                    <ul class="age-meta">
+                      <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Aventuras</li>
+                      <li class="meta-nivel" aria-label="Nivel de lectura: 2 de 4"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="on" d="M5 19v-4M10 19v-8"/><path d="M15 19V7M20 19V4"/></svg>Intermedio</li>
+                      <li class="meta-edad"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20.5c0-4 3.1-7 7-7s7 3 7 7"/></svg>8 años</li>
+                    </ul>
+                    <div class="age-ctas">
+                      <span class="age-cta-col"><button class="btn ghost amber age-cta" type="button" data-lector="cuentos/lucas/cuento.json"><i class="bg"></i>Leer cuento</button></span>
+                      <span class="age-cta-col"><button class="btn primary age-cta" type="button" disabled><i class="bg"></i>Crear cuento</button><span class="age-soon">Próximamente</span></span>
+                    </div>
+                  </div>
+                </li>
+                <li class="age-item">
+                  <div class="age-card age-6">
+                    <i class="bg"></i>
+                    <figure class="age-figure">
+                      <div class="age-slot"><img src="imagenes/Portadas/brujilla-maria.jpg" alt="La brujilla María" width="800" height="446" loading="lazy" decoding="async"></div>
+                      <span class="age-band">Fantasía</span>
+                    </figure>
+                    <p class="age-desc">La ilusión de descubrir sus primeras historias</p>
+                    <ul class="age-meta">
+                      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l11-11"/><path d="M13 7l4 4"/><path d="M18.5 2.5v4M16.5 4.5h4"/><path d="M8 3.5v3M6.5 5h3"/><path d="M20 12.5v3M18.5 14h3"/></svg>Fantasía</li>
+                      <li class="meta-nivel facil" aria-label="Nivel de lectura: 1 de 4"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="on" d="M5 19v-4"/><path d="M10 19v-8M15 19V7M20 19V4"/></svg>Fácil</li>
+                      <li class="meta-edad"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20.5c0-4 3.1-7 7-7s7 3 7 7"/></svg>6-7 años</li>
+                    </ul>
+                    <div class="age-ctas">
+                      <span class="age-cta-col"><button class="btn ghost amber age-cta" type="button" disabled><i class="bg"></i>Leer cuento</button><span class="age-soon">Próximamente</span></span>
+                      <a class="btn ghost age-cta" href="/biblioteca/"><i class="bg"></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"></path><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"></path></svg>Ver más cuentos</a>
+                    </div>
+                  </div>
+                </li>
+                <li class="age-item">
+                  <div class="age-card age-8">
+                    <i class="bg"></i>
+                    <figure class="age-figure">
+                      <div class="age-slot"><img src="imagenes/Portadas/viaje-ivan.jpg" alt="El viaje épico de Iván" width="800" height="446" loading="lazy" decoding="async"></div>
+                      <span class="age-band">Aventuras</span>
+                    </figure>
+                    <p class="age-desc">Lecturas para mentes curiosas y nuevos personajes</p>
+                    <ul class="age-meta">
+                      <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Aventuras</li>
+                      <li class="meta-nivel" aria-label="Nivel de lectura: 2 de 4"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="on" d="M5 19v-4M10 19v-8"/><path d="M15 19V7M20 19V4"/></svg>Intermedio</li>
+                      <li class="meta-edad"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20.5c0-4 3.1-7 7-7s7 3 7 7"/></svg>9 años</li>
+                    </ul>
+                    <div class="age-ctas">
+                      <span class="age-cta-col"><button class="btn ghost amber age-cta" type="button" disabled><i class="bg"></i>Leer cuento</button><span class="age-soon">Próximamente</span></span>
+                      <a class="btn ghost age-cta" href="/biblioteca/"><i class="bg"></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"></path><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"></path></svg>Ver más cuentos</a>
+                    </div>
+                  </div>
+                </li>
+                <li class="age-item">
+                  <div class="age-card age-10">
+                    <i class="bg"></i>
+                    <figure class="age-figure">
+                      <div class="age-slot"><img src="imagenes/Portadas/marta-luz.jpg" alt="Marta y la caída de la luz" width="800" height="446" loading="lazy" decoding="async"></div>
+                      <span class="age-band">Amistad</span>
+                    </figure>
+                    <p class="age-desc">Historias que acompañan su crecimiento</p>
+                    <ul class="age-meta">
+                      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7.6 4.2 4.2 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></svg>Amistad</li>
+                      <li class="meta-nivel avanzado" aria-label="Nivel de lectura: 4 de 4"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="on" d="M5 19v-4M10 19v-8M15 19V7M20 19V4"/></svg>Avanzado</li>
+                      <li class="meta-edad"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20.5c0-4 3.1-7 7-7s7 3 7 7"/></svg>+10 años</li>
+                    </ul>
+                    <div class="age-ctas">
+                      <span class="age-cta-col"><button class="btn ghost amber age-cta" type="button" disabled><i class="bg"></i>Leer cuento</button><span class="age-soon">Próximamente</span></span>
+                      <a class="btn ghost age-cta" href="/biblioteca/"><i class="bg"></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"></path><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"></path></svg>Ver más cuentos</a>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <button class="lg-close bib-nav bib-next" type="button" aria-label="Historias siguientes"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
             </div>
-          </li>
-
-          <li class="age-item">
-            <div class="age-hang">
-              <span class="age-pin" aria-hidden="true"></span>
-              <div class="age-card age-8">
-              <i class="bg"></i>
-              <figure class="age-figure">
-                <div class="age-slot"><img src="imagenes/Portadas/viaje-ivan.jpg" alt="El viaje épico de Iván" width="800" height="446" loading="lazy" decoding="async"></div>
-                <h3 class="age-band">8-9 años</h3>
-              </figure>
-              <p class="age-desc">Lecturas para mentes curiosas y nuevos personajes</p>
-              <button class="btn ghost age-cta" type="button" disabled><i class="bg"></i>Ver ejemplos</button>
-              <span class="age-soon">Próximamente</span>
-              </div>
-            </div>
-          </li>
-
-          <li class="age-item">
-            <div class="age-hang">
-              <span class="age-pin" aria-hidden="true"></span>
-              <div class="age-card age-10">
-              <i class="bg"></i>
-              <figure class="age-figure">
-                <div class="age-slot"><img src="imagenes/Portadas/marta-luz.jpg" alt="Marta y la caída de la luz" width="800" height="446" loading="lazy" decoding="async"></div>
-                <h3 class="age-band">+10 años</h3>
-              </figure>
-              <p class="age-desc">Historias que acompañan su crecimiento</p>
-              <button class="btn ghost age-cta" type="button" disabled><i class="bg"></i>Ver ejemplos</button>
-              <span class="age-soon">Próximamente</span>
-              </div>
-            </div>
-          </li>
-        </ul>
+            <div class="bib-dots" aria-hidden="true"></div>
+          </div>
+        </div>
       </section>
 
       <!-- ===================== CAPÍTULO I: LEER PARA COMPRENDER ===================== -->
@@ -569,6 +610,7 @@
   </main>
 
   <script src="js/site.js"></script>
+  <script src="js/lector.js"></script>
 
 </body>
 </html>

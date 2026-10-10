@@ -217,7 +217,7 @@ b:not(:empty).in-view:not(.hero *),
 .dn-switch-mount { display: inline-flex; align-items: center; }
 
 .wz-login { flex: none; white-space: nowrap; }
-/* misma sombra para «Ver ejemplos» de las tarjetas por edad */
+/* misma sombra para «Leer cuento» de las tarjetas por edad */
 .wz-login .bg, .age-cta .bg, .cover-cta .bg { box-shadow: 3px 4px 0 rgba(59,47,23,.22); }
 .wz-login:active .bg, .age-cta:active:not(:disabled) .bg, .cover-cta:active:not(:disabled) .bg { transform: translate(2px,2px); box-shadow: 1px 2px 0 rgba(59,47,23,.20); }
 :root[data-theme="noche"] .wz-login .bg, :root[data-theme="noche"] .age-cta .bg, :root[data-theme="noche"] .cover-cta .bg { box-shadow: 3px 4px 0 rgba(240,230,200,.35); }
@@ -351,8 +351,15 @@ main { flex: 1; width: 100%; }
 .banda-separadora { position: relative; width: 100vw; margin: 26px 0 26px calc(50% - 50vw);
   min-height: clamp(220px, 36vh, 380px); background: #E7E3CC; overflow: hidden; }
 /* contenido (opcional): mismo ancho que .home y aire para no pisar los bordes rasgados */
-.banda-separadora-body { max-width: var(--container-w); margin: 0 auto; padding: 84px var(--gutter) 76px; }
+/* fondo: ilustración de la banda al 50% sobre el color de la banda (día / noche) */
+.banda-separadora::before { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .5;
+  background: url(../imagenes/Fondo/Banda_separadora_dia.jpg) center / cover no-repeat; }
+:root[data-theme="noche"] .banda-separadora::before { background-image: url(../imagenes/Fondo/Banda_separadora_noche.jpg); }
+.banda-separadora:has(.brindis)::before { opacity: .3; } /* banda «brindis»: fondo más suave */
+.banda-separadora-body { position: relative; z-index: 1; max-width: var(--container-w); margin: 0 auto; padding: 84px var(--gutter) 76px; }
 .banda-separadora-body:empty { padding: 0; }
+/* banda con el carrusel (Inicio): un 20% menos de aire arriba */
+.banda-separadora-body:has(> .bib-carousel) { padding-top: 67px; }
 
 /* ── Banda «brindis» (¿Qué es Senior Lobo?): lobo con copa a la izquierda y lema a la derecha ── */
 .brindis { display: flex; align-items: center; gap: clamp(28px, 6vw, 110px); min-height: clamp(220px, 36vh, 380px);
@@ -629,12 +636,16 @@ main { flex: 1; width: 100%; }
   cursor: pointer; display: inline-flex; align-items: center; gap: 9px; position: relative; z-index: 0;
   text-decoration: none; }
 .btn .bg { position: absolute; inset: 0; z-index: -1; border-radius: 9px; }
-/* botones desactivados hasta el lanzamiento («Crear cuento», «Ver ejemplos») */
+/* botones desactivados hasta el lanzamiento («Crear cuento», «Leer cuento») */
 .btn:disabled { opacity: .55; cursor: not-allowed; }
 .cover-cta:disabled { opacity: .8; } /* sobre la foto oscura, algo más visible */
 .btn.primary { color: var(--on-dark); }
 .btn.primary .bg { background: var(--teal); }
 .btn.ghost .bg { background: var(--pergamino); border: 2px solid var(--line); }
+/* «Leer cuento» de las tarjetas: relleno ámbar con el mismo borde */
+.btn.amber { color: #38362c; }
+.btn.amber:not(:disabled) .bg { background: var(--amber); } /* deshabilitado: fondo de .btn.ghost */
+.btn.amber:disabled { color: var(--line); }
 .hero-acts .btn.primary .bg { box-shadow: 4px 5px 0 rgba(59, 47, 23, .22); }
 .hero-acts .btn.ghost .bg { box-shadow: 4px 5px 0 rgba(59, 47, 23, .22), inset 0 1px 0 rgba(255, 255, 255, .4); }
 .hero-acts .btn:active:not(:disabled) .bg { transform: translate(2px, 2px); box-shadow: 2px 3px 0 rgba(59, 47, 23, .20); }
@@ -788,9 +799,22 @@ main { flex: 1; width: 100%; }
 .age-desc { font-family: var(--font-body); font-size: calc(17.5 * var(--u)); line-height: 1.35; color: var(--ink-soft);
   width: 100%; min-height: calc(2em * 1.35); margin: calc(14 * var(--u)) 0 0;
   display: flex; align-items: center; justify-content: flex-start; text-align: left; }
-/* botón «Ver ejemplos» bajo la frase (estilo de «Iniciar sesión») */
+/* botón «Leer cuento» bajo la frase (estilo de «Iniciar sesión») */
 .age-cta { margin: calc(14 * var(--u)) 0 calc(6 * var(--u)); white-space: nowrap; }
-/* «Próximamente» bajo «Ver ejemplos» (desactivado, ver .btn:disabled) */
+/* Inicio y biblioteca: «Leer cuento» y, al lado, «Ver más cuentos» o «Crear cuento»; «Próximamente» queda bajo
+   su botón (columna .age-cta-col). Botones algo más compactos para que quepan los dos */
+.age-ctas { display: flex; align-items: flex-start; gap: calc(10 * var(--u)); width: 100%;
+  margin: calc(14 * var(--u)) 0 calc(6 * var(--u)); }
+/* los dos botones se reparten el ancho de la tarjeta a partes iguales */
+.age-ctas > * { flex: 1 1 0; min-width: 0; }
+.age-cta-col { display: flex; flex-direction: column; align-items: center; }
+/* icono de biblioteca (el mismo del menú) en «Ver más cuentos» */
+.age-ctas .age-cta svg { flex: none; width: 1.25em; height: 1.25em; fill: none; stroke: currentColor;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.age-ctas .age-cta { gap: calc(6 * var(--u)); }
+.age-ctas .age-cta { width: 100%; justify-content: center; margin: 0 0 calc(6 * var(--u)); font-size: calc(13 * var(--u));
+  padding: calc(10 * var(--u)) calc(8 * var(--u)); }
+/* «Próximamente» bajo «Leer cuento» (desactivado, ver .btn:disabled) */
 .age-soon { margin: 0 0 calc(4 * var(--u)); font-family: var(--font-disp); text-transform: uppercase;
   letter-spacing: .14em; font-size: calc(11 * var(--u)); font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
 
@@ -863,17 +887,23 @@ main { flex: 1; width: 100%; }
 .bib-track > .age-item { scroll-snap-align: start; }
 .bib-track > .age-item > .age-card { flex: 1; }
 .age-card.band-abajo .age-band { top: auto; bottom: calc(10 * var(--u)); }
-/* género: pastilla un 20% más pequeña que la de Inicio y ámbar en todas las tarjetas */
-.bib-track .age-band { background: var(--amber); color: #38362c;
+/* género: pastilla un 20% más pequeña que la de Inicio, con el fondo de «Ver más cuentos» (.btn.ghost) */
+.bib-track .age-band { background: var(--pergamino); color: var(--line);
   padding: calc(5.6 * var(--u)) calc(11.2 * var(--u)) calc(4.8 * var(--u)); font-size: calc(10.4 * var(--u)); }
-/* edad: banda diagonal en la esquina superior derecha de la portada, con el aspecto
-   de las bandas «Próximamente» (.soon-band); la portada recorta sus extremos */
-.bib-track .age-slot { position: relative; overflow: hidden; }
-.bib-track .age-ribbon { position: absolute; top: calc(22 * var(--u)); right: calc(-44 * var(--u));
-  width: calc(170 * var(--u)); transform: rotate(40deg);
-  padding: calc(7 * var(--u)) 0 calc(6 * var(--u)); font-size: calc(12 * var(--u)); letter-spacing: .22em; white-space: nowrap;
-  font-family: var(--font-disp); color: var(--pergamino); } /* gana a .age-slot span (texto del hueco vacío) */
-:root[data-theme="noche"] .bib-track .age-ribbon { color: var(--tinta); }
+/* portada con el título arriba: el recorte se ancla al borde superior para que se lea */
+.age-slot img.pos-arriba { object-position: center top; }
+/* fila de iconos bajo la frase: género, nivel (barras, las encendidas en ámbar) y edad */
+.age-meta { list-style: none; width: 100%; margin: calc(10 * var(--u)) 0 0; padding: 0;
+  display: flex; align-items: center; justify-content: center; gap: calc(18 * var(--u)); }
+.age-meta li { position: relative; display: flex; align-items: center; gap: calc(6 * var(--u));
+  font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .14em; font-size: calc(11 * var(--u));
+  font-weight: 600; color: var(--ink-soft); }
+.age-meta svg { width: calc(22 * var(--u)); height: calc(22 * var(--u)); fill: none; stroke: currentColor;
+  stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.age-meta .meta-nivel path { opacity: .35; }
+.age-meta .meta-nivel path.on { stroke: var(--amber); opacity: 1; }
+.age-meta .meta-nivel.facil path.on { stroke: var(--bosque); } /* nivel fácil: la barra encendida en verde */
+.age-meta .meta-nivel.avanzado path.on { stroke: #855f42; } /* nivel avanzado: las cuatro barras en marrón */
 /* flechas: botón redondo de papel (mismo que cerrar del modal), centradas en el alto de la
    tarjeta. .bib-stage envuelve solo la pista (sin los puntos); la tarjeta queda entre el
    padding de 14px (arriba) y 22px (abajo), así que su centro está 4px por encima del 50% */
@@ -909,10 +939,20 @@ main { flex: 1; width: 100%; }
   #destacadas .chapter-no { grid-column: 1 / -1; grid-row: 1; margin-bottom: 9px; }
   #destacadas .chapter-title { grid-column: 2; grid-row: 2; }
   .bib-carousel .bib-nav { position: relative; inset: auto; margin: 0; }
-  .bib-carousel .bib-prev { grid-column: 1; grid-row: 2; }
-  .bib-carousel .bib-next { grid-column: 3; grid-row: 2; }
-  .bib-track { grid-column: 1 / -1; grid-row: 3; margin-top: 8px; }
-  .bib-dots { grid-column: 1 / -1; grid-row: 4; }
+  #destacadas .bib-prev { grid-column: 1; grid-row: 2; }
+  #destacadas .bib-next { grid-column: 3; grid-row: 2; }
+  #destacadas .bib-track { grid-column: 1 / -1; grid-row: 3; margin-top: 8px; }
+  #destacadas .bib-dots { grid-column: 1 / -1; grid-row: 4; }
+  /* carrusel sin título encima (Inicio, en la banda separadora): las flechas
+     flanquean los puntos bajo la pista: fila 1 pista, fila 2 flecha | puntos | flecha */
+  .bib-carousel:not(#destacadas *) { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px;
+    column-gap: 10px; align-items: center; }
+  .bib-carousel:not(#destacadas *) .bib-stage { display: contents; }
+  .bib-carousel:not(#destacadas *) .bib-track { grid-column: 1 / -1; grid-row: 1; }
+  .bib-carousel:not(#destacadas *) .bib-prev { grid-column: 1; grid-row: 2; }
+  .bib-carousel:not(#destacadas *) .bib-next { grid-column: 3; grid-row: 2; }
+  .bib-carousel:not(#destacadas *) .bib-dots { grid-column: 2; grid-row: 2; margin-top: 0; }
+  .bib-carousel:not(#destacadas *) .bib-dots::before, .bib-carousel:not(#destacadas *) .bib-dots::after { width: 40px; }
 }
 
 /* ── Biblioteca: libros destacados — ficha de libro ──

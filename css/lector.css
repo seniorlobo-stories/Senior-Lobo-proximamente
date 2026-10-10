@@ -22,6 +22,8 @@
   --lr-dots:     radial-gradient(rgba(240,230,200,.05) 1px, transparent 1px);
 }
 .lector::backdrop { background: var(--paper-piece); }
+/* sin zoom por doble toque (p. ej. al pulsar dos veces seguidas «siguiente»); el pellizco con dos dedos sigue */
+.lector, .lector button, .lr-scroll { touch-action: manipulation; }
 html:has(.lector[open]) { overflow: hidden; overscroll-behavior: none; }
 .lector, .lector * { scrollbar-width: none; }
 .lector ::-webkit-scrollbar { display: none; width: 0; height: 0; }
@@ -62,6 +64,9 @@ html:has(.lector[open]) { overflow: hidden; overscroll-behavior: none; }
 .lector.nav-open .lr-burger i:nth-child(2) { opacity: 0; }
 .lector.nav-open .lr-burger i:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
 
+/* casa: siempre visible a la izquierda de la hamburguesa; cierra el lector y vuelve al punto de origen */
+.lr-home { z-index: 30; right: 62px; top: 16px; width: 37px; height: 37px; border-radius: 9px; }
+
 /* 4 · Nav-bar desplegable */
 .lr-nav { position: absolute; z-index: 20; top: 0; left: 0; right: 0; min-height: 44px;
   padding: 14px 132px 14px 22px; display: flex; flex-direction: column; justify-content: center; gap: 2px;
@@ -72,7 +77,6 @@ html:has(.lector[open]) { overflow: hidden; overscroll-behavior: none; }
 .lr-nav h2 { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .07em; font-weight: 600;
   font-size: 15.5px; line-height: 1.35; color: var(--line); text-wrap: balance; }
 .lr-etiqueta { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .04em; color: var(--lr-ink-soft); }
-.lr-home { right: 62px; top: 16px; width: 37px; height: 37px; border-radius: 9px; }
 
 /* 5 · Zona inferior: controles + panel de texto */
 .lr-bottom { position: absolute; z-index: 5; left: 0; right: 0; bottom: 0;
