@@ -514,11 +514,7 @@ main { flex: 1; width: 100%; }
 .hero-biblioteca .hero-sub b { background: #E7E3CC; padding: 1px 6px; transition: background-color .45s ease;
   -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 :root[data-theme="noche"] .hero-biblioteca .hero-sub b { background: #141d2b; }
-/* de noche, halo oscuro suave detrás del texto */
 .hero-biblioteca .hero-content { position: relative; }
-:root[data-theme="noche"] .hero-biblioteca .hero-content::before { content: ""; position: absolute; z-index: -1;
-  inset: 0 -50px -10px -70px; pointer-events: none;
-  background: radial-gradient(closest-side, rgba(20,29,43,.82) 55%, rgba(20,29,43,0)); }
 /* móvil: texto y botón en el 60% derecho del hero, arriba */
 @media (max-width: 600px) {
   /* fondo un 30% más cerca (propiedad scale: se suma a la deriva bgDrift, que usa transform) */
@@ -530,7 +526,6 @@ main { flex: 1; width: 100%; }
   .hero-biblioteca .hero-content { top: 10%; }
   .hero-biblioteca .hero-acts { margin-top: 12px; }
   .hero-biblioteca .hero-acts .btn { padding: 10px 14px; }
-  :root[data-theme="noche"] .hero-biblioteca .hero-content::before { inset: -6px -20px -10px -30px; }
 }
 .hero-obras .hero-scene img { object-position: 65% 75%; }
 /* búho con casco: misma animación owlBranch que en Inicio, pero a la derecha; la rama sale por

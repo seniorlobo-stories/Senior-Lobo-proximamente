@@ -75,7 +75,7 @@
     el.prev.addEventListener('click', function () { destello(el.prev); irA(st.pag - 1); });
     el.next.addEventListener('click', function () { destello(el.next); irA(st.pag + 1); });
     el.play.addEventListener('click', alternarAudio);
-    // la casa cierra el lector y devuelve a la pantalla de origen (mismo scroll; el foco vuelve al botón «Leer libro»)
+    // la casa cierra el lector y devuelve a la pantalla de origen (mismo scroll; el foco vuelve al botón «Leer cuento»)
     dlg.querySelector('.lr-home').addEventListener('click', function () { dlg.close(); });
     dlg.querySelector('.lr-reinicio').addEventListener('click', function () { irA(0); });
     dlg.querySelector('.lr-salir').addEventListener('click', function () { dlg.close(); }); // como la casa: vuelve a la pantalla de origen
