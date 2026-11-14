@@ -8,6 +8,8 @@
    lleva el audio a la primera palabra de esa página. Sin audio: play apagado + «No disponible». */
 (function () {
   var ICON_HOME = '<svg viewBox="0 0 24 24"><path d="M3.5 11L12 4l8.5 7"/><path d="M6 9.5V20h4.5v-5.5h3V20H18V9.5"/></svg>';
+  var ICON_LUNA = '<svg class="ic-luna" viewBox="0 0 24 24"><path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z"/></svg>';
+  var ICON_SOL = '<svg class="ic-sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>';
   var ICON_PREV = '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
   var ICON_NEXT = '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>';
   var ICON_PLAY = '<svg class="ic-play" viewBox="0 0 24 24"><path d="M8 5.2l11 6.8-11 6.8z"/></svg>';
@@ -43,7 +45,8 @@
         '<h2 class="lr-titulo"></h2>' +
         '<span class="lr-etiqueta"></span>' +
       '</div>' +
-      // la casa va fuera de la nav-bar: siempre visible, al lado de la hamburguesa
+      // luna/sol y casa: al lado de la hamburguesa, solo visibles con la nav-bar abierta (CSS)
+      '<button class="lr-btn lr-tema" type="button">' + ICON_LUNA + ICON_SOL + '</button>' +
       '<button class="lr-btn lr-home" type="button" aria-label="Volver">' + ICON_HOME + '</button>' +
       '<button class="lr-btn lr-burger" type="button" aria-label="Menú" aria-expanded="false" aria-controls="lrNav"><span><i></i><i></i><i></i></span></button>' +
       '<div class="lr-bottom">' +
@@ -77,6 +80,9 @@
     el.play.addEventListener('click', alternarAudio);
     // la casa cierra el lector y devuelve a la pantalla de origen (mismo scroll; el foco vuelve al botón «Leer cuento»)
     dlg.querySelector('.lr-home').addEventListener('click', function () { dlg.close(); });
+    // luna/sol: cambia el modo solo dentro del lector (la web se queda como estaba)
+    el.tema = dlg.querySelector('.lr-tema');
+    el.tema.addEventListener('click', function () { ponerTema(dlg.dataset.tema === 'noche' ? 'dia' : 'noche'); });
     dlg.querySelector('.lr-reinicio').addEventListener('click', function () { irA(0); });
     dlg.querySelector('.lr-salir').addEventListener('click', function () { dlg.close(); }); // como la casa: vuelve a la pantalla de origen
 
@@ -107,6 +113,11 @@
       if (e.key === 'ArrowLeft') irA(st.pag - 1);
       else if (e.key === 'ArrowRight') irA(st.pag + 1);
     });
+  }
+
+  function ponerTema(modo) {
+    dlg.dataset.tema = modo;
+    el.tema.setAttribute('aria-label', modo === 'noche' ? 'Cambiar a modo día' : 'Cambiar a modo noche');
   }
 
   // la flecha pulsada se queda en ámbar un instante (en móvil :active apenas se ve)
@@ -294,6 +305,8 @@
       prepararCuento(c);
       if (!dlg.open) {
         scrollOrigen = window.scrollY;
+        // cada vez que se abre arranca en el modo de la web
+        ponerTema(document.documentElement.dataset.theme === 'noche' ? 'noche' : 'dia');
         dlg.showModal();
         history.pushState({ lector: true }, '');
       }

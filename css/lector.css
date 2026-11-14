@@ -13,7 +13,28 @@
   margin: 0; padding: 0; border: 0; overflow: hidden; overscroll-behavior: none;
   background: var(--paper-piece); color: var(--ink); font-family: var(--font-body);
 }
-:root[data-theme="noche"] .lector {
+/* tema propio del lector (data-tema en el <dialog>): al abrir copia el de la web, pero el botón
+   luna/sol lo cambia solo aquí. Se redefinen los tokens de site.css (y los derivados --line/--ink,
+   que se resuelven en :root) para que valga aunque la web esté en el otro modo. */
+.lector[data-tema="dia"] {
+  --pergamino:   #f5edd8;
+  --tinta:       #38362c;
+  --niebla:      #9ba89c;
+  --castano:     #8c5f3a;
+  --ink-soft:    #6f7268;
+  --paper-piece: color-mix(in srgb, #ffffff 32%, var(--pergamino));
+  --line:        var(--tinta);
+  --ink:         var(--tinta);
+}
+.lector[data-tema="noche"] {
+  --pergamino:   #1b2744;
+  --tinta:       #f0e6c8;
+  --niebla:      #6b7a9a;
+  --castano:     #c98a5a;
+  --ink-soft:    #8a96aa;
+  --paper-piece: #253560;
+  --line:        var(--tinta);
+  --ink:         var(--tinta);
   --lr-kraft:    #1b2744;
   --lr-ink-soft: color-mix(in srgb, var(--tinta) 60%, var(--niebla));
   --lr-text:     var(--ink);
@@ -22,6 +43,8 @@
   --lr-dots:     radial-gradient(rgba(240,230,200,.05) 1px, transparent 1px);
 }
 .lector::backdrop { background: var(--paper-piece); }
+.lector[data-tema="dia"]::backdrop { background: color-mix(in srgb, #ffffff 32%, #f5edd8); }
+.lector[data-tema="noche"]::backdrop { background: #253560; }
 /* sin zoom por doble toque (p. ej. al pulsar dos veces seguidas «siguiente»); el pellizco con dos dedos sigue */
 .lector, .lector button, .lr-scroll { touch-action: manipulation; }
 html:has(.lector[open]) { overflow: hidden; overscroll-behavior: none; }
@@ -64,12 +87,23 @@ html:has(.lector[open]) { overflow: hidden; overscroll-behavior: none; }
 .lector.nav-open .lr-burger i:nth-child(2) { opacity: 0; }
 .lector.nav-open .lr-burger i:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
 
-/* casa: siempre visible a la izquierda de la hamburguesa; cierra el lector y vuelve al punto de origen */
+/* casa: a la izquierda de la hamburguesa; cierra el lector y vuelve al punto de origen */
 .lr-home { z-index: 30; right: 62px; top: 16px; width: 37px; height: 37px; border-radius: 9px; }
+/* luna/sol: a la izquierda de la casa; cambia el lector a noche (luna) o a día (sol) */
+.lr-tema { z-index: 30; right: 110px; top: 16px; width: 37px; height: 37px; border-radius: 9px; }
+.lr-tema .ic-sol { display: none; }
+.lector[data-tema="noche"] .lr-tema .ic-luna { display: none; }
+.lector[data-tema="noche"] .lr-tema .ic-sol { display: block; }
+/* casa y luna/sol van escondidas en la barra: aparecen al abrirla con la hamburguesa */
+.lr-home, .lr-tema { opacity: 0; visibility: hidden; transform: translateY(-8px);
+  transition: opacity .2s ease, transform .28s cubic-bezier(.5,1.2,.5,1), visibility 0s .28s; }
+.lector.nav-open .lr-home, .lector.nav-open .lr-tema { opacity: 1; visibility: visible; transform: none;
+  transition: opacity .2s ease .06s, transform .28s cubic-bezier(.5,1.2,.5,1), visibility 0s; }
+.lector.nav-open .lr-home:active, .lector.nav-open .lr-tema:active { transform: translateY(1px); }
 
 /* 4 · Nav-bar desplegable */
 .lr-nav { position: absolute; z-index: 20; top: 0; left: 0; right: 0; min-height: 44px;
-  padding: 14px 132px 14px 22px; display: flex; flex-direction: column; justify-content: center; gap: 2px;
+  padding: 14px 180px 14px 22px; display: flex; flex-direction: column; justify-content: center; gap: 2px;
   background-color: var(--lr-kraft); background-image: var(--lr-dots); background-size: 5px 5px;
   box-shadow: 0 4px 0 var(--lr-sh);
   transform: translateY(-110%); transition: transform .28s cubic-bezier(.5,1.2,.5,1); }
