@@ -366,3 +366,6 @@
   // el <dialog> solo ocupa lo que la imagen: un clic sobre él que no cae en la imagen es el fondo
   lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });
 })();
+
+// ── Footer: el año del copyright se actualiza solo (el HTML trae 2026 por si no hay JS) ──
+document.querySelectorAll('.sf-year').forEach(function (el) { el.textContent = new Date().getFullYear(); });

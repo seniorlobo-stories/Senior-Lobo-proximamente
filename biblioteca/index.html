@@ -6,9 +6,7 @@
   <title>Biblioteca de cuentos infantiles | Senior Lobo</title>
   <meta name="description" content="Biblioteca gratuita con un cuento nuevo cada 48 horas. Empieza por «Buenas noches Lucas, buenas noches pesadilla» y descubre las historias de Senior Lobo." />
   <link rel="canonical" href="https://seniorlobo.es/biblioteca/" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Cormorant+Upright:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/fuentes.css" />
   <link rel="preload" href="../fonts/wakerobin-compressed.otf" as="font" type="font/otf" crossorigin />
   <link rel="preload" href="../fonts/Mick_Caster.otf" as="font" type="font/otf" crossorigin />
   <link rel="stylesheet" href="../css/site.css" />
@@ -494,13 +492,62 @@
         </article>
       </section>
 
-      <footer class="home-foot">
-        <span>Senior Lobo · Cuentos personalizados con IA</span>
-        <span>Hecho a mano, impreso en tapa dura</span>
-      </footer>
-
     </div>
   </main>
+
+  <!-- ── Footer: componente universal, el mismo pie en toda la web (como el navbar) ── -->
+  <footer class="site-foot">
+    <i class="bg"></i>
+    <div class="sf-inner">
+      <div class="sf-cols">
+        <nav class="sf-col sf-bib" aria-label="Biblioteca digital">
+          <h2 class="sf-head">Biblioteca digital</h2>
+          <a class="sf-link" href="/biblioteca/">Cuentos digitales gratis</a>
+        </nav>
+        <a href="/" class="sf-brand">
+          <span class="wz-mark">
+            <img class="brand-logo-dia" src="../Logos/Logo_banner_senior_lobo_dia.svg" alt="" loading="lazy" />
+            <img class="brand-logo-noche" src="../Logos/Senior_lobo_noche.svg" alt="" aria-hidden="true" loading="lazy" />
+          </span>
+          <span class="sf-brand-text">
+            <span class="sf-word">Senior Lobo</span>
+            <span class="sf-tagline">Cuentos personalizados</span>
+          </span>
+        </a>
+        <nav class="sf-col sf-app" aria-label="Descarga la app">
+          <h2 class="sf-head">Descarga app</h2>
+          <span class="sf-link">Senior Lobo para Apple</span>
+          <span class="sf-link">Senior Lobo para Google</span>
+        </nav>
+        <nav class="sf-col sf-faq" aria-label="Senior Lobo">
+          <h2 class="sf-head">Senior Lobo</h2>
+          <span class="sf-link">Preguntas frecuentes</span>
+        </nav>
+        <div class="sf-col sf-contact">
+          <h2 class="sf-head">¿Quieres contactar con nosotros?</h2>
+          <p class="sf-text">Senior Lobo estará encantado de leerte<br><a class="sf-link" href="mailto:info@seniorlobo.es">info@seniorlobo.es</a></p>
+          <div class="sf-social">
+            <span class="sf-text">Síguenos en</span>
+            <a href="https://www.instagram.com/seniorlobosl" target="_blank" rel="noopener" aria-label="Instagram"><i class="bg"></i><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.2 6.8v.01"/></svg></a>
+            <a href="https://www.linkedin.com/company/seniorlobo/" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M6 10v9M6 5.5v.01M10.5 19v-9M10.5 13.8a3.6 3.6 0 0 1 7.2 0V19"/></svg></a>
+            <a href="https://www.tiktok.com/@seniorlobosl" target="_blank" rel="noopener" aria-label="TikTok"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M13.5 4v10.6a3.6 3.6 0 1 1-3.6-3.6"/><path d="M13.5 4c.4 2.7 2.2 4.4 5 4.6"/></svg></a>
+            <a href="https://x.com/seniorloboSL" target="_blank" rel="noopener" aria-label="X (Twitter)"><i class="bg"></i><svg viewBox="0 0 24 24"><path d="M5.5 4.5l13 15M18.5 4.5l-13 15"/></svg></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="sf-rule" aria-hidden="true"></div>
+
+      <div class="sf-bottom">
+        <nav class="sf-legal" aria-label="Legal">
+          <span class="sf-link">Términos y condiciones de uso</span>
+          <a class="sf-link" href="/politica-de-privacidad/">Política de privacidad</a>
+          <span class="sf-link">Política de cookies</span>
+        </nav>
+        <p class="sf-copy">Senior Lobo © <span class="sf-year">2026</span> - La editorial que cambia las reglas del juego</p>
+      </div>
+    </div>
+  </footer>
 
   <!-- ===================== VISOR: captura a pantalla completa ===================== -->
   <dialog class="shot-lb" id="shotLb" aria-label="Imagen a pantalla completa">

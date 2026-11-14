@@ -69,7 +69,8 @@ body {
 strong:not(.hero *),
 b:not(:empty):not(.hero *),
 .wz-nlink,
-.cf-menu-label {
+.cf-menu-label,
+.sf-link {
   background-image: linear-gradient(var(--amber), var(--amber));
   background-repeat: no-repeat;
   background-position: 0 100%;
@@ -85,6 +86,7 @@ b:not(:empty):not(.hero *),
 strong.in-view:not(.hero *),
 b:not(:empty).in-view:not(.hero *),
 .wz-nlink:hover,
+a.sf-link:hover,
 .cf-menu-item:hover .cf-menu-label,
 .cf-menu-item:active .cf-menu-label {
   background-size: 100% 2px;
@@ -1351,10 +1353,112 @@ html:has(.shot-lb[open]) { overflow: hidden; }
   .cmp-big { grid-column: 1 / -1; justify-self: center; width: 86.667%; }
 }
 
-/* ── Footer ── */
-.home-foot { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap;
-  margin: 64px 0 0; padding-top: 24px; border-top: 2px solid color-mix(in srgb, var(--line) 22%, transparent);
-  font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .06em; }
+/* ── Footer: componente universal ──
+   El mismo pie (marca, columnas de enlaces, contacto y redes, avisos legales) se
+   reutiliza verbatim en todas las páginas, igual que el navbar. Fondo de papel
+   como el del navbar, rasgado por arriba (#torn-paper-up). */
+.site-foot { position: relative; z-index: 0; margin-top: 10px; padding: 70px var(--gutter) 34px; }
+.site-foot > .bg { position: absolute; z-index: -1; inset: 14px -24px -40px; pointer-events: none;
+  background-color: var(--paper-piece);
+  background-image: radial-gradient(rgba(120,90,40,.05) 1px, transparent 1px); background-size: 4px 4px;
+  filter: url(#torn-paper-up); will-change: filter; transition: background-color .4s ease; }
+.site-foot { overflow: hidden; }
+.sf-inner { max-width: var(--container-w); margin: 0 auto; }
+
+/* marca: mismo tamaño que en el navbar; bajo «Biblioteca digital», pegada a la línea */
+.sf-brand { grid-area: brand; align-self: end; justify-self: start; display: inline-flex; align-items: center; gap: 14px; text-decoration: none; }
+/* el SVG del logo trae ~13px de aire a la izquierda: se compensa para que el dibujo
+   arranque en el mismo borde que los textos de la columna */
+.sf-brand .wz-mark { margin-left: -13px; }
+.sf-brand-text { display: flex; flex-direction: column; gap: 3px; line-height: 1; }
+.sf-word { font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .14em; font-weight: 700;
+  font-size: 21px; color: var(--line); white-space: nowrap; }
+.sf-tagline { font-family: var(--font-body); font-style: italic; font-size: 13.5px; color: var(--ink-soft); white-space: nowrap; }
+
+/* rejilla por zonas: la marca es una pieza propia para poder recolocarla en tablet y móvil */
+.sf-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.45fr); gap: 32px 28px;
+  grid-template-rows: auto 1fr; grid-template-areas: "bib app faq contact" "brand app faq contact"; }
+.sf-bib { grid-area: bib; }
+.sf-app { grid-area: app; }
+.sf-faq { grid-area: faq; }
+.sf-contact { grid-area: contact; }
+.sf-col { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+.sf-head { margin: 0 0 6px; font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .08em;
+  font-weight: 700; font-size: 15.5px; line-height: 1.2; color: var(--line); }
+.sf-link, .sf-text { font-family: var(--font-body); font-size: 19px; line-height: 1.45; color: var(--ink); text-decoration: none; }
+.sf-text { margin: 0; }
+
+/* redes: cada icono va en un botón como «Iniciar sesión» (papel, borde de tinta, sombra) */
+/* una sola fila siempre: si la columna se estrecha (tablet), los botones encogen en vez de saltar de línea */
+.sf-social { display: flex; align-items: center; gap: 14px; margin-top: 10px; flex-wrap: nowrap; }
+.sf-social .sf-text { flex: none; margin-right: 4px; white-space: nowrap; }
+.sf-social a { position: relative; z-index: 0; display: grid; place-items: center; flex: 0 1 44px; min-width: 0; aspect-ratio: 1; color: var(--line); }
+.sf-social a > .bg { position: absolute; inset: 0; z-index: -1; border-radius: 9px; background: var(--pergamino);
+  border: 2px solid var(--line); box-shadow: 3px 4px 0 rgba(59,47,23,.22); transition: background-color .2s; }
+.sf-social a:hover > .bg { background: var(--amber); }
+:root[data-theme="noche"] .sf-social a:hover { color: #38362c; }
+.sf-social a:active > .bg { transform: translate(2px,2px); box-shadow: 1px 2px 0 rgba(59,47,23,.20); }
+:root[data-theme="noche"] .sf-social a > .bg { box-shadow: 3px 4px 0 rgba(240,230,200,.35); }
+:root[data-theme="noche"] .sf-social a:active > .bg { box-shadow: 1px 2px 0 rgba(240,230,200,.35); }
+.sf-social svg { width: 50%; height: 50%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.sf-rule { height: 2px; margin: 22px 0 26px; background: color-mix(in srgb, var(--line) 40%, transparent); filter: url(#torn-line); }
+
+.sf-bottom { display: flex; align-items: center; justify-content: space-between; gap: 14px 28px; flex-wrap: wrap; }
+.sf-legal { display: flex; align-items: center; flex-wrap: wrap; row-gap: 8px; }
+.sf-legal .sf-link { font-size: 16.5px; }
+.sf-legal .sf-link + .sf-link { margin-left: 16px; padding-left: 16px; border-left: 2px solid var(--line); line-height: 1.1; }
+.sf-copy { margin: 0; font-family: var(--font-body); font-size: 16.5px; color: var(--ink); }
+
+@media (max-width: 960px) {
+  .sf-social { gap: 10px; }
+  .sf-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto;
+    grid-template-areas: "bib app" "faq contact" "brand contact"; }
+}
+/* móvil: compacto (la mitad de alto). Biblioteca y FAQ en dos columnas, las dos
+   apps en una sola línea, contacto a todo el ancho y la marca más pequeña junto a la línea */
+@media (max-width: 600px) {
+  .site-foot { padding: 56px var(--gutter) 22px; }
+  .sf-cols { gap: 28px 16px; grid-template-areas: "bib faq" "app app" "contact contact" "brand brand"; }
+  .sf-col { gap: 6px; }
+  .sf-head { margin: 0 0 4px; font-size: 14px; -webkit-text-stroke: .45px currentColor; }
+  .sf-link, .sf-text { font-size: 16.5px; line-height: 1.4; }
+  .sf-app { flex-direction: row; flex-wrap: wrap; column-gap: 20px; }
+  .sf-app .sf-head { flex-basis: 100%; }
+  /* «Síguenos en» como título (mismo estilo que los encabezados) y los botones debajo */
+  .sf-social { align-self: stretch; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .sf-social .sf-text { flex-basis: 100%; margin: 0 0 4px; font-family: var(--font-disp); text-transform: uppercase; letter-spacing: .08em;
+    font-weight: 700; font-size: 14px; line-height: 1.2; color: var(--line); -webkit-text-stroke: .45px currentColor; }
+  .sf-social a { flex: none; width: 43px; }
+  .sf-brand { justify-self: center; margin-top: 4px; gap: 10px; }
+  .sf-brand .wz-mark, .sf-brand .wz-mark img { width: 52px; height: 52px; }
+  .sf-brand .wz-mark { margin-left: -10px; }
+  .sf-word { font-size: 17px; }
+  .sf-tagline { font-size: 12px; }
+  .sf-rule { margin: 16px 0 14px; }
+  .sf-bottom { flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+  .sf-legal .sf-link, .sf-copy { font-size: 13.5px; }
+  /* sin barras: al partir línea, la barra quedaría colgando al principio */
+  .sf-legal { justify-content: center; column-gap: 18px; row-gap: 2px; }
+  .sf-legal .sf-link + .sf-link { margin-left: -.22em; padding-left: .22em; border-left: 0; }
+}
+
+/* ── Página legal (Política de privacidad): sin hero; cada sección se titula
+   con la etiqueta de capítulo (rombos) alineada a la izquierda y puede partirse ── */
+.pagina-legal { padding-top: 24px; }
+html.is-compact .pagina-legal { margin-top: calc(8px + var(--navh, 94px)); }
+.pagina-legal .chapter-plate { align-items: flex-start; }
+.pagina-legal .chapter-no { justify-content: flex-start; white-space: normal; line-height: 1.5; }
+.pagina-legal .chapter-title { text-align: left; }
+.pagina-legal .chapter-plate .nb-divider,
+.pagina-legal .book-page > .nb-divider { justify-content: flex-start; }
+.pagina-legal .book-page > .nb-divider { margin-top: 30px; }
+.pagina-legal .book-para { text-align: left; hyphens: none; }
+.pagina-legal .legal-fecha { font-family: var(--font-mono); font-size: 14px; letter-spacing: .04em; color: var(--ink-soft); }
+/* enlaces (correo, web): ámbar sin subrayado; de día, oscurecido para que se lea sobre el papel */
+.pagina-legal .book-page a { color: color-mix(in srgb, var(--amber) 70%, #3b2f17); text-decoration: none; }
+:root[data-theme="noche"] .pagina-legal .book-page a { color: var(--amber); }
+.pagina-legal .book-page a:hover { color: var(--amber); }
 
 /* ── Responsive: tablet (758px) y móvil (430px) ── */
 @media (max-width: 600px) {
