@@ -1,0 +1,79 @@
+/* ── Lector de cuentos · base ──
+   Lo único que el lector necesita de la web de Senior Lobo: tipografías, 2 colores y las
+   variables de fuente, más un reset mínimo. Cárgalo ANTES de lector.css.
+   Si la web de destino ya define estas variables (--amber, --font-*), puedes quitarlas de aquí;
+   el resto de colores los fija lector.css dentro del propio lector (día y noche). */
+
+/* Tipografías (rutas relativas a esta hoja: ../fonts/) */
+@font-face{
+  font-family:'Wakerobin Compressed';
+  src:url('../fonts/wakerobin-compressed.otf') format('opentype');
+  font-weight:400 700; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'Mick Caster';
+  src:url('../fonts/Mick_Caster.otf') format('opentype'),
+      url('../fonts/Mick_Caster.ttf') format('truetype');
+  font-weight:400 700; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'Cormorant Upright';
+  src:url('../fonts/cormorant-upright-latin-ext-400-normal.woff2') format('woff2');
+  font-weight:400; font-style:normal; font-display:swap;
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face{
+  font-family:'Cormorant Upright';
+  src:url('../fonts/cormorant-upright-latin-400-normal.woff2') format('woff2');
+  font-weight:400; font-style:normal; font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:'Cormorant Upright';
+  src:url('../fonts/cormorant-upright-latin-ext-500-normal.woff2') format('woff2');
+  font-weight:500; font-style:normal; font-display:swap;
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face{
+  font-family:'Cormorant Upright';
+  src:url('../fonts/cormorant-upright-latin-500-normal.woff2') format('woff2');
+  font-weight:500; font-style:normal; font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:'Cormorant Upright';
+  src:url('../fonts/cormorant-upright-latin-ext-600-normal.woff2') format('woff2');
+  font-weight:600; font-style:normal; font-display:swap;
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face{
+  font-family:'Cormorant Upright';
+  src:url('../fonts/cormorant-upright-latin-600-normal.woff2') format('woff2');
+  font-weight:600; font-style:normal; font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:'Cormorant Upright';
+  src:url('../fonts/cormorant-upright-latin-ext-700-normal.woff2') format('woff2');
+  font-weight:700; font-style:normal; font-display:swap;
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face{
+  font-family:'Cormorant Upright';
+  src:url('../fonts/cormorant-upright-latin-700-normal.woff2') format('woff2');
+  font-weight:700; font-style:normal; font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+/* Variables que lee lector.css (iguales de día y de noche) */
+:root {
+  --amber:     #c9a035;                                   /* play, botón pulsado, palabra leída */
+  --font-disp: 'Wakerobin Compressed', Garamond, serif;   /* títulos en mayúsculas, botones */
+  --font-body: 'Cormorant Upright', Garamond, serif;      /* texto del cuento */
+  --font-slab: 'Mick Caster', serif;                      /* título de portada y «Fin» */
+  --font-mono: 'Cormorant Upright', Garamond, serif;      /* píldora «Pág», etiquetas pequeñas */
+}
+
+/* Reset dentro del lector (en la web original viene del reset global de site.css).
+   :where() = especificidad 0, así lector.css siempre gana. */
+:where(.lector, .lector *, .lector *::before, .lector *::after) { box-sizing: border-box; margin: 0; padding: 0; }
